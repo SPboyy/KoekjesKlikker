@@ -1,6 +1,7 @@
 const login = [
     {
-        "Header": "Bedankt"
+        "Header": "Bedankt",
+        "Image": "images/cookie.png"
     }
     ];
 
