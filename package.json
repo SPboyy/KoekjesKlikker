@@ -1,0 +1,25 @@
+{
+  "name": "koekjesklikker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js -e js,json,css,handlebars"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SPboyy/KoekjesKlikker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SPboyy/KoekjesKlikker/issues"
+  },
+  "homepage": "https://github.com/SPboyy/KoekjesKlikker#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.3",
+    "nodemon": "^3.1.10"
+  }
+}
