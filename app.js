@@ -17,6 +17,9 @@ app.use("/login", loginRouter);
 app.get("/login", (req, res) => {
     res.render("login");
 });
+app.get("/", (req, res) => {
+    res.render("home");
+});
 
 app.use(express.static(__dirname + "/public"));
 // custom 404 page
