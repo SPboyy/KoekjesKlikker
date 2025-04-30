@@ -5,14 +5,21 @@ const achievements = [
     ];
 
 
+
     function multiply(achievements) {
         let i = 0;
         for (let achievement of achievements) {
-            if (achievement.unlocked === 1) {
+            if (achievement.unlocked == 1) {
                 i++;
             }
         }
         return i;
     }
     
-    console.log(multiply(achievements));
+    const multiplier = multiply(achievements);
+
+    module.exports = 
+    {
+        achievements,
+        multiplier
+    };
