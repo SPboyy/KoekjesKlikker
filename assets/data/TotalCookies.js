@@ -3,6 +3,11 @@ function getTotalCookies()
 {
     return Cookies
 }
-module.exports = {
-    getTotalCookies
+function MoreCookies()
+{
+    Cookies += 1;
+}
+module.exports = {  
+    getTotalCookies,
+    MoreCookies
 }

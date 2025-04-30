@@ -2,7 +2,9 @@
     <div class="column left"> 
         <h1>Cookies</h1>
         <h1>{{koekies}}</h1>
-        <img src="images/cookie.png" height="75%" width="100%">
+       <button class="cookie-button" id="cookieBtn">
+        <img src="images/cookie.png" alt="Cookie Button" height="75%" width="100%">
+        </button>
     </div>
     <div class="column center">
 
@@ -11,3 +13,15 @@
     
     </div>
   </div>
+
+  <script>
+  document.getElementById('cookieBtn').addEventListener('click', () => {
+    fetch('/add-cookie', {
+      method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.querySelector('h1:nth-of-type(2)').innerText = data.total;
+    });
+  });
+</script>
