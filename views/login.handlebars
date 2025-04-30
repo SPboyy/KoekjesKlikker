@@ -1,5 +1,14 @@
-<h1>{{title}}</h1>
-
-{{#each login}}
-  <p>{{this.Header}}</p>
-{{/each}}
+<main>
+    <img src="{{this.Image}}">
+    <form action="/login" method="POST">
+        <div>
+        <label for={{this.Username}}>Username:</label>
+        <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+        <label for={{this.Password}}>Password:</label>
+        <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</main>
