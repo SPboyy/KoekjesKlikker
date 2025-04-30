@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .column {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .left {
+    background-color: #f2f2f2;
+  }
+  
+  .center {
+    background-color: #ddd;
+  }
+  
+  .right {
+    background-color: #f2f2f2;
+  }
+  
