@@ -11,6 +11,10 @@ app.engine("handlebars", expressHandlebars.engine({
 }));
 app.set("view engine", "handlebars");
 
+app.get("/", (req, res) => {
+    res.render("home");
+});
+
 app.use(express.static(__dirname + "/public"));
 // custom 404 page
 app.use((req, res) => {
