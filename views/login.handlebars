@@ -1,11 +1,11 @@
-<main>
+<main id="login-page" style="text-align: center;">
     {{#each login}}
     <div>
-        <img src="images/cookie.png" width="15%" style="margin: 50px auto 0; display: block;">
+        <img src="images/cookie.png" width="20%" style="margin: 40px auto 0; display: block;">
         <h1 style="margin: 0;">COOKIE</h1>
         <h1 style="margin: 0;">CLICKER</h1>
     </div>
-    <form action="/login" method="POST" style="text-align: center;">
+    <form action="/" method="POST" style="text-align: center;">
         <div>
         <input type="text" id="username" name="username" placeholder="{{this.Username}}" required>
         </div>
@@ -13,9 +13,9 @@
             <input type="password" id="password" name="password" placeholder="{{this.Password}}" required>
         </div>
         <div style="margin-top: 10px;">
-            <button type="submit">Login</button>
+            <button type="submit" id="login-button">LOG IN</button>
         </div>
-        <button type="submit" style="margin-top: 10px;">Register</button>
+        <button type="submit" id="sign-in-button" style="margin-top: 10px;">Sign up</button>
     </form>
     {{/each}}
 </main>
