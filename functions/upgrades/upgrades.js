@@ -1,15 +1,3 @@
-const priceIncrease = 1.2;
-
-
-function buyBuilding(building) 
-
-{
-
-
-
-}
-
-
 var rollingPin =
 {
 
