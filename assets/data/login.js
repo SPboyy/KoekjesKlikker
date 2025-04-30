@@ -1,7 +1,7 @@
 const login = [
     {
         "Header": "Bedankt",
-        "Image": "https://www.uwv.nl/Images/uwv-logo.png",
+        "Image": "images/cookie.png"
     }
     ];
 
