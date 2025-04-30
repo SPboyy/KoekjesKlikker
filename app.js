@@ -12,6 +12,9 @@ app.engine("handlebars", expressHandlebars.engine({
 }));
 app.set("view engine", "handlebars");
 
+const cookiesRouter = require("./routes/cookies");
+app.use("/",cookiesRouter);
+
 app.use("/login", loginRouter);
 
 app.get("/login", (req, res) => {
