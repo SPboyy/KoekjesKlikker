@@ -2,6 +2,7 @@ const port = process.env.PORT || 3000;
 
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
+const loginRouter = require("./routes/login");
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -10,6 +11,12 @@ app.engine("handlebars", expressHandlebars.engine({
     defaultLayout: "main",
 }));
 app.set("view engine", "handlebars");
+
+app.use("/login", loginRouter);
+
+app.get("/login", (req, res) => {
+    res.render("login");
+});
 
 app.use(express.static(__dirname + "/public"));
 // custom 404 page
