@@ -15,8 +15,9 @@ body {
   }
   
   .left {
-    background-color: #f2f2f2;
+    background-image: url("../images/OreoBaground.jpg");
   }
+  
   
   .center {
     background-color: #ddd;
@@ -28,6 +29,7 @@ body {
   
   h1{
     text-align: center;
+    color: white;
   }
   .cookie-button {
     background: none;
@@ -39,6 +41,7 @@ body {
 
   .cookie-button img {
     display: block;
-    width: 100%;
+    width: 75%;
     height: auto;
+    margin-left: 13%;
   }
