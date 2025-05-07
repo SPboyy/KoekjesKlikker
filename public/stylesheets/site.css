@@ -3,11 +3,12 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
+
 }
 
 .container {
   display: flex;
-  height: 100vh;
+  height: 150vh;
 }
 .containerUpgrades1
 {
@@ -360,4 +361,9 @@ box-sizing: border-box;
 
 .popup-content {
   position: relative;
+}
+.scaler {
+  transform: scale(0.67);
+  transform-origin: top left;
+  width: calc(100% / 0.67);
 }
