@@ -3,11 +3,12 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
+
 }
 
 .container {
   display: flex;
-  height: 100vh;
+  height: 150vh;
 }
 .containerUpgrades1
 {
@@ -41,12 +42,20 @@ body {
 
     margin-left: 13%;
   }
+  .columndoubleLong
+  {
+    flex:1.6;
+    margin-left: 13%;
+  }
   .upgrade-button img {
     width: 80%;        
     height: auto;       
     display: block;
   }
-  
+  .big-img{
+    height: 200%;
+    width: 200%;
+  }
   .upgrade-button {
     background: none;
     border: none;
@@ -56,12 +65,36 @@ body {
     width: 80% ;        
     height: auto;       
   }
-  .Buildings-button{
+  .building-count {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: white;
+    padding: 2px 6px;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-radius: 6px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .BigBuildings-button {
+    position: relative;
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     display: inline-block;
+    width: 47.5%;
+    height: auto;
+  }
+  
+  .Buildings-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    position: relative; 
+    width: 100%;
   }
   .Buildings-button img{
     width: 100%;        
@@ -326,8 +359,20 @@ box-sizing: border-box;
   z-index: 1100;
 }
 
+#button-TopRight{
+  float: right;
+  height: 12.5%;
+  width: 25%;
+  background-color: #fceabb;
+}
+#button-TopLeft{
+  height: 12.5%;
+  width: 25%;
+  background-color: #fceabb;
+}
 .popup-content {
   position: relative;
+
 }
 
 #prestige-container {
@@ -411,4 +456,11 @@ box-sizing: border-box;
 .prestige-node.active {
   background-color: #a96e41;
   opacity: 1;
+=======
+  float: right;
+}
+.scaler {
+  transform: scale(0.67);
+  transform-origin: top left;
+  width: calc(100% / 0.67);
 }
