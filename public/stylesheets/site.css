@@ -456,7 +456,6 @@ box-sizing: border-box;
 .prestige-node.active {
   background-color: #a96e41;
   opacity: 1;
-=======
   float: right;
 }
 .scaler {
