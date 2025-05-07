@@ -9,7 +9,16 @@ body {
   display: flex;
   height: 100vh;
 }
-
+.containerUpgrades1
+{
+  display: flex;
+  background-color: #7b4b2a;
+}
+.containerUpgrades2
+{
+  display: flex;
+  background-color: #b0754d;
+}
 .column {
   flex: 1;
   padding: 20px;
@@ -21,13 +30,13 @@ body {
 }
 
 .columnhalf{
-  flex: 1;
+  flex: 1.1;
   padding: 20px;
   box-sizing: border-box;
 }
 .columndouble
 {
-  flex:1.5;
+  flex:1.6;
   padding: 20px;
 
     margin-left: 13%;
@@ -99,6 +108,7 @@ body {
 
 h1{
   text-align: center;
+  color:white;
 }
 #login-button {
   background-color: rgb(28, 138, 206);
