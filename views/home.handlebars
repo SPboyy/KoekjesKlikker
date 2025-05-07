@@ -1,6 +1,6 @@
 <div class="container">
     <div class="column left"> 
-        <h1>Cookies</h1>
+        <h1>Cookies (cps: {cps})</h1>
         <h1>{{koekies}}</h1>
        <button class="cookie-button" id="cookieBtn">
         <img src="images/cookie.png" alt="Cookie Button" height="75%" width="100%">
@@ -39,8 +39,9 @@
     </th>
    </div>
     <div class="columndouble">
-      <h3>Rolling pin</h3>
+      <h3>Rolling pin price: {getal}</h3>
       <button class="Buildings-button" id="cookieBtn">
+        <span class="building-count">0</span>
         <img src="images/RollingPinOnTable.jpg" alt="Cookie Button" height="150%" width="100%">
       </button>
     </div>
@@ -51,21 +52,22 @@
     <th>
       <h2>multiplier price: {getal}</h2>
         <button class="upgrade-button" id="cookieBtn">
-        <img src="images/LightBrownRollingPin.png" alt="Cookie Button" >
+        <img src="images/CookieMonster.png" alt="Cookie Button" height="60%">
         </button>
         
     </th>
     <th>
       <h2>Discount price: {getal}</h2>
         <button class="upgrade-button" id="cookieBtn">
-        <img src="images/BrownRollingPin.png" alt="Cookie Button">
+        <img src="images/RedCookieMonster.png" alt="Cookie Button">
         </button>
     </th>
    </div>
-    <div class="columndouble">
-      <h3>Rolling pin</h3>
-      <button class="Buildings-button" id="cookieBtn">
-        <img src="images/RollingPinOnTable.jpg" alt="Cookie Button" height="150%" width="100%">
+    <div class="columndoubleLong">
+      <h3>Cookie Monster price: {getal}</h3>
+      <button class="BigBuildings-button" id="cookieBtn">
+        <span class="building-count">0</span>
+         <img src="images/CookieMonster.jpg" alt="Cookie Button" class="big-img">
       </button>
     </div>
  </div>
@@ -90,7 +92,7 @@
   }
 
   function closePopup() {
-    const popup = document.getElementById("popup");
+    const popup = document.getElementById("popup"); 
     popup.style.display = "none";
   }
 
