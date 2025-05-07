@@ -29,7 +29,7 @@ body {
 {
   flex:1.5;
   padding: 20px;
-=======
+
     margin-left: 13%;
   }
   .upgrade-button img {
@@ -99,7 +99,7 @@ body {
 
 h1{
   text-align: center;
-=======
+}
 #login-button {
   background-color: rgb(28, 138, 206);
   border-radius: 12px;
@@ -226,6 +226,7 @@ width: 100%;
 zoom: 106.4%;
 padding: 20px;
 box-sizing: border-box;
+}
 #sign-in-button {
   background-color: #7b4b2a;
     color: #e7c8a0;
