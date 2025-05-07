@@ -1,7 +1,7 @@
 
 const achievements = [
-    { name: "the grind begins", description: "you bought 1 rolling pin", unlocked: 0},
-    { name: "getting started", description: "you clicked your first cookie", unlocked: 0},
+    { achievementId: 1, name: "the grind begins", description: "you bought 1 rolling pin", unlocked: 0},
+    { achievementId: 2, name: "getting started", description: "you clicked your first cookie", unlocked: 0},
     ];
 
 
