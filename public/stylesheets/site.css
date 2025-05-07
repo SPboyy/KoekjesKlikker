@@ -359,8 +359,20 @@ box-sizing: border-box;
   z-index: 1100;
 }
 
+#button-TopRight{
+  float: right;
+  height: 12.5%;
+  width: 25%;
+  background-color: #fceabb;
+}
+#button-TopLeft{
+  height: 12.5%;
+  width: 25%;
+  background-color: #fceabb;
+}
 .popup-content {
   position: relative;
+  float: right;
 }
 .scaler {
   transform: scale(0.67);
