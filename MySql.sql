@@ -6,27 +6,46 @@
 -- INSERT INTO login (loginId,username,password,checkAdmin) VALUES (1,"admin","admin",true)
 
 
-CREATE TABLE player(
-    playerId INTEGER NOT NULL,
-    playerName TEXT NOT NULL,
-    amountOfCookies LONG NOT NULL,
-    amountOfRebirths INTEGER,
-    amountOfUpgrades INTEGER,
-    amountOfRebirthTokens INTEGER,
-    cookiesSpend LONG,
-    totalAmountOfCookies LONG NOT NULL,µ
-    achAmount1 BOOLEAN,
-    achAmount100 BOOLEAN,
-    achAmount1000 BOOLEAN,
-    achAmount10000 BOOLEAN,
-    achAmount100000 BOOLEAN,
-    achAmount1000000 BOOLEAN,
-    achAmount10000000 BOOLEAN,
-    achAmount100000000 BOOLEAN,
-    achAmount1000000000 BOOLEAN,
-    achAmount10000000000 BOOLEAN,
-    PRIMARY KEY (playerId)
-    
-    );
+-- CREATE TABLE player(
+--     playerId INTEGER PRIMARY KEY NOT NULL,
+--     playerName TEXT NOT NULL,
+--     amountOfCookies LONG NOT NULL,
+--     amountOfRebirths INTEGER,
+--     amountOfUpgrades INTEGER,
+--     amountOfRebirthTokens INTEGER,
+--     cookiesSpend LONG,
+--     totalAmountOfCookies LONG NOT NULL,
+--     achAmount1 BOOLEAN,
+--     achAmount100 BOOLEAN,
+--     achAmount1000 BOOLEAN,
+--     achAmount10000 BOOLEAN,
+--     achAmount100000 BOOLEAN,
+--     achAmount1000000 BOOLEAN,
+--     achAmount10000000 BOOLEAN,
+--     achAmount100000000 BOOLEAN,
+--     achAmount1000000000 BOOLEAN,
+--     achAmount10000000000 BOOLEAN
 
+    
+--     );
+
+INSERT INTO player(
+playerId,
+playerName,
+amountOfCookies,
+amountOfRebirths,
+amountOfUpgrades,
+amountOfRebirthTokens,
+cookiesSpend,
+totalAmountOfCookies,
+achAmount100,
+achAmount1000,
+achAmount10000,
+achAmount100000,
+achAmount1000000,
+achAmount10000000,
+achAmount100000000,
+achAmount1000000000,
+achAmount10000000000) 
+VALUES (1,"Bob",1000,0,0,0,5000,6000,true,true,true,true,true,true,true,true,true)
 
