@@ -1,0 +1,6 @@
+-- CREATE TABLE player(playerid INTEGER NOT NULL PRIMARY KEY, playername TEXT NOT NULL, amountofcookies LONG NOT NULL, amountofrebirths INTEGER, amountofupgrades INTEGER, amountofrebirthtokens INTEGER, cookiesspend LONG, totalamountofcookies LONG NOT NULL); 
+-- INSERT INTO player(playerid,playername,amountofcookies,amountofrebirths,amountofupgrades,amountofrebirthtokens,cookiesspend,totalamountofcookies) VALUES (1,"Bob",1000,0,0,0,5000,6000)
+-- CREATE TABLE buildings (buildingid INTEGER NOT NULL PRIMARY KEY,name Text NOT NULL,multiplier INTEGER NOT NULL,price INTEGER NOT NULL,priceincrease DOUBLE NOT NULL,cops DOUBLE NOT NULL, amount INTEGER NOT NULL);
+-- INSERT INTO buildings (buildingid, name,multiplier,price,priceincrease,cops,amount) VALUES (1,"rolling pin",1,10,1.2,0.1,0)
+-- CREATE TABLE login(loginid INTEGER NOT NULL,username TEXT NOT NULL,password TEXT NOT NULL, checkadmin BOOLEAN);
+-- INSERT INTO login (loginid,username,password,checkadmin) VALUES (1,"admin","admin",true)
