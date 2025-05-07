@@ -7,7 +7,18 @@
         </button>
     </div>
     <div class="column center">
-      
+      <button onclick="openPopup()">Prestige</button>
+    </div>
+
+    <div id="popup" class="popup-overlay" style="display: none;">
+      <div class="popup-content">
+        <h2>Prestige</h2>
+        <span class="close-button" onclick="closePopup()">×</span>
+        <p>Prestige level {Koekjes}</p>
+        <p>Heavenly chips {Koekjes}</p>
+        <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
+        <button onclick="closePopup()">Bevestigen</button>
+      </div>
     </div>
     <div class="column right">
   <div class="container">
@@ -46,5 +57,23 @@
     .then(data => {
       document.querySelector('h1:nth-of-type(2)').innerText = data.total;
     });
+  });
+
+  function openPopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "flex";
+  }
+
+  function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "none";
+  }
+
+  window.addEventListener("click", function (event) {
+    const popup = document.getElementById("popup");
+    const content = document.querySelector(".popup-content");
+    if (event.target === popup) {
+      closePopup();
+    }
   });
 </script>
