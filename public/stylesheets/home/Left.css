@@ -1,0 +1,19 @@
+.left {
+    background-color: #7b4b2a;
+    overflow-y: auto;
+    height: auto;
+  }
+  .cookie-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .cookie-button img {
+    display: block;
+    width: 75%;
+    height: auto;
+  
+    margin-left: 13%;
+  }
