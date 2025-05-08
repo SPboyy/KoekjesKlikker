@@ -82,3 +82,96 @@
     opacity: 1;
     float: right;
   }
+
+  #prestige-info-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 240px;
+    background-color: #f5ede3;
+    border: 2px solid #a96e41;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-family: "Georgia", serif;
+    z-index: 10;
+  }
+  
+  #prestige-info-box .prestige-label {
+    color: #8b5a2b;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  #prestige-info-box button {
+    background-color: #f5deb3;
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: inset 0 0 5px #fff3;
+    transition: background-color 0.2s;
+  }
+  
+  #prestige-info-box button:hover {
+    background-color: #eac88a;
+  }
+
+  .confirm-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+  }
+  
+  .confirm-box {
+    background-color: #f5ede3;
+    border: 2px solid #a96e41;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    text-align: center;
+    font-family: "Georgia", serif;
+    color: #2e1a0f;
+  }
+  
+  .confirm-box p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+  }
+  
+  .button-row button {
+    background-color: #f5deb3;
+    color: black;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .button-row button:hover {
+    background-color: #eac88a;
+  }
+  
+  .hidden {
+    display: none;
+  }
