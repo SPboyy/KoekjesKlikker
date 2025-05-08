@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="/stylesheets/home/Right.css">
 <link rel="stylesheet" href="/stylesheets/home/Left.css">
 <link rel="stylesheet" href="/stylesheets/home/Center.css">
+<<<<<<< Updated upstream
 <div class="container">
 {{>left}}
 {{>center}}
@@ -11,3 +12,231 @@
 <script src="/javascript/home/popup.js"></script>
 <script src="/javascript/home/prestige.js"></script>
 <script src="/javascript/home/buyBuilding.js"></script>
+=======
+
+<div class="container">
+    <div class="column left"> 
+        <h1>Cookies (cps: <span id="cpsDisplay">{{cps}}</span>)</h1>
+        <h1 id="cookieCount">{{koekies}}</h1>
+        <button class="cookie-button" id="cookieBtn">
+            <img src="/images/cookie.png" alt="Cookie Button" class="cookie-img">
+        </button>
+    </div>
+    <div class="column center">
+        <div class="row">
+            <button id="button-TopLeft">Options</button>
+            <button id="button-TopRight" onclick="openPopup()">Prestige</button>
+        </div>
+        <div class="row">
+            <button id="button-TopLeft">Stats</button>
+        </div>
+        <div class="podium">
+            <div class="podium-block second">
+                <div class="podium-rank">2</div>
+                <div class="podium-name">Player2</div>
+            </div>
+            <div class="podium-block first">
+                <div class="podium-rank">1</div>
+                <div class="podium-name">Player1</div>
+            </div>
+            <div class="podium-block third">
+                <div class="podium-rank">3</div>
+                <div class="podium-name">Player3</div>
+            </div>
+        </div>
+        <div class="containerLeaderboard">
+            <table>
+                <tr>
+                    <th>ranking</th>
+                    <th>name</th>
+                    <th>Total Cookies</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Player1</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Player2</td>
+                    <td>0</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h2>Prestige</h2>
+            <span class="close-button" onclick="closePopup()">×</span>
+            <p>Prestige level {{prestigeLevel}}</p>
+            <p>Heavenly chips {{heavenlyChips}}</p>
+            <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
+            <button onclick="confirmPrestige()">Bevestigen</button>
+        </div>
+    </div>
+
+    <div class="column right">
+        <div class="containerUpgrades1">
+            <div class="columnhalf"> 
+                <div>
+                    <h2>Multiplier price: {{multiplierPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn1">
+                        <img src="/images/LightBrownRollingPin.png" alt="Multiplier Upgrade" class="upgrade-img">
+                    </button>
+                </div>
+                <div>
+                    <h2>Discount price: {{discountPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn2">
+                        <img src="/images/BrownRollingPin.png" alt="Discount Upgrade" class="upgrade-img">
+                    </button>
+                </div>
+            </div>
+            <div class="columndouble">
+                <h3>Rolling pin price: {{buildings.[0].price}}</h3>
+                <button class="Buildings-button" id="buildingBtn1" onclick="buyBuilding(0)">
+                    <span class="building-count">{{buildings.[0].amount}}</span>
+                    <img src="/images/RollingPinOnTable.jpg" alt="Rolling Pin" class="building-img">
+                </button>
+            </div>
+        </div>
+
+        <div class="containerUpgrades2">
+            <div class="columnhalf"> 
+                <div>
+                    <h2>Multiplier price: {{multiplierPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn3">
+                        <img src="/images/CookieMonster.png" alt="Multiplier Upgrade" class="upgrade-img">
+                    </button>
+                </div>
+                <div>
+                    <h2>Discount price: {{discountPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn4">
+                        <img src="/images/RedCookieMonster.png" alt="Discount Upgrade" class="upgrade-img">
+                    </button>
+                </div>
+            </div>
+            <div class="columndoubleLong">
+                <h3>Cookie Monster price: {{buildings.[1].price}}</h3>
+                <button class="BigBuildings-button" id="buildingBtn2" onclick="buyBuilding(1)">
+                    <span class="building-count">{{buildings.[1].amount}}</span>
+                    <img src="/images/CookieMonster.jpg" alt="Cookie Monster" class="big-building-img">
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Game state
+    let passiveCookies = 0;
+    let lastUpdate = Date.now();
+    
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        startPassiveIncome();
+    });
+
+    // Passive income generator
+    function startPassiveIncome() {
+        const now = Date.now();
+        const deltaTime = (now - lastUpdate) / 1000;
+        lastUpdate = now;
+        
+        const cps = parseFloat(document.getElementById('cpsDisplay').textContent) || 0;
+        passiveCookies += cps * deltaTime;
+        
+        if (passiveCookies >= 1) {
+            const cookiesToAdd = Math.floor(passiveCookies);
+            passiveCookies -= cookiesToAdd;
+            
+            fetch('/add-passive-cookies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: cookiesToAdd })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cookieCount').textContent = data.total;
+                document.getElementById('cpsDisplay').textContent = data.cps;
+            })
+            .catch(err => console.error("Error adding passive cookies:", err));
+        }
+        
+        requestAnimationFrame(startPassiveIncome);
+    }
+
+    // Cookie click handler
+    document.getElementById('cookieBtn').addEventListener('click', () => {
+        fetch('/add-cookie', {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('cookieCount').textContent = data.total;
+            document.getElementById('cpsDisplay').textContent = data.cps;
+        })
+        .catch(err => {
+            console.error("Error adding cookie:", err);
+            alert("Failed to add cookie. Please try again.");
+        });
+    });
+
+    // Buy building handler
+    function buyBuilding(index) {
+        fetch(`/buy-building/${index}`, {
+            method: 'POST'
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(res.statusText);
+            return res.json();
+        })
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            document.querySelectorAll('.building-count')[index].textContent = data.amount;
+            document.querySelectorAll('.columndouble h3, .columndoubleLong h3')[index].innerHTML = 
+                `${data.name} price: ${data.price.toFixed(1)}`;
+            
+            document.getElementById('cookieCount').textContent = data.totalCookies;
+            document.getElementById('cpsDisplay').textContent = data.cps;
+        })
+        .catch(err => console.error("Error buying building:", err));
+    }
+
+    // Prestige functions
+    function openPopup() {
+        document.getElementById("popup").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+    }
+
+    function confirmPrestige() {
+        fetch('/prestige', {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(err => console.error("Error during prestige:", err));
+    }
+
+    // Close popup when clicking outside
+    window.addEventListener("click", function(event) {
+        const popup = document.getElementById("popup");
+        if (event.target === popup) {
+            closePopup();
+        }
+    });
+</script>
+>>>>>>> Stashed changes
