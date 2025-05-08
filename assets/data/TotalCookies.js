@@ -1,13 +1,11 @@
-var Cookies = 0;
-function getTotalCookies()
-{
-    return Cookies
+let totalCookies = 0;
+
+function MoreCookies(amount = 1) {
+  totalCookies += amount;
 }
-function MoreCookies()
-{
-    Cookies += 1;
+
+function getTotalCookies() {
+  return totalCookies;
 }
-module.exports = {  
-    getTotalCookies,
-    MoreCookies
-}
+
+module.exports = { MoreCookies, getTotalCookies };
