@@ -6,6 +6,7 @@ const loginRouter = require("./routes/login");
 const prestigeRouter = require("./routes/prestige");
 const app = express();
 const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // configure Handlebars view engine
 app.engine("handlebars", expressHandlebars.engine({
@@ -14,9 +15,9 @@ app.engine("handlebars", expressHandlebars.engine({
 app.set("view engine", "handlebars");
 
 const cookiesRouter = require("./routes/cookies");
-app.use("/", cookiesRouter);  // Cookies route
-app.use("/login", loginRouter);  // Login route
-app.use("/prestige", prestigeRouter);  // Prestige route
+app.use("/",cookiesRouter);
+app.use("/login", loginRouter);
+app.use("/prestige", prestigeRouter);
 
 // Specifieke routes voor login, prestige en home
 app.get("/login", (req, res) => {

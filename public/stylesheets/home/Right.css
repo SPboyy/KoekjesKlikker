@@ -1,0 +1,118 @@
+.right {
+    background-color: #f2f2f2;
+    overflow-y: auto;
+    height: auto;
+  }
+.containerUpgrades1
+{
+  display: flex;
+  background-color: #7b4b2a;
+
+}
+.containerUpgrades2
+{
+  display: flex;
+  background-color: #b0754d;
+}
+.columnhalf{
+    flex: 1.1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.columndouble
+{
+  flex:1.6;
+  padding: 20px;
+
+    margin-left: 13%;
+}
+.columndoubleLong
+  {
+    flex:1.6;
+    margin-left: 13%;
+  }
+  .upgrade-button img {
+    width: 80%;        
+    height: auto;       
+    display: block;
+  }
+  .big-img{
+    height: 200%;
+    width: 200%;
+  }
+  .upgrade-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    width: 80% ;        
+    height: auto;       
+  }
+  .building-count {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: white;
+    padding: 2px 6px;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-radius: 6px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .BigBuildings-button {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    width: 47.5%;
+    height: auto;
+  }
+  
+  .Buildings-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    position: relative; 
+    width: 100%;
+  }
+  .Buildings-button img{
+    width: 100%;        
+    height: auto;       
+    display: block;
+  }
+  .upgrade-button img {
+    width: 80%;        
+    height: auto;       
+    display: block;
+    margin-left: 21%;
+  }
+  
+  .upgrade-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    width: 80% ;        
+    height: auto;       
+  }
+  .Buildings-button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    
+  }
+  .Buildings-button img{
+    
+    display: block;
+    height: auto;
+    width: 100%;
+    margin-right: 50%;
+    float: left;
+  }

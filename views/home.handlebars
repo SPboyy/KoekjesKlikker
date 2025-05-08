@@ -1,3 +1,7 @@
+ <link rel="stylesheet" href="/stylesheets/home/home.css">
+  <link rel="stylesheet" href="/stylesheets/home/Right.css">
+   <link rel="stylesheet" href="/stylesheets/home/Left.css">
+    <link rel="stylesheet" href="/stylesheets/home/Center.css">
 <div class="container">
     <div class="column left"> 
         <h1>Cookies (cps: <span id="cpsDisplay">{{cps}}</span>)</h1>
@@ -7,18 +11,61 @@
         </button>
     </div>
     <div class="column center">
-        <button onclick="openPopup()">Prestige</button>
+      <div class="row">
+            <button id="button-TopLeft">Options</button>
+            <button id="button-TopRight" onclick="openPopup()">Prestige</button>
+      </div>
+      <div class="row">
+            <button id="button-TopLeft">Stats</button>
+      </div>
+    <div class="podium">
+  <div class="podium-block second">
+    <div class="podium-rank">2</div>
+    <div class="podium-name">Player2</div>
+  </div>
+  <div class="podium-block first">
+    <div class="podium-rank">1</div>
+    <div class="podium-name">Player1</div>
+  </div>
+  <div class="podium-block third">
+    <div class="podium-rank">3</div>
+    <div class="podium-name">Player3</div>
+  </div>
+</div>
+<div class="containerLeaderboard">
+<table>
+  <tr>
+    <th>ranking</th>
+    <th>name</th>
+    <th>Total Cookies</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Player1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Player2</td>
+    <td>0</td>
+  </tr>
+</table>
+
+
+</div>
+
+
     </div>
 
     <div id="popup" class="popup-overlay" style="display: none;">
-        <div class="popup-content">
-            <h2>Prestige</h2>
-            <span class="close-button" onclick="closePopup()">×</span>
-            <p>Prestige level {{prestigeLevel}}</p>
-            <p>Heavenly chips {{heavenlyChips}}</p>
-            <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
-            <button onclick="closePopup()">Bevestigen</button>
-        </div>
+      <div class="popup-content">
+        <h2>Prestige</h2>
+        <span class="close-button" onclick="closePopup()">×</span>
+        <p>Prestige level {Koekjes}</p>
+        <p>Heavenly chips {Koekjes}</p>
+        <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
+        <button onclick="confirmPrestige()">Bevestigen</button>
+      </div>
     </div>
     <div class="column right">
         <div class="containerUpgrades1">
