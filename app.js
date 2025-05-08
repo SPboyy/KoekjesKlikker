@@ -14,11 +14,11 @@ app.engine("handlebars", expressHandlebars.engine({
 app.set("view engine", "handlebars");
 
 const cookiesRouter = require("./routes/cookies");
-app.use("/",cookiesRouter);
+app.use("/", cookiesRouter);  // Cookies route
+app.use("/login", loginRouter);  // Login route
+app.use("/prestige", prestigeRouter);  // Prestige route
 
-app.use("/login", loginRouter);
-app.use("/prestige", prestigeRouter);
-
+// Specifieke routes voor login, prestige en home
 app.get("/login", (req, res) => {
     res.render("login");
 });
@@ -29,17 +29,22 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
+// Statische bestanden
 app.use(express.static(__dirname + "/public"));
-// custom 404 page
+
+// Custom 404 pagina
 app.use((req, res) => {
     res.render("errors/404");
-})
-// custom 500 page
+});
+
+// Custom 500 pagina
 app.use((err, req, res, next) => {
     console.error(err.message);
     res.render("errors/500");
 });
-app.listen(port, () => console.log(
-    `Express started on http://localhost:${port};  `+
-    `press Ctrl-C to terminate.`));
 
+// Start de server
+app.listen(port, () => console.log(
+    `Express started on http://localhost:${port};  ` +
+    `press Ctrl-C to terminate.`
+));

@@ -1,113 +1,129 @@
 <div class="container">
     <div class="column left"> 
-        <h1>Cookies (cps: {cps})</h1>
-        <h1>{{koekies}}</h1>
-       <button class="cookie-button" id="cookieBtn">
-        <img src="images/cookie.png" alt="Cookie Button" height="75%" width="100%">
+        <h1>Cookies (cps: <span id="cpsDisplay">{{cps}}</span>)</h1>
+        <h1 id="cookieCount">{{koekies}}</h1>
+        <button class="cookie-button" id="cookieBtn">
+            <img src="images/cookie.png" alt="Cookie Button" class="cookie-img">
         </button>
     </div>
     <div class="column center">
-      <div class="row">
-            <button id="button-TopLeft">Options</button>
-            <button id="button-TopRight" onclick="openPopup()">Prestige</button>
-      </div>
-      <div class="row">
-            <button id="button-TopLeft">Stats</button>
-            <button id="button-TopRight">Leaderboards</button>
-      </div>
+        <button onclick="openPopup()">Prestige</button>
     </div>
-  
+
     <div id="popup" class="popup-overlay" style="display: none;">
-      <div class="popup-content">
-        <h2>Prestige</h2>
-        <span class="close-button" onclick="closePopup()">×</span>
-        <p>Prestige level {Koekjes}</p>
-        <p>Heavenly chips {Koekjes}</p>
-        <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
-        <button onclick="closePopup()">Bevestigen</button>
-      </div>
+        <div class="popup-content">
+            <h2>Prestige</h2>
+            <span class="close-button" onclick="closePopup()">×</span>
+            <p>Prestige level {{prestigeLevel}}</p>
+            <p>Heavenly chips {{heavenlyChips}}</p>
+            <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
+            <button onclick="closePopup()">Bevestigen</button>
+        </div>
     </div>
     <div class="column right">
-  <div class="containerUpgrades1">
+        <div class="containerUpgrades1">
+            <div class="columnhalf"> 
+                <th>
+                    <h2>Multiplier price: {{multiplierPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn1">
+                        <img src="images/LightBrownRollingPin.png" alt="Multiplier Upgrade" class="upgrade-img">
+                    </button>
+                </th>
+                <th>
+                    <h2>Discount price: {{discountPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn2">
+                        <img src="images/BrownRollingPin.png" alt="Discount Upgrade" class="upgrade-img">
+                    </button>
+                </th>
+            </div>
+            <div class="columndouble">
+                <h3>Rolling pin price: {{buildings.[0].price}}</h3>
+                <button class="Buildings-button" id="buildingBtn1" onclick="buyBuilding(0)">
+                    <span class="building-count">{{buildings.[0].amount}}</span>
+                    <img src="images/RollingPinOnTable.jpg" alt="Rolling Pin" class="building-img">
+                </button>
+            </div>
+        </div>
 
-    <div class="columnhalf"> 
-    <th>
-      <h2>multiplier price: {getal}</h2>
-        <button class="upgrade-button" id="cookieBtn">
-        <img src="images/LightBrownRollingPin.png" alt="Cookie Button" >
-        </button>
-        
-    </th>
-    <th>
-      <h2>Discount price: {getal}</h2>
-        <button class="upgrade-button" id="cookieBtn">
-        <img src="images/BrownRollingPin.png" alt="Cookie Button">
-        </button>
-    </th>
-   </div>
-    <div class="columndouble">
-      <h3>Rolling pin price: {getal}</h3>
-      <button class="Buildings-button" id="cookieBtn">
-        <span class="building-count">0</span>
-        <img src="images/RollingPinOnTable.jpg" alt="Cookie Button" height="150%" width="100%">
-      </button>
+        <div class="containerUpgrades2">
+            <div class="columnhalf"> 
+                <th>
+                    <h2>Multiplier price: {{multiplierPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn3">
+                        <img src="images/CookieMonster.png" alt="Multiplier Upgrade" class="upgrade-img">
+                    </button>
+                </th>
+                <th>
+                    <h2>Discount price: {{discountPrice}}</h2>
+                    <button class="upgrade-button" id="upgradeBtn4">
+                        <img src="images/RedCookieMonster.png" alt="Discount Upgrade" class="upgrade-img">
+                    </button>
+                </th>
+            </div>
+            <div class="columndoubleLong">
+                <h3>Cookie Monster price: {{buildings.[1].price}}</h3>
+                <button class="BigBuildings-button" id="buildingBtn2" onclick="buyBuilding(1)">
+                    <span class="building-count">{{buildings.[1].amount}}</span>
+                    <img src="images/CookieMonster.jpg" alt="Cookie Monster" class="big-building-img">
+                </button>
+            </div>
+        </div>
     </div>
- </div>
-  <div class="containerUpgrades2">
+</div>
 
-    <div class="columnhalf"> 
-    <th>
-      <h2>multiplier price: {getal}</h2>
-        <button class="upgrade-button" id="cookieBtn">
-        <img src="images/CookieMonster.png" alt="Cookie Button" height="60%">
-        </button>
-        
-    </th>
-    <th>
-      <h2>Discount price: {getal}</h2>
-        <button class="upgrade-button" id="cookieBtn">
-        <img src="images/RedCookieMonster.png" alt="Cookie Button">
-        </button>
-    </th>
-   </div>
-    <div class="columndoubleLong">
-      <h3>Cookie Monster price: {getal}</h3>
-      <button class="BigBuildings-button" id="cookieBtn">
-        <span class="building-count">0</span>
-         <img src="images/CookieMonster.jpg" alt="Cookie Button" class="big-img">
-      </button>
-    </div>
- </div>
- </div>
-    
-   
-
-  <script>
-  document.getElementById('cookieBtn').addEventListener('click', () => {
-    fetch('/add-cookie', {
-      method: 'POST'
-    })
-    .then(res => res.json())
-    .then(data => {
-      document.querySelector('h1:nth-of-type(2)').innerText = data.total;
+<script>
+    document.getElementById('cookieBtn').addEventListener('click', () => {
+        fetch('/add-cookie', {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.querySelector('#cookieCount').innerText = data.total;
+            document.querySelector('#cpsDisplay').innerText = data.cps;
+        })
+        .catch(err => {
+            console.error("Error adding cookie:", err);
+            alert("Failed to add cookie. Please try again.");
+        });
     });
-  });
 
-  function openPopup() {
-    const popup = document.getElementById("popup");
-    popup.style.display = "flex";
-  }
-
-  function closePopup() {
-    const popup = document.getElementById("popup"); 
-    popup.style.display = "none";
-  }
-
-  window.addEventListener("click", function (event) {
-    const popup = document.getElementById("popup");
-    const content = document.querySelector(".popup-content");
-    if (event.target === popup) {
-      closePopup();
+    function buyBuilding(index) {
+        fetch(`/buy-building/${index}`, {
+            method: 'POST'
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(res.statusText);
+            return res.json();
+        })
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            document.querySelectorAll('.building-count')[index].textContent = data.amount;
+            document.querySelectorAll('.columndouble h3, .columndoubleLong h3')[index].innerHTML = 
+                `${data.name} price: ${data.price.toFixed(1)}`;
+            
+            document.querySelector('#cookieCount').innerText = data.totalCookies;
+            document.querySelector('#cpsDisplay').innerText = data.cps;
+        })
     }
-  });
+
+    function openPopup() {
+        const popup = document.getElementById("popup");
+        popup.style.display = "flex";
+    }
+
+    function closePopup() {
+        const popup = document.getElementById("popup"); 
+        popup.style.display = "none";
+    }
+
+    window.addEventListener("click", function(event) {
+        const popup = document.getElementById("popup");
+        if (event.target === popup) {
+            closePopup();
+        }
+    });
 </script>

@@ -1,29 +1,36 @@
-const priceIncrease = 1.2;
-
-const buildings = [
-    { price: 10, name: "rolling pin", priceIncrease: priceIncrease, amount: 0, multiplier: 1, cps: 0.1 },
-    { price: 100, name: "cookie monster", priceIncrease: priceIncrease, amount: 0, multiplier: 1, cps: 1 }
-
+let buildings = [
+    { buildingId: 0, price: 10, name: "Rolling pin", priceIncrease: 1.2, amount: 0, multiplier: 1, cps: 0.1 },
+    { buildingId: 1, price: 100, name: "Cookie monster", priceIncrease: 1.2, amount: 0, multiplier: 1, cps: 1 }
 ];
 
-function sortedBuildings() 
-{
-
-    buildings.sort((a, b) => a.price - b.price);
-
+function getBuildings() {
+    return buildings;
 }
 
-sortedBuildings();
-
-function buyBuilding(building) {
-    building.price = building.price * priceIncrease;
+function buyBuilding(buildingId, totalCookies) {
+    const building = buildings.find(b => b.buildingId === buildingId);
     
-    building.cps += building.cps / building.amount;
-
+    if (!building) {
+        return { error: "Building not found" };
+    }
+    
+    totalCookies -= building.price;
     building.amount += 1;
+    building.price = Math.round(building.price * building.priceIncrease * 10) / 10;
+    
+    const cps = buildings.reduce((sum, b) => sum + (b.amount * b.cps * b.multiplier), 0);
+    
+    return { 
+        building, 
+        totalCookies,
+        cps: cps.toFixed(1),
+        name: building.name,
+        price: building.price,
+        amount: building.amount
+    };
 }
 
-module.exports = {
-    buildings,
-    buyBuilding
+module.exports = { 
+    getBuildings, 
+    buyBuilding 
 };
