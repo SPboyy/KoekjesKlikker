@@ -17,3 +17,19 @@
   
     margin-left: 13%;
   }
+  .columnhalf{
+    flex: 1.4;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.columndouble
+{
+  flex:1.6;
+  padding: 20px;
+
+    margin-left: 13%;
+}
+.containerUpgrades1
+{
+  display: flex;
+}
