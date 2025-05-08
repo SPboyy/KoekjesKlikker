@@ -3,8 +3,10 @@ const port = process.env.PORT || 3000;
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const loginRouter = require("./routes/login");
+const prestigeRouter = require("./routes/prestige");
 const app = express();
 const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // configure Handlebars view engine
 app.engine("handlebars", expressHandlebars.engine({
@@ -14,11 +16,14 @@ app.set("view engine", "handlebars");
 
 const cookiesRouter = require("./routes/cookies");
 app.use("/",cookiesRouter);
-
 app.use("/login", loginRouter);
+app.use("/prestige", prestigeRouter);
 
 app.get("/login", (req, res) => {
     res.render("login");
+});
+app.get("/prestige", (req, res) => {
+    res.render("prestige");
 });
 app.get("/", (req, res) => {
     res.render("home");

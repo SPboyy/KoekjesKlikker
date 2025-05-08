@@ -64,7 +64,7 @@
         <p>Prestige level {Koekjes}</p>
         <p>Heavenly chips {Koekjes}</p>
         <p>Ascending will reset the game for a permanent boost based on total amount of cookies you made.</p>
-        <button onclick="closePopup()">Bevestigen</button>
+        <button onclick="confirmPrestige()">Bevestigen</button>
       </div>
     </div>
     <div class="column right">
@@ -142,6 +142,12 @@
     const popup = document.getElementById("popup"); 
     popup.style.display = "none";
   }
+
+  function confirmPrestige() {
+    closePopup();
+
+    window.location.href = "/prestige";
+}
 
   window.addEventListener("click", function (event) {
     const popup = document.getElementById("popup");
