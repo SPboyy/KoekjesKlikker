@@ -13,4 +13,18 @@
     <div id="node-10" class="prestige-node locked" onclick="unlockNode('node-10')">10</div>
     <div id="node-11" class="prestige-node locked" onclick="unlockNode('node-11')">11</div>
 </div>
+<div id="prestige-info-box">
+  <div class="prestige-label">Prestige level: <span id="prestige-level">0</span></div>
+  <div class="prestige-label">Heavenly chips: <span id="heavenly-chips">0</span></div>
+  <button id="reincarnate-button">Reincarnate</button>
+</div>
+<div id="reincarnate-confirm" class="confirm-overlay hidden">
+  <div class="confirm-box">
+    <p>Are you sure you want to return to the main menu?</p>
+    <div class="button-row">
+      <button id="confirm-yes">Yes</button>
+      <button id="confirm-no">No</button>
+    </div>
+  </div>
+</div>
 <script src="/javascript/prestiges/prestiges.js"></script>

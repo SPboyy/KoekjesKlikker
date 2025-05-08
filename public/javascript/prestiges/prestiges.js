@@ -204,6 +204,34 @@ function updateVisibility() {
     createConnections();
 }
 
+document.getElementById('reincarnate-button').onclick = function () {
+    document.getElementById('reincarnate-confirm').classList.remove('hidden');
+};
+
+document.getElementById('confirm-no').onclick = function () {
+    document.getElementById('reincarnate-confirm').classList.add('hidden');
+};
+
+document.getElementById('confirm-yes').onclick = function () {
+    confirmPrestige();
+};
+
+function confirmPrestige() {
+    closePopup();
+    window.location.href = "/";
+}
+
+function closePopup() {
+    document.getElementById('reincarnate-confirm').classList.add('hidden');
+}
+
+window.addEventListener("click", function (event) {
+    const popup = document.getElementById("reincarnate-confirm");
+    if (event.target === popup) {
+        closePopup();
+    }
+});
+
 window.onload = function() {
     positionNodes();
     const startNode = document.getElementById('node-0');
