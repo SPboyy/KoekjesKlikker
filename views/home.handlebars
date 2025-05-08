@@ -7,9 +7,16 @@
         </button>
     </div>
     <div class="column center">
-      <button onclick="openPopup()">Prestige</button>
+      <div class="row">
+            <button id="button-TopLeft">Options</button>
+            <button id="button-TopRight" onclick="openPopup()">Prestige</button>
+      </div>
+      <div class="row">
+            <button id="button-TopLeft">Stats</button>
+            <button id="button-TopRight">Leaderboards</button>
+      </div>
     </div>
-
+  
     <div id="popup" class="popup-overlay" style="display: none;">
       <div class="popup-content">
         <h2>Prestige</h2>
