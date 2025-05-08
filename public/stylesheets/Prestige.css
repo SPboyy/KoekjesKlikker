@@ -1,0 +1,84 @@
+#prestige-container {
+    position: relative;
+    width: auto;
+    height: 692px;
+    margin: 0 auto;
+    background-color: #f5ede3;
+    border: 2px solid #a96e41;
+    overflow: hidden;
+    
+  }
+  
+  .prestige-node {
+    position: absolute;
+    width: 100px;
+    height: 40px;
+    background-color: #8b5a2b;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #d2aa6b;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.2s, opacity 0.3s ease, background-color 0.3s ease;
+    text-align: center;
+    padding: 5px;
+    z-index: 1;
+  }
+  
+  .prestige-node:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+  
+  .locked {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .unlocked {
+    background-color: #a06d45;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .faded {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .connection {
+    height: 4px;
+    background-color: gray;
+    position: absolute;
+    transform-origin: 0 0;
+    z-index: 0;
+    transition: background-color 0.3s, opacity 0.3s;
+  }
+  
+  .prestige-node.faded {
+    opacity: 0.5;
+    pointer-events: auto;
+  }
+  
+  .prestige-node.hidden {
+    display: none;
+  }
+  
+  .prestige-node.unlocked {
+    opacity: 1;
+  }
+  
+  .prestige-node.active {
+    background-color: #a96e41;
+    opacity: 1;
+    float: right;
+  }
