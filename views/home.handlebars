@@ -155,16 +155,27 @@
             document.querySelector('#cookieCount').innerText = data.totalCookies;
             document.querySelector('#cpsDisplay').innerText = data.cps;
         })
-    }
+  function openPopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "flex";
+  }
 
-    function openPopup() {
-        const popup = document.getElementById("popup");
-        popup.style.display = "flex";
-    }
+  function closePopup() {
+    const popup = document.getElementById("popup"); 
+    popup.style.display = "none";
+  }
 
-    function closePopup() {
-        const popup = document.getElementById("popup"); 
-        popup.style.display = "none";
+  function confirmPrestige() {
+    closePopup();
+
+    window.location.href = "/prestige";
+  }
+
+  window.addEventListener("click", function (event) {
+    const popup = document.getElementById("popup");
+    const content = document.querySelector(".popup-content");
+    if (event.target === popup) {
+      closePopup();
     }
 
     window.addEventListener("click", function(event) {
