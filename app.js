@@ -37,6 +37,7 @@ app.get("/login", (req, res) => {
 app.get("/prestige", (req, res) => {
     res.render("prestige");
 });
+// Root route (bijv. homepage)
 
 app.get("/", (req, res) => {
   res.render("home");
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
 
 app.use(express.static(__dirname + "/public"));
 
+// Fallback 404-pagina
 
 app.use((req, res) => {
   res.status(404).render("errors/404");
