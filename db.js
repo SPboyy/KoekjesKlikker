@@ -8,5 +8,4 @@ const db = new sqlite3.Database(path.resolve(__dirname, "DataBase.db"), (err) =>
     console.log("Verbonden met SQLite database.");
   }
 });
-
 module.exports = db;
