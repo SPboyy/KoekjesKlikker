@@ -12,10 +12,28 @@
   }
   .cookie-button img {
     display: block;
-    width: 75%;
+    width: 60%;
     height: auto;
   
-    margin-left: 13%;
+    margin-left: 20%;
+  }
+  .finger-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    width: 80% ;        
+    height: auto;       
+  }
+  .finger-button img {
+    width: 80%;        
+    height: auto;       
+    display: block;
+  }
+  h2{
+    text-align: center;
+    color:white;
   }
   .columnhalf{
     flex: 1.4;
