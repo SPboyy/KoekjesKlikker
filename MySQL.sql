@@ -59,3 +59,14 @@
 -- INSERT INTO login (loginId,username,password,checkAdmin) VALUES (1,"admin","admin",true)
 -- INSERT INTO buildings (buildingId,name,multiplier,price,priceIncrease,cops,amount) VALUES(3,"Furnace",0,1000,1.2,10,0)
 INSERT INTO login(loginId,username,password,checkAdmin) VALUES (2,"Daan","1234567890",0)
+
+--DROP TABLE IF EXISTS login;
+
+CREATE TABLE login (
+ loginId INTEGER PRIMARY KEY AUTOINCREMENT,
+ username TEXT NOT NULL UNIQUE,
+ password TEXT NOT NULL,
+ checkAdmin INTEGER NOT NULL
+);
+
+INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
