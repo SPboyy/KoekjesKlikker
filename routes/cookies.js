@@ -105,7 +105,7 @@ router.post('/buy-building/:id', (req, res) => {
     });
 });
 
-// Nieuwe route voor live stats ophalen
+// route voor live stats ophalen
 router.get('/get-stats', (req, res) => {
     gameState.cps = calculateCPS();
     res.json({
