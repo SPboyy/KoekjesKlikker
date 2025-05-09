@@ -21,3 +21,32 @@
     overflow-y: auto; 
     position: relative;
   }
+  .leftUpgrade {
+    flex: 1;
+  }
+  .RightUpgrade {
+    flex: 1;
+  }
+  .centerUpgrade {
+    flex: 1;
+  }
+  .leftAch {
+    flex: 0.5;
+  }
+  .RightAch{
+    flex: 1;
+  }
+  .centerAch{
+    flex: 1;
+  }
+p{
+    text-align: center;
+    
+}
+.containerUpgrades{
+        display: flex;
+        height: auto;
+        box-sizing: border-box;
+        overflow-y: auto; 
+        position: relative;
+}
