@@ -105,23 +105,6 @@ router.post('/buy-building/:id', (req, res) => {
     });
 });
 
-// route voor live stats ophalen
-router.get('/get-stats', (req, res) => {
-    gameState.cps = calculateCPS();
-    res.json({
-        total: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1)
-    });
-});
-
-// Elke seconde automatisch cookies toevoegen op basis van CPS
-setInterval(() => {
-    const cps = calculateCPS();
-    gameState.currentCookies += cps;
-    gameState.totalCookiesEver += cps;
-    saveGameState();
-}, 1000);
-
 // Nieuwe route voor live stats ophalen
 router.get('/get-stats', (req, res) => {
     gameState.cps = calculateCPS();
