@@ -11,9 +11,9 @@ let gameState = {
     prestigeLevel: 0,
     heavenlyChips: 0,
     buildings: [
-        { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-        { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 2, price: 1000, name: "furnace", amount: 0, cps: 11 }
+        { id: 1, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
+        { id: 2, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
+        { id: 3, price: 1000, name: "furnace", amount: 0, cps: 10 }
     ]
 };
 
