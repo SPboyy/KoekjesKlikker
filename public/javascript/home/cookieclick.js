@@ -22,14 +22,5 @@ cookieBtn.addEventListener('click', async () => {
         
     } catch (error) {
         console.error("Cookie click error:", error);
-        showToast("Failed to add cookie"); 
     }
 });
-
-function showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
