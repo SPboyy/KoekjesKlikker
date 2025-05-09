@@ -3,6 +3,7 @@ const port = process.env.PORT || 3000;
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const loginRouter = require("./routes/login");
+const signupRouter = require("./routes/signup");
 const prestigeRouter = require("./routes/prestige");
 const app = express();
 const bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ app.set("view engine", "handlebars");
 const cookiesRouter = require("./routes/cookies");
 app.use("/",cookiesRouter);
 app.use("/login", loginRouter);
+app.use("/signup", signupRouter);
 app.use("/prestige", prestigeRouter);
 
 // Specifieke routes voor login, prestige en home
