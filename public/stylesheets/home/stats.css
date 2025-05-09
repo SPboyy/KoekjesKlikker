@@ -1,0 +1,17 @@
+.stats{
+    margin-left: 8.5%;
+  }
+  .stats table{
+    margin-left: 0%;
+  }
+  .stats th{
+    color: white;
+  }
+  .columnlong{
+    margin-left: 10%;
+    flex: 1;
+  }
+  .columnshort{
+    flex: 0.5;
+  }
+  
