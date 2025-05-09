@@ -12,7 +12,7 @@ let gameState = {
     buildings: [
         { id: 1, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
         { id: 2, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 3, price: 1000, name: "Furnace", amount: 0, cps: 11 }
+        { id: 3, price: 1000, name: "Furnace", amount: 0, cps: 10 }
     ]
 };
 
@@ -104,5 +104,22 @@ router.post('/buy-building/:id', (req, res) => {
         cps: gameState.cps.toFixed(1)
     });
 });
+
+// Nieuwe route voor live stats ophalen
+router.get('/get-stats', (req, res) => {
+    gameState.cps = calculateCPS();
+    res.json({
+        total: gameState.currentCookies.toFixed(1),
+        cps: gameState.cps.toFixed(1)
+    });
+});
+
+// Elke seconde automatisch cookies toevoegen op basis van CPS
+setInterval(() => {
+    const cps = calculateCPS();
+    gameState.currentCookies += cps;
+    gameState.totalCookiesEver += cps;
+    saveGameState();
+}, 1000);
 
 module.exports = router;
