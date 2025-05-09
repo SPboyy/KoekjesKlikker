@@ -20,15 +20,12 @@ function positionNodes() {
     const container = document.getElementById('prestige-container');
     const containerRect = container.getBoundingClientRect();
 
-    // Bepaal het midden van het scherm/container
     const centerX = containerRect.width / 2;
     const centerY = containerRect.height / 2;
 
-    // Zet node-0 exact in het midden
     nodes['node-0'].x = centerX;
     nodes['node-0'].y = centerY;
 
-    // Verplaats andere nodes relatief t.o.v. het midden
     const relativePositions = {
         'node-1': { x: -150, y: -100 },
         'node-2': { x: 0, y: -150 },
@@ -54,12 +51,10 @@ function positionNodes() {
         el.style.top = `${y - NODE_HEIGHT / 2}px`;
     });
 
-    // Plaats node-0 (start node)
     const startNode = document.getElementById('node-0');
     startNode.style.left = `${centerX - NODE_WIDTH / 2}px`;
     startNode.style.top = `${centerY - NODE_HEIGHT / 2}px`;
 
-    // Verwijder oude lijnen en maak opnieuw verbindingen
     document.querySelectorAll('.connection').forEach(line => line.remove());
     createConnections();
 }
@@ -77,28 +72,23 @@ function createConnections() {
 
             if (!fromEl || !toEl) return;
 
-            // Calculate center points of nodes
             const fromCenterX = fromNode.x;
             const fromCenterY = fromNode.y;
             const toCenterX = toNode.x;
             const toCenterY = toNode.y;
 
-            // Calculate angle between nodes
             const dx = toCenterX - fromCenterX;
             const dy = toCenterY - fromCenterY;
             const angle = Math.atan2(dy, dx);
 
-            // Calculate start and end points (edge of nodes)
             const startX = fromCenterX + Math.cos(angle) * (NODE_WIDTH/2);
             const startY = fromCenterY + Math.sin(angle) * (NODE_HEIGHT/2);
             const endX = toCenterX - Math.cos(angle) * (NODE_WIDTH/2);
             const endY = toCenterY - Math.sin(angle) * (NODE_HEIGHT/2);
 
-            // Calculate line length and rotation
             const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
             const rotation = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
 
-            // Create line element
             const line = document.createElement('div');
             line.className = 'connection';
             line.style.width = `${length}px`;
@@ -107,7 +97,6 @@ function createConnections() {
             line.style.transformOrigin = '0 0';
             line.style.transform = `rotate(${rotation}deg)`;
 
-            // Set line style based on node states
             const fromStatus = fromEl.className;
             const toStatus = toEl.className;
 

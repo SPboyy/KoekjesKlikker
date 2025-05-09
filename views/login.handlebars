@@ -1,4 +1,4 @@
- <link rel="stylesheet" href="/stylesheets/login.css">
+<link rel="stylesheet" href="/stylesheets/login.css">
 <main id="login-page" style="text-align: center;">
     {{#each login}}
     <div>
@@ -8,7 +8,7 @@
     </div>
     <form action="/login" method="POST">
         <div>
-        <input type="text" id="username" name="username" placeholder="{{this.Username}}" required>
+            <input type="text" id="username" name="username" placeholder="{{this.Username}}" required>
         </div>
         <div style="margin-top: 10px;">
             <input type="password" id="password" name="password" placeholder="{{this.Password}}" required>
@@ -16,7 +16,9 @@
         <div style="margin-top: 10px;">
             <button type="submit" id="login-button">LOG IN</button>
         </div>
-        <button type="submit" id="sign-in-button" style="margin-top: 10px;">Sign up</button>
     </form>
+    <a href="/signup">
+        <button type="button" id="sign-in-button" style="margin-top: 10px;">Sign up</button>
+    </a>
     {{/each}}
 </main>

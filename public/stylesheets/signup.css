@@ -1,0 +1,59 @@
+#signup-page {
+    background-color: #7b4b2a;
+    width: 100%;
+    zoom: 106.4%;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#username,
+#password,
+#confirm-password {
+    background-color: #d2aa7b;
+    border: 2px solid #c69c6d;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #5e422d;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
+                inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+    width: 20%;
+    box-sizing: border-box;
+    outline: none;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#signup-button {
+    background-color: rgb(28, 138, 206);
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s ease-in-out, box-shadow 0.1s;
+    width: 20%;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.back-to-login {
+    display: block;
+    margin-top: 15px;
+    color: #e7c8a0;
+    text-decoration: underline;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1em;
+}
+
+.error {
+    color: #ffdede;
+    font-size: 0.9em;
+    margin-top: 4px;
+    font-family: 'Segoe UI', sans-serif;
+  }
