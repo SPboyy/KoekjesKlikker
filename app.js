@@ -31,23 +31,32 @@ app.use("/login", loginRouter);
 app.use("/signup", signupRouter);
 app.use("/prestige", prestigeRouter);
 
-// Root route (bijv. homepage)
+app.get("/login", (req, res) => {
+    res.render("login");
+});
+app.get("/prestige", (req, res) => {
+    res.render("prestige");
+});
+
 app.get("/", (req, res) => {
   res.render("home");
 });
 
-// Fallback 404-pagina
+app.use(express.static(__dirname + "/public"));
+
+
 app.use((req, res) => {
   res.status(404).render("errors/404");
 });
 
-// Fallback 500-pagina
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).render("errors/500");
 });
 
-// Server starten
-app.listen(port, () => {
-  console.log(`Server draait op http://localhost:${port}`);
-});
+app.listen(port, () => console.log(
+    `Express started on http://localhost:${port};  ` +
+    `press Ctrl-C to terminate.`
+));
+

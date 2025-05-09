@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 
-// Load or initialize game state
 const gameStatePath = './gameState.json';
 let gameState = {
     currentCookies: 0,
@@ -13,11 +12,11 @@ let gameState = {
     buildings: [
         { id: 1, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
         { id: 2, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 3, price: 1000, name: "furnace", amount: 0, cps: 10 }
+        { id: 3, price: 1000, name: "Furnace", amount: 0, cps: 11 }
     ]
 };
 
-// Try to load existing game state
+// Probeer game state te laden
 try {
     const savedState = fs.readFileSync(gameStatePath, 'utf8');
     gameState = JSON.parse(savedState);
@@ -25,12 +24,12 @@ try {
     console.log("No saved game state found, using defaults");
 }
 
-// Save game state
+// Sla game state op
 function saveGameState() {
     fs.writeFileSync(gameStatePath, JSON.stringify(gameState));
 }
 
-// Calculate CPS
+// Bereken CPS
 function calculateCPS() {
     return gameState.buildings.reduce((sum, building) => {
         return sum + (building.amount * building.cps);
@@ -56,7 +55,7 @@ router.post('/add-cookie', (req, res) => {
     gameState.totalCookiesEver += 1;
     gameState.cps = calculateCPS();
     saveGameState();
-    
+
     res.json({ 
         total: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
@@ -64,12 +63,12 @@ router.post('/add-cookie', (req, res) => {
 });
 
 router.post('/add-passive-cookies', (req, res) => {
-    const amount = req.body.amount || 0;
+    const amount = parseFloat(req.body.amount || 0);
     gameState.currentCookies += amount;
     gameState.totalCookiesEver += amount;
     gameState.cps = calculateCPS();
     saveGameState();
-    
+
     res.json({ 
         total: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
@@ -79,23 +78,23 @@ router.post('/add-passive-cookies', (req, res) => {
 router.post('/buy-building/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const building = gameState.buildings.find(b => b.id === id);
-    
+
     if (!building) {
         return res.status(404).json({ error: "Building not found" });
     }
-    
+
     if (gameState.currentCookies < building.price) {
         return res.status(400).json({ 
             error: `Not enough cookies. Needed: ${building.price}, Have: ${gameState.currentCookies}` 
         });
     }
-    
+
     gameState.currentCookies -= building.price;
     building.amount += 1;
     building.price = Math.floor(building.price * 1.15);
     gameState.cps = calculateCPS();
     saveGameState();
-    
+
     res.json({
         success: true,
         amount: building.amount,
@@ -105,6 +104,5 @@ router.post('/buy-building/:id', (req, res) => {
         cps: gameState.cps.toFixed(1)
     });
 });
-
 
 module.exports = router;
