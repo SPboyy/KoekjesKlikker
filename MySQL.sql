@@ -57,4 +57,5 @@
 -- INSERT INTO buildings (buildingId, name,multiplier,price,priceIncrease,cops,amount) VALUES (1,"rolling pin",1,10,1.2,0.1,0)
 -- CREATE TABLE login(loginId INTEGER NOT NULL,username TEXT NOT NULL,password TEXT NOT NULL, checkAdmin BOOLEAN);
 -- INSERT INTO login (loginId,username,password,checkAdmin) VALUES (1,"admin","admin",true)
-INSERT INTO buildings (buildingId,name,multiplier,price,priceIncrease,cops,amount) VALUES(3,"Furnace",0,1000,1.2,10,0)
+-- INSERT INTO buildings (buildingId,name,multiplier,price,priceIncrease,cops,amount) VALUES(3,"Furnace",0,1000,1.2,10,0)
+INSERT INTO login(loginId,username,password,checkAdmin) VALUES (2,"Daan","1234567890",0)
