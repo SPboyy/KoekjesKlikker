@@ -1,53 +1,53 @@
-const port = process.env.PORT || 3000;
-
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
+const bodyParser = require("body-parser");
+const path = require("path");
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Routers importeren
 const loginRouter = require("./routes/login");
 const signupRouter = require("./routes/signup");
 const prestigeRouter = require("./routes/prestige");
-const app = express();
-const bodyParser = require('body-parser');
+const cookiesRouter = require("./routes/cookies");
+
+// Middleware voor POST-requests
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// configure Handlebars view engine
+// Handlebars view engine instellen
 app.engine("handlebars", expressHandlebars.engine({
-    defaultLayout: "main",
+  defaultLayout: "main"
 }));
 app.set("view engine", "handlebars");
+app.set("views", path.join(__dirname, "views"));
 
-const cookiesRouter = require("./routes/cookies");
-app.use("/",cookiesRouter);
+// Statische bestanden serveren
+app.use(express.static(path.join(__dirname, "public")));
+
+// Routes
+app.use("/", cookiesRouter);
 app.use("/login", loginRouter);
 app.use("/signup", signupRouter);
 app.use("/prestige", prestigeRouter);
 
-// Specifieke routes voor login, prestige en home
-app.get("/login", (req, res) => {
-    res.render("login");
-});
-app.get("/prestige", (req, res) => {
-    res.render("prestige");
-});
+// Root route (bijv. homepage)
 app.get("/", (req, res) => {
-    res.render("home");
+  res.render("home");
 });
 
-// Statische bestanden
-app.use(express.static(__dirname + "/public"));
-
-// Custom 404 pagina
+// Fallback 404-pagina
 app.use((req, res) => {
-    res.render("errors/404");
+  res.status(404).render("errors/404");
 });
 
-// Custom 500 pagina
+// Fallback 500-pagina
 app.use((err, req, res, next) => {
-    console.error(err.message);
-    res.render("errors/500");
+  console.error(err.stack);
+  res.status(500).render("errors/500");
 });
 
-// Start de server
-app.listen(port, () => console.log(
-    `Express started on http://localhost:${port};  ` +
-    `press Ctrl-C to terminate.`
-));
+// Server starten
+app.listen(port, () => {
+  console.log(`Server draait op http://localhost:${port}`);
+});
