@@ -1,11 +1,5 @@
  <div class="column center">
-      <div class="row">
-            <button id="button-TopLeft">Options</button>
-            <button id="button-TopRight" onclick="openPopup()">Prestige</button>
-      </div>
-      <div class="row">
-            <button id="button-TopLeft">Stats</button>
-      </div>
+{{>centerButtons}}
     <div class="podium">
   <div class="podium-block second">
     <div class="podium-rank">2</div>
@@ -38,13 +32,8 @@
     <td>0</td>
   </tr>
 </table>
-
-
 </div>
-
-
     </div>
-
     <div id="popup" class="popup-overlay" style="display: none;">
       <div class="popup-content">
         <h2>Prestige</h2>
