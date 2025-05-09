@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="/stylesheets/signup.css">
+<main id="signup-page" style="text-align: center;">
+  {{#each signup}}
+  <div>
+    <img src="{{this.Image}}" width="20%" style="margin: 40px auto 0; display: block;">
+    <h1 style="margin: 0;">COOKIE</h1>
+    <h1 style="margin: 0;">CLICKER</h1>
+  </div>
+
+  <form action="/signup" method="POST">
+    <div>
+      <input type="text" id="username" name="username" placeholder="Username" required>
+      {{#if ../hasError}}
+        {{#if this.UsernameError}}<p class="error">{{this.UsernameError}}</p>{{/if}}
+      {{/if}}
+    </div>
+
+    <div style="margin-top: 10px;">
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      {{#if ../hasError}}
+        {{#if this.PasswordError}}<p class="error">{{this.PasswordError}}</p>{{/if}}
+      {{/if}}
+    </div>
+
+    <div style="margin-top: 10px;">
+      <input type="password" id="confirm-password" name="confirmPassword" placeholder="Confirm Password" required>
+      {{#if ../hasError}}
+        {{#if this.ConfirmError}}<p class="error">{{this.ConfirmError}}</p>{{/if}}
+      {{/if}}
+    </div>
+
+    <div style="margin-top: 10px;">
+      <button type="submit" id="signup-button">SIGN UP</button>
+    </div>
+
+    <a href="/login" class="back-to-login">Back to Login</a>
+  </form>
+  {{/each}}
+</main>
