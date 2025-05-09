@@ -62,9 +62,11 @@ INSERT INTO login(loginId,username,password,checkAdmin) VALUES (2,"Daan","123456
 
 --DROP TABLE IF EXISTS login;
 
---CREATE TABLE login (
---  loginId INTEGER PRIMARY KEY AUTOINCREMENT,
---  username TEXT NOT NULL UNIQUE,
---  password TEXT NOT NULL,
---  checkAdmin INTEGER NOT NULL
---);
+CREATE TABLE login (
+ loginId INTEGER PRIMARY KEY AUTOINCREMENT,
+ username TEXT NOT NULL UNIQUE,
+ password TEXT NOT NULL,
+ checkAdmin INTEGER NOT NULL
+);
+
+INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
