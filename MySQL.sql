@@ -58,7 +58,7 @@
 -- CREATE TABLE login(loginId INTEGER NOT NULL,username TEXT NOT NULL,password TEXT NOT NULL, checkAdmin BOOLEAN);
 -- INSERT INTO login (loginId,username,password,checkAdmin) VALUES (1,"admin","admin",true)
 -- INSERT INTO buildings (buildingId,name,multiplier,price,priceIncrease,cops,amount) VALUES(3,"Furnace",0,1000,1.2,10,0)
-INSERT INTO login(loginId,username,password,checkAdmin) VALUES (2,"Daan","1234567890",0)
+INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
 
 --DROP TABLE IF EXISTS login;
 
@@ -70,3 +70,23 @@ CREATE TABLE login (
 );
 
 INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
+ CREATE TABLE player(
+     playerId INTEGER PRIMARY KEY NOT NULL,
+     username TEXT NOT NULL,
+     amountOfCookies LONG NOT NULL,
+     amountOfRebirths INTEGER,
+     amountOfUpgrades INTEGER,
+     amountOfRebirthTokens INTEGER,
+     cookiesSpend LONG,
+     totalAmountOfCookies LONG NOT NULL,
+     achAmount1 BOOLEAN,
+     achAmount100 BOOLEAN,
+     achAmount1000 BOOLEAN,
+     achAmount10000 BOOLEAN,
+     achAmount100000 BOOLEAN,
+     achAmount1000000 BOOLEAN,
+     achAmount10000000 BOOLEAN,
+     achAmount100000000 BOOLEAN,
+     achAmount1000000000 BOOLEAN
+     );
+     DROP TABLE login
