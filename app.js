@@ -38,6 +38,7 @@ app.get("/prestige", (req, res) => {
     res.render("prestige");
 });
 // Root route (bijv. homepage)
+
 app.get("/", (req, res) => {
   res.render("home");
 });
@@ -45,9 +46,11 @@ app.get("/", (req, res) => {
 app.use(express.static(__dirname + "/public"));
 
 // Fallback 404-pagina
+
 app.use((req, res) => {
   res.status(404).render("errors/404");
 });
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -58,3 +61,4 @@ app.listen(port, () => console.log(
     `Express started on http://localhost:${port};  ` +
     `press Ctrl-C to terminate.`
 ));
+
