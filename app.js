@@ -19,7 +19,6 @@ app.use("/",cookiesRouter);
 app.use("/login", loginRouter);
 app.use("/prestige", prestigeRouter);
 
-// Specifieke routes voor login, prestige en home
 app.get("/login", (req, res) => {
     res.render("login");
 });
@@ -30,21 +29,17 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
-// Statische bestanden
 app.use(express.static(__dirname + "/public"));
 
-// Custom 404 pagina
 app.use((req, res) => {
     res.render("errors/404");
 });
 
-// Custom 500 pagina
 app.use((err, req, res, next) => {
     console.error(err.message);
     res.render("errors/500");
 });
 
-// Start de server
 app.listen(port, () => console.log(
     `Express started on http://localhost:${port};  ` +
     `press Ctrl-C to terminate.`
