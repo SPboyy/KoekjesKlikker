@@ -16,4 +16,3 @@ function renderTemplate(templateId) {
   function showOptions(){
     renderTemplate("template-centerOptions")
   }
-  
