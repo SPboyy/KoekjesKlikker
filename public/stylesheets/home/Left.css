@@ -3,6 +3,15 @@
     overflow-y: auto;
     height: auto;
   }
+  .left::-webkit-scrollbar {
+    display: none;
+}
+
+
+.left {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
   .cookie-button {
     background: none;
     border: none;
