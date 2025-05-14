@@ -3,12 +3,22 @@
     overflow-y: auto;
     height: auto;
   }
+  .right::-webkit-scrollbar {
+    display: none;
+}
+
+
+.right {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
 .containerUpgrades1
 {
   display: flex;
   background-color: #7b4b2a;
 
 }
+
 .containerUpgrades2
 {
   display: flex;
@@ -106,7 +116,22 @@
     border: none;
     cursor: pointer;
     display: inline-block;
+  }
+  .Event-button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;    
+    height: auto;   
+    margin-left: 5%;
+  }
+    .Event-button img{
     
+    display: block;
+    height: auto;
+    width: 100%;
+    margin-right: 50%;
+    float: left;
   }
   .Buildings-button img{
     
@@ -115,6 +140,9 @@
     width: 100%;
     margin-right: 50%;
     float: left;
+  }
+  h1{
+    margin-left: 5%;
   }
   h3{
     color:white

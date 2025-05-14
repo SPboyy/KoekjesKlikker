@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
+const path = require('path');
 
-const gameStatePath = './gameState.json';
+const gameStatePath = path.join(__dirname, '../gameState.json');
+
+// Initial game state in RAM
 let gameState = {
     currentCookies: 0,
     totalCookiesEver: 0,
@@ -10,35 +13,70 @@ let gameState = {
     prestigeLevel: 0,
     heavenlyChips: 0,
     buildings: [
-        { id: 1, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-        { id: 2, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 3, price: 1000, name: "Furnace", amount: 0, cps: 10 }
-    ]
+        { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
+        { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
+        { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
+    ],
+    lastUpdate: Date.now()
 };
 
-// Probeer game state te laden
+// Load saved state at startup
 try {
-    const savedState = fs.readFileSync(gameStatePath, 'utf8');
-    gameState = JSON.parse(savedState);
+    if (fs.existsSync(gameStatePath)) {
+        const savedState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
+        const now = Date.now();
+        const timeDiff = (now - (savedState.lastUpdate || now)) / 1000;
+        const offlineCookies = (savedState.cps || 0) * timeDiff;
+
+        gameState = {
+            ...savedState,
+            currentCookies: savedState.currentCookies + offlineCookies,
+            totalCookiesEver: savedState.totalCookiesEver + offlineCookies,
+            lastUpdate: now
+        };
+
+        console.log(`Loaded game state with ${offlineCookies.toFixed(1)} offline cookies`);
+    }
 } catch (err) {
     console.log("No saved game state found, using defaults");
 }
 
-// Sla game state op
-function saveGameState() {
-    fs.writeFileSync(gameStatePath, JSON.stringify(gameState));
+// Helpers
+function calculateCPS() {
+    return gameState.buildings.reduce((sum, b) => sum + (b.amount * b.cps), 0);
 }
 
-// Bereken CPS
-function calculateCPS() {
-    return gameState.buildings.reduce((sum, building) => {
-        return sum + (building.amount * building.cps);
-    }, 0);
+function updatePassiveCookies() {
+    const now = Date.now();
+    const seconds = (now - gameState.lastUpdate) / 1000;
+    const generated = gameState.cps * seconds;
+
+    gameState.currentCookies += generated;
+    gameState.totalCookiesEver += generated;
+    gameState.lastUpdate = now;
 }
+
+// Passive income + CPS update every second
+setInterval(() => {
+    updatePassiveCookies();
+    gameState.cps = calculateCPS();
+}, 1000);
+
+// Auto-save every 10 seconds
+setInterval(() => {
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+        if (err) console.error("Error saving game:", err);
+    });
+}, 10000);
+
+// Shutdown handling
+process.on('SIGINT', () => {
+    fs.writeFileSync(gameStatePath, JSON.stringify(gameState));
+    process.exit();
+});
 
 // Routes
 router.get('/', (req, res) => {
-    gameState.cps = calculateCPS();
     res.render('home', {
         koekies: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1),
@@ -53,23 +91,8 @@ router.get('/', (req, res) => {
 router.post('/add-cookie', (req, res) => {
     gameState.currentCookies += 1;
     gameState.totalCookiesEver += 1;
-    gameState.cps = calculateCPS();
-    saveGameState();
 
-    res.json({ 
-        total: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1)
-    });
-});
-
-router.post('/add-passive-cookies', (req, res) => {
-    const amount = parseFloat(req.body.amount || 0);
-    gameState.currentCookies += amount;
-    gameState.totalCookiesEver += amount;
-    gameState.cps = calculateCPS();
-    saveGameState();
-
-    res.json({ 
+    res.json({
         total: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
     });
@@ -84,16 +107,14 @@ router.post('/buy-building/:id', (req, res) => {
     }
 
     if (gameState.currentCookies < building.price) {
-        return res.status(400).json({ 
-            error: `Not enough cookies. Needed: ${building.price}, Have: ${gameState.currentCookies}` 
+        return res.status(400).json({
+            error: `Not enough cookies. Needed: ${building.price}, Have: ${gameState.currentCookies}`
         });
     }
 
     gameState.currentCookies -= building.price;
     building.amount += 1;
     building.price = Math.floor(building.price * 1.15);
-    gameState.cps = calculateCPS();
-    saveGameState();
 
     res.json({
         success: true,
@@ -105,21 +126,11 @@ router.post('/buy-building/:id', (req, res) => {
     });
 });
 
-// Nieuwe route voor live stats ophalen
 router.get('/get-stats', (req, res) => {
-    gameState.cps = calculateCPS();
     res.json({
         total: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
     });
 });
-
-// Elke seconde automatisch cookies toevoegen op basis van CPS
-setInterval(() => {
-    const cps = calculateCPS();
-    gameState.currentCookies += cps;
-    gameState.totalCookiesEver += cps;
-    saveGameState();
-}, 1000);
 
 module.exports = router;
