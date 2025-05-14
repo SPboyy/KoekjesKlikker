@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db"); // importeer je db bestand
+const db = require("../db");
 const { login } = require("../assets/data/login");
 
 router.get("/", function (req, res) {
