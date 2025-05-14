@@ -3,7 +3,16 @@
     overflow-y: auto;
     height: auto;
   }
-  
+
+.center::-webkit-scrollbar {
+    display: none;
+}
+
+
+.center {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
 #popup {
   display: none;
   position: fixed;
