@@ -3,6 +3,15 @@
     overflow-y: auto;
     height: auto;
   }
+  .right::-webkit-scrollbar {
+    display: none;
+}
+
+
+.right {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
 .containerUpgrades1
 {
   display: flex;
