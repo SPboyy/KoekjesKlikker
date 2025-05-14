@@ -12,4 +12,8 @@ function renderTemplate(templateId) {
   function showLeaderboard() {
     renderTemplate("template-centerLeaderboard");
   }
+
+  function showOptions(){
+    renderTemplate("template-centerOptions")
+  }
   
