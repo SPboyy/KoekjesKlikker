@@ -1,12 +1,20 @@
-    function showChristmass(){
-     renderTemplate("template-Christmass")
+function showEvent(templateId) {
+  const source   = document.getElementById(templateId).innerHTML;
+  const template = Handlebars.compile(source);
+  const html     = template({});
+  document.getElementById("CookieContent").innerHTML = html;
+}
+   function showChristmass(){
+     showEvent("template-Christmass")
   }
     function showEaster(){
-    renderTemplate("template-Easter")
+    showEvent("template-Easter")
   }
     function showHalloween(){
-    renderTemplate("template-Halloween")
+    showEvent("template-Halloween")
   }
   function showNormal(){
-    renderTemplate("template-NoEvent")
+    showEvent("template-NoEvent")
   }
+
+

@@ -1,7 +1,9 @@
     <div class="column left"> 
         <h2>Cookies (cps: <span id="cpsDisplay">{{cps}}</span>)</h2>
         <h2 id="cookieCount">{{koekies}}</h2>
-          {{>NoEvent}}
+              <div id="CookieContent">
+      {{> NoEvent }} 
+          </div>
           <div class="containerUpgrades1">
 
     <div class="columnhalf"> 
@@ -16,3 +18,18 @@
     </div>
  </div>
     </div>
+  <script id="template-NoEvent" type="text/x-handlebars-template">
+  {{> NoEvent }}
+</script>
+
+<script id="template-Halloween" type="text/x-handlebars-template">
+  {{> Halloween }}
+</script>
+<script id="template-Christmass" type="text/x-handlebars-template">
+  {{>Christmass}}
+</script>
+<script id="template-Easter" type="text/x-handlebars-template">
+  {{>Easter}}
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
+<script src="/javascript/home/eventSwitch.js"></script>

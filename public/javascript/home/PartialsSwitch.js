@@ -1,18 +1,17 @@
-function renderTemplate(templateId) {
-    const source = document.getElementById(templateId).innerHTML;
-    const template = Handlebars.compile(source);
-    const html = template({});
-    document.getElementById("centerContent").innerHTML = html;
-  }
-  
+function showCenter(templateId) {
+  const source   = document.getElementById(templateId).innerHTML;
+  const template = Handlebars.compile(source);
+  const html     = template({});
+  document.getElementById("centerContent").innerHTML = html;
+}
   function showStats() {
-    renderTemplate("template-centerStats");
+    showCenter("template-centerStats");
   }
   
   function showLeaderboard() {
-    renderTemplate("template-centerLeaderboard");
+    showCenter("template-centerLeaderboard");
   }
 
   function showOptions(){
-    renderTemplate("template-centerOptions")
+    showCenter("template-centerOptions")
   }
