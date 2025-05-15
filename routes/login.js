@@ -10,7 +10,6 @@ router.get("/", function (req, res) {
 
 // 🔐 POST /login - Verwerk inlogpoging
 router.post("/", (req, res) => {
-  console.log("🚀 Login POST ontvangen:", req.body);
   const { username, password } = req.body;
 
   const query = `SELECT * FROM login WHERE username = ? AND password = ?`;
@@ -21,7 +20,6 @@ router.post("/", (req, res) => {
     }
 
     if (row) {
-      console.log("⬇️ Login resultaat uit DB:", row); // 🔍 Controle
       req.session.username = row.username; // ✅ Belangrijk!
       console.log("✅ Ingelogd als:", req.session.username);
 
