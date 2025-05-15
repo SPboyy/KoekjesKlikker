@@ -69,7 +69,7 @@ CREATE TABLE login (
  checkAdmin INTEGER NOT NULL
 );
 
-INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
+-- INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin",1)
  CREATE TABLE player(
      playerId INTEGER PRIMARY KEY NOT NULL,
      username TEXT NOT NULL,
@@ -89,4 +89,4 @@ INSERT INTO login(loginId,username,password,checkAdmin) VALUES (1,"admin","admin
      achAmount100000000 BOOLEAN,
      achAmount1000000000 BOOLEAN
      );
-     DROP TABLE login
+-- DROP TABLE login
