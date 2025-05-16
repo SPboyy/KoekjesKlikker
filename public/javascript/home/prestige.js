@@ -8,32 +8,31 @@ function closePopup() {
 
 function confirmReincarnation() {
   console.log("confirmReincarnation() is aangeroepen");
-  fetch("http://localhost:3000/prestige/reincarnate", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error("Unauthorized");
-    }
-    return res.json();
-  })
-  .then(data => {
+  fetch("http://localhost:3000/reincarnate", {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+.then(res => {
+  if (!res.ok) {
+    throw new Error("Unauthorized");
+  }
+  return res.json();
+})
+.then(data => {
   console.log("Response van server:", data);
-  alert("Redirect naar: " + data.redirectUrl); // Test of deze popup komt
   if (data.success && data.redirectUrl) {
     window.location.href = data.redirectUrl;
   }
 })
-  .catch(err => {
-    alert("Fout bij reïncarnatie: " + err.message);
-  });
+.catch(err => {
+  alert("Fout bij reïncarnatie: " + err.message);
+});
 }
 
-document.getElementById('confirm-yes').onclick = function () {
+document.getElementById('confirm-reincarnate-yes').onclick = function () {
   confirmReincarnation();
 };
 
