@@ -119,23 +119,56 @@ function createConnections() {
 }
 
 function unlockNode(id) {
-    const el = document.getElementById(id);
-    if (el.classList.contains('active')) return;
+  const el = document.getElementById(id);
+  if (el.classList.contains('active')) return;
 
-    const isStartNode = id === 'node-0';
-    const isConnectedToActive = Object.entries(nodes).some(([nodeId, data]) => {
-        return data.connectedTo.includes(id) &&
-               document.getElementById(nodeId).classList.contains('active');
-    });
+  const isStartNode = id === 'node-0';
+  const isConnectedToActive = Object.entries(nodes).some(([nodeId, data]) => {
+    return data.connectedTo.includes(id) &&
+           document.getElementById(nodeId).classList.contains('active');
+  });
 
-    if (isStartNode || isConnectedToActive) {
-        el.classList.remove('locked', 'unlocked', 'faded', 'hidden');
-        el.classList.add('active');
-        updateVisibility();
-        createConnections();
+  if (isStartNode || isConnectedToActive) {
+    el.classList.remove('locked', 'unlocked', 'faded', 'hidden');
+    el.classList.add('active');
+    updateVisibility();
+    createConnections();
+
+    // 🆕 save naar server
+    saveUnlockedNodes();
+  } else {
+    alert('Je moet eerst de vorige node ontgrendelen!');
+  }
+}
+
+function saveUnlockedNodes() {
+  const activeNodes = Array.from(document.querySelectorAll(".prestige-node.active"))
+    .map(el => el.id);
+
+  const t0 = performance.now();
+  console.log("[💾] Opslaan van actieve nodes gestart", activeNodes);
+
+  fetch("http://localhost:3000/prestige/save", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ unlockedNodes: activeNodes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const t1 = performance.now();
+    if (!data.success) {
+      console.error("❌ Fout bij opslaan van prestige nodes");
     } else {
-        alert('Je moet eerst de vorige node ontgrendelen!');
+      console.log(`[✅] Opslaan voltooid in ${(t1 - t0).toFixed(2)} ms`);
     }
+  })
+  .catch(err => {
+    const t1 = performance.now();
+    console.error(`[⚠️] Netwerkfout (${(t1 - t0).toFixed(2)} ms):`, err);
+  });
 }
 
 function updateVisibility() {
@@ -193,6 +226,19 @@ function updateVisibility() {
     createConnections();
 }
 
+function returnToHome() {
+  console.log("[🏠] Gebruiker keert terug naar homepagina");
+  closePopup();
+  const start = performance.now();
+  window.location.href = "/";
+  const end = performance.now();
+  console.log(`[➡️] Redirect uitgevoerd in ${(end - start).toFixed(2)} ms (NB: pagina laadt daarna extern)`);
+}
+
+document.getElementById('confirm-return-yes').onclick = function () {
+  returnToHome();
+};
+
 document.getElementById('reincarnate-button').onclick = function () {
     document.getElementById('reincarnate-confirm').classList.remove('hidden');
 };
@@ -200,15 +246,6 @@ document.getElementById('reincarnate-button').onclick = function () {
 document.getElementById('confirm-no').onclick = function () {
     document.getElementById('reincarnate-confirm').classList.add('hidden');
 };
-
-document.getElementById('confirm-yes').onclick = function () {
-    confirmPrestige();
-};
-
-function confirmPrestige() {
-    closePopup();
-    window.location.href = "/";
-}
 
 function closePopup() {
     document.getElementById('reincarnate-confirm').classList.add('hidden');
@@ -222,6 +259,9 @@ window.addEventListener("click", function (event) {
 });
 
 window.onload = function() {
+    const startTime = performance.now();
+    console.log("[⏱️] Begin met laden en positioneren van nodes");
+
     positionNodes();
     const startNode = document.getElementById('node-0');
     startNode.className = 'prestige-node faded';
@@ -232,6 +272,8 @@ window.onload = function() {
             el.className = 'prestige-node hidden';
         }
     });
-    
+
     updateVisibility();
+    const endTime = performance.now();
+    console.log(`[✅] Alles geladen in ${(endTime - startTime).toFixed(2)} ms`);
 };

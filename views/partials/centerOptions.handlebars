@@ -2,8 +2,25 @@
     {{>centerButtons}}
     <div class="row">
     <button id="button-logout" >logout</button>
+
     <button id="button-delete" >delete prograss</button>
     </div>
+
+
+      <button id="button-delete" onclick="openPopup()">delete progress</button>
+
+<div id="popup">
+  <div class="popup-content">
+    <h2>Are you sure you want to reset all your progress?</h2>
+    <div class="button-container">
+      <button onclick="confirmDelete()" style="margin-right: 10px;">Yes</button>
+      <button onclick="closePopup()">No</button>
+    </div>
+  </div>
+</div>
+
+    <p>volume</p>
+
           <div class="row"></div>
     <button id="button-TopLeft" >color blind</button>
           <div class="row"></div>
@@ -11,3 +28,4 @@
  
 
 </div>
+<script src="../javascript/home/popup.js"></script>

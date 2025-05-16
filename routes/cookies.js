@@ -20,7 +20,7 @@ let gameState = {
     lastUpdate: Date.now()
 };
 
-// Load saved state at startup
+// Load save
 try {
     if (fs.existsSync(gameStatePath)) {
         const savedState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
@@ -41,7 +41,6 @@ try {
     console.log("No saved game state found, using defaults");
 }
 
-// Helpers
 function calculateCPS() {
     return gameState.buildings.reduce((sum, b) => sum + (b.amount * b.cps), 0);
 }
@@ -56,13 +55,13 @@ function updatePassiveCookies() {
     gameState.lastUpdate = now;
 }
 
-// Passive income + CPS update every second
+// Passive income + CPS update
 setInterval(() => {
     updatePassiveCookies();
     gameState.cps = calculateCPS();
 }, 1000);
 
-// Auto-save every 10 seconds
+// Auto-save
 setInterval(() => {
     fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
         if (err) console.error("Error saving game:", err);

@@ -3,71 +3,101 @@ const expressHandlebars = require("express-handlebars");
 const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(session);
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Sessies met SQLite opslag
+// ✅ CORS correct instellen
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
+app.set("trust proxy", 1);
+
 app.use(session({
-  secret: "geheimenaam",
+  store: new SQLiteStore({
+    db: 'DataBase.db',
+    dir: './'
+  }),
+  secret: "eenGeheimeSleutel",
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: false,
     httpOnly: true,
-    maxAge: 1000 * 60 * 60
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7
   }
 }));
 
-// Body parsing
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// View engine
-app.engine("handlebars", expressHandlebars.engine({
-  defaultLayout: "main"
-}));
+app.engine("handlebars", expressHandlebars.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
-// Static bestanden
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes importeren
-const loginRouter = require("./routes/login");
-const signupRouter = require("./routes/signup");
-const prestigeRouter = require("./routes/prestige");
-const cookiesRouter = require("./routes/cookies");
+app.use("/login", require("./routes/login"));
+app.use("/signup", require("./routes/signup"));
+app.use("/prestige", require("./routes/prestige"));
+app.use("/", require("./routes/cookies"));
 
-// Routes koppelen
-app.use("/login", loginRouter);
-app.use("/signup", signupRouter);
-app.use("/prestige", prestigeRouter);
-app.use("/", cookiesRouter);
-
-// Homepagina
 app.get("/", (req, res) => {
   if (!req.session.username) {
     return res.redirect("/login");
   }
 
-  res.render("home", {
-    username: req.session.username
-  });
+  res.render("home", { username: req.session.username });
 });
 
-// 404 pagina
-app.use((req, res) => {
-  res.status(404).render("errors/404");
+app.post('/prestige/save', (req, res) => {
+  const start = Date.now();
+  
+  saveToDatabase(req.body.unlockedNodes)
+    .then(() => {
+      const duration = Date.now() - start;
+      console.log(`[⏱️] prestige/save duurde ${duration} ms`);
+      res.json({ success: true });
+    })
+    .catch(err => {
+      const duration = Date.now() - start;
+      console.error(`[❌] prestige/save faalde na ${duration} ms`, err);
+      res.json({ success: false });
+    });
 });
 
-// Foutafhandeling
-app.use((err, req, res, next) => {
-  res.status(500).render("errors/500");
+// 🔧 Dummy implementatie
+async function performReincarnation(userId) {
+  console.log("Reincarnation gestart voor:", userId);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log("Reincarnation voltooid");
+}
+
+app.post('/reincarnate', async (req, res) => {
+    const start = Date.now();
+    try {
+        await performReincarnation(req.session.userId); // of een andere identifier
+        const duration = Date.now() - start;
+        console.log(`[♻️] /reincarnate duurde ${duration} ms`);
+        res.json({
+            success: true,
+            redirectUrl: "/prestige" // ✅ Hier geef je de redirect door
+        });
+    } catch (err) {
+        const duration = Date.now() - start;
+        console.error(`[❌] Fout bij /reincarnate na ${duration} ms`, err);
+        res.status(500).json({ success: false });
+    }
 });
 
-// Server starten
-app.listen(port, () => console.log(
-  `Express gestart op http://localhost:${port}; ` +
-  `press Ctrl-C to terminate.`
-));
+app.use((req, res) => res.status(404).render("errors/404"));
+app.use((err, req, res, next) => res.status(500).render("errors/500"));
+
+app.listen(port, () => {
+  console.log(`Express gestart op http://localhost:${port}`);
+});

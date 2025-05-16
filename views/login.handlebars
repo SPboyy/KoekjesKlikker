@@ -6,7 +6,7 @@
         <h1 style="margin: 0;">COOKIE</h1>
         <h1 style="margin: 0;">CLICKER</h1>
     </div>
-    <form action="/login" method="POST">
+    <form id="loginForm">
         <div>
             <input type="text" id="username" name="username" placeholder="{{this.Username}}" required>
         </div>
@@ -22,3 +22,34 @@
     </a>
     {{/each}}
 </main>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("http://localhost:3000/login", {
+      method: "POST",
+      credentials: "include", // ✅ Stuurt de sessiecookie mee
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => {
+      if (res.redirected) {
+        window.location.href = res.url; // Als backend redirect geeft
+      } else if (res.ok) {
+        window.location.href = "/"; // Fallback
+      } else {
+        alert("❌ Inloggen mislukt");
+      }
+    })
+    .catch(err => {
+      console.error("Netwerkfout:", err);
+      alert("Netwerkfout bij inloggen");
+    });
+  });
+</script>
