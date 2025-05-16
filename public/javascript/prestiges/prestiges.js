@@ -119,23 +119,49 @@ function createConnections() {
 }
 
 function unlockNode(id) {
-    const el = document.getElementById(id);
-    if (el.classList.contains('active')) return;
+  const el = document.getElementById(id);
+  if (el.classList.contains('active')) return;
 
-    const isStartNode = id === 'node-0';
-    const isConnectedToActive = Object.entries(nodes).some(([nodeId, data]) => {
-        return data.connectedTo.includes(id) &&
-               document.getElementById(nodeId).classList.contains('active');
-    });
+  const isStartNode = id === 'node-0';
+  const isConnectedToActive = Object.entries(nodes).some(([nodeId, data]) => {
+    return data.connectedTo.includes(id) &&
+           document.getElementById(nodeId).classList.contains('active');
+  });
 
-    if (isStartNode || isConnectedToActive) {
-        el.classList.remove('locked', 'unlocked', 'faded', 'hidden');
-        el.classList.add('active');
-        updateVisibility();
-        createConnections();
-    } else {
-        alert('Je moet eerst de vorige node ontgrendelen!');
+  if (isStartNode || isConnectedToActive) {
+    el.classList.remove('locked', 'unlocked', 'faded', 'hidden');
+    el.classList.add('active');
+    updateVisibility();
+    createConnections();
+
+    // 🆕 save naar server
+    saveUnlockedNodes();
+  } else {
+    alert('Je moet eerst de vorige node ontgrendelen!');
+  }
+}
+
+function saveUnlockedNodes() {
+  const activeNodes = Array.from(document.querySelectorAll(".prestige-node.active"))
+    .map(el => el.id);
+
+  fetch("http://localhost:3000/prestige/save", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ unlockedNodes: activeNodes })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      console.error("Fout bij opslaan van prestige nodes");
     }
+  })
+  .catch(err => {
+    console.error("Netwerkfout bij opslaan van nodes:", err);
+  });
 }
 
 function updateVisibility() {
@@ -193,6 +219,15 @@ function updateVisibility() {
     createConnections();
 }
 
+function returnToHome() {
+  closePopup();
+  window.location.href = "/";
+}
+
+document.getElementById('confirm-yes').onclick = function () {
+  returnToHome();
+};
+
 document.getElementById('reincarnate-button').onclick = function () {
     document.getElementById('reincarnate-confirm').classList.remove('hidden');
 };
@@ -200,15 +235,6 @@ document.getElementById('reincarnate-button').onclick = function () {
 document.getElementById('confirm-no').onclick = function () {
     document.getElementById('reincarnate-confirm').classList.add('hidden');
 };
-
-document.getElementById('confirm-yes').onclick = function () {
-    confirmPrestige();
-};
-
-function confirmPrestige() {
-    closePopup();
-    window.location.href = "/";
-}
 
 function closePopup() {
     document.getElementById('reincarnate-confirm').classList.add('hidden');

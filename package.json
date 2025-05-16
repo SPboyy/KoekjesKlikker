@@ -19,6 +19,7 @@
   "homepage": "https://github.com/SPboyy/KoekjesKlikker#readme",
   "dependencies": {
     "connect-sqlite3": "^0.9.15",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
     "express-session": "^1.18.1",

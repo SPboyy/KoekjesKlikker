@@ -90,3 +90,4 @@ CREATE TABLE login (
      achAmount1000000000 BOOLEAN
      );
 -- DROP TABLE login
+-- ALTER TABLE player ADD COLUMN unlockedPrestigeNodes TEXT DEFAULT '["node-0"]';
