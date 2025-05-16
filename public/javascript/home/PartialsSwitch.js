@@ -13,5 +13,6 @@ function showCenter(templateId) {
   }
 
   function showOptions(){
-    showCenter("template-centerOptions")
+    showCenter("template-centerOptions");
+    
   }

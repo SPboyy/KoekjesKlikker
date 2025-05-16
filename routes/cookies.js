@@ -57,9 +57,9 @@ function updatePassiveCookies() {
 
 // Passive income + CPS update
 setInterval(() => {
-    updatePassiveCookies();
+    updatePassiveCookies()/2;
     gameState.cps = calculateCPS();
-}, 1000);
+}, 500);
 
 // Auto-save
 setInterval(() => {
