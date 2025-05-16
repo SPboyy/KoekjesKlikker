@@ -20,7 +20,7 @@ router.post("/", (req, res) => {
     }
 
     if (row) {
-      req.session.username = row.username; // ✅ Belangrijk!
+      req.session.username = row.username;
       console.log("✅ Ingelogd als:", req.session.username);
 
       return res.redirect("/");

@@ -1,31 +1,26 @@
 <div class="column center">
     {{>centerButtons}}
-    <div class="row">
-    <button id="button-logout" >logout</button>
+    
+    <button id="button-logout">logout</button>
 
-    <button id="button-delete" >delete prograss</button>
+    <button id="button-delete" onclick="openDeletePopup()">delete progress</button>
+
+    <div id="popup-delete">
+        <div class="popup-content-delete">
+            <h2>Are you sure you want to reset all your progress?</h2>
+            <div class="button-container">
+                <button onclick="confirmDelete()" style="margin-right: 10px;">Yes</button>
+                <button onclick="closeDeletePopup()">No</button>
+            </div>
+        </div>
     </div>
-
-
-      <button id="button-delete" onclick="openPopup()">delete progress</button>
-
-<div id="popup">
-  <div class="popup-content">
-    <h2>Are you sure you want to reset all your progress?</h2>
-    <div class="button-container">
-      <button onclick="confirmDelete()" style="margin-right: 10px;">Yes</button>
-      <button onclick="closePopup()">No</button>
-    </div>
-  </div>
-</div>
 
     <p>volume</p>
-
-          <div class="row"></div>
-    <button id="button-TopLeft" >color blind</button>
-          <div class="row"></div>
-    <button id="button-TopLeft" >dark mode</button>  
- 
-
+    <div class="row"></div>
+    <button id="button-TopLeft">color blind</button>
+    <div class="row"></div>
+    <button id="button-TopLeft">dark mode</button>  
 </div>
+
 <script src="../javascript/home/popup.js"></script>
+<script src="../javascript/home/Delete.js"></script>
