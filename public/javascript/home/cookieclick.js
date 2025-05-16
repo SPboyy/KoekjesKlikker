@@ -12,5 +12,4 @@ function updateStats() {
         .catch(err => console.error('Error fetching stats:', err));
 }
 
-// Elke seconde de teller verversen
-setInterval(updateStats, 1000);
+setInterval(updateStats, 500);
