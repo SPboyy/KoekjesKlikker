@@ -6,9 +6,7 @@
   {{> left }}
 
   <div class="column center">
-    <div id="centerContent">
-      {{> centerLeaderboard }} 
-    </div>
+    {{>center}}
   </div>
 
   {{> right }}
@@ -21,20 +19,11 @@
     </div>
   </div>
 </div>
-<script id="template-centerStats" type="text/x-handlebars-template">
-  {{> centerStats }}
-</script>
 
-<script id="template-centerLeaderboard" type="text/x-handlebars-template">
-  {{> centerLeaderboard }}
-</script>
-<script id="template-centerOptions" type="text/x-handlebars-template">
-  {{>centerOptions}}
-</script>
 
+</script>
 <script src="/javascript/home/cookieclick.js"></script>
 <script src="/javascript/home/popup.js"></script>
 <script src="/javascript/home/prestige.js"></script>
 <script src="/javascript/home/buyBuilding.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
-<script src="/javascript/home/PartialsSwitch.js"></script>
+
