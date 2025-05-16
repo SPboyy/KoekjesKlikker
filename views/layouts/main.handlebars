@@ -6,22 +6,12 @@
 </head>
 <body>
 
-    <audio id="bgAudio" controls loop>
-    <source src="Audio/baground.mp4" type="audio/mp4">
+    <audio id="myAudio" loop>
+    <source src="Audio/baground.mp3" type="audio/mpeg">
   </audio>
 
   {{{body}}}
 
-  <script>
-    document.addEventListener('click', function () {
-      const audio = document.getElementById('bgAudio');
-      audio.play().then(() => {
-        console.log("Audio started.");
-      }).catch(err => {
-        console.log("Audio play failed:", err);
-      });
-    }, { once: true });
-  </script>
 
 </body>
 </html>
