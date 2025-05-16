@@ -1,5 +1,6 @@
 <div class="column center">
     {{>centerButtons}}
+<<<<<<< Updated upstream
     <div class="row">
     <button id="button-logout" >logout</button>
      <button id="button-delete" onclick="openPopup()">delete progress</button>
@@ -7,18 +8,27 @@
 
 
      
+=======
+    
+    <button id="button-logout">logout</button>
 
-<div id="popup">
-  <div class="popup-content">
-    <h2>Are you sure you want to reset all your progress?</h2>
-    <div class="button-container">
-      <button onclick="confirmDelete()" style="margin-right: 10px;">Yes</button>
-      <button onclick="closePopup()">No</button>
+    <!-- AANGEPAST: uniek ID voor delete progress -->
+    <button id="button-delete-progress" onclick="openDeletePopup()">delete progress</button>
+>>>>>>> Stashed changes
+
+    <!-- AANGEPAST: popup ID blijft hetzelfde -->
+    <div id="popup-delete">
+        <div class="popup-content-delete">
+            <h2>Are you sure you want to reset all your progress?</h2>
+            <div class="button-container">
+                <button onclick="confirmDelete()" style="margin-right: 10px;">Yes</button>
+                <button onclick="closeDeletePopup()">No</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
     <p>volume</p>
+<<<<<<< Updated upstream
 
           <div class="row"></div>
     <button id="button-TopLeft" >color blind</button>
@@ -26,5 +36,14 @@
     <button id="button-TopLeft" >dark mode</button>  
  
 
+=======
+    <div class="row"></div>
+    <button id="button-TopLeft">color blind</button>
+    <div class="row"></div>
+    <button id="button-TopLeft">dark mode</button>  
+>>>>>>> Stashed changes
 </div>
+
+<!-- Scripts -->
 <script src="../javascript/home/popup.js"></script>
+<script src="../javascript/home/Delete.js"></script>
