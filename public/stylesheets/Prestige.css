@@ -6,17 +6,28 @@
     background-color: #f5ede3;
     border: 2px solid #a96e41;
     overflow: hidden;
-    
-  }
-  .prestige-img{
+}
+
+.prestige-img {
     width: 125%;
     height: auto;
-  }
-  .prestigeBig-img{
-        width: 75%;
+}
+
+.prestigeBig-img {
+    width: 75%;
     height: auto;
-  }
-  .prestige-node {
+}
+
+.prestige-node img {
+  max-width: 200%;
+  max-height: 200%;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
+  margin: 0 auto;
+}
+
+.prestige-node {
     position: absolute;
     width: 100px;
     height: 40px;
@@ -34,63 +45,66 @@
     text-align: center;
     padding: 5px;
     z-index: 1;
-  }
-  
-  .prestige-node:hover {
+}
+
+.prestige-node:hover {
     transform: scale(1.05);
     cursor: pointer;
-  }
-  
-  .locked {
+}
+
+/* Algemene faded class voor andere elementen (indien nodig) */
+.faded {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* Specifieke faded styling voor prestige nodes: zichtbaar en klikbaar */
+.prestige-node.faded {
+    opacity: 0.5;
+    pointer-events: auto;
+}
+
+.locked {
     opacity: 0;
     pointer-events: none;
-  }
-  
-  .unlocked {
+}
+
+.unlocked {
     background-color: #a06d45;
     opacity: 1;
     pointer-events: auto;
-  }
-  
-  .faded {
-    opacity: 0.3;
-    pointer-events: none;
-  }
-  
-  .hidden {
+}
+
+.hidden {
     opacity: 0;
     pointer-events: none;
-  }
-  
-  .connection {
+    display: none; /* Zorgt dat verborgen nodes ook geen ruimte innemen */
+}
+
+.connection {
     height: 4px;
     background-color: gray;
     position: absolute;
     transform-origin: 0 0;
     z-index: 0;
     transition: background-color 0.3s, opacity 0.3s;
-  }
-  
-  .prestige-node.faded {
-    opacity: 0.5;
-    pointer-events: auto;
-  }
-  
-  .prestige-node.hidden {
+}
+
+.prestige-node.hidden {
     display: none;
-  }
-  
-  .prestige-node.unlocked {
+}
+
+.prestige-node.unlocked {
     opacity: 1;
-  }
-  
-  .prestige-node.active {
+}
+
+.prestige-node.active {
     background-color: #a96e41;
     opacity: 1;
     float: right;
-  }
+}
 
-  #prestige-info-box {
+#prestige-info-box {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -102,16 +116,16 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     font-family: "Georgia", serif;
     z-index: 10;
-  }
-  
-  #prestige-info-box .prestige-label {
+}
+
+#prestige-info-box .prestige-label {
     color: #8b5a2b;
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 8px;
-  }
-  
-  #prestige-info-box button {
+}
+
+#prestige-info-box button {
     background-color: #f5deb3;
     color: black;
     border: none;
@@ -122,13 +136,13 @@
     width: 100%;
     box-shadow: inset 0 0 5px #fff3;
     transition: background-color 0.2s;
-  }
-  
-  #prestige-info-box button:hover {
-    background-color: #eac88a;
-  }
+}
 
-  .confirm-overlay {
+#prestige-info-box button:hover {
+    background-color: #eac88a;
+}
+
+.confirm-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -139,9 +153,9 @@
     justify-content: center;
     align-items: center;
     z-index: 1001;
-  }
-  
-  .confirm-box {
+}
+
+.confirm-box {
     background-color: #f5ede3;
     border: 2px solid #a96e41;
     padding: 20px 30px;
@@ -150,21 +164,21 @@
     text-align: center;
     font-family: "Georgia", serif;
     color: #2e1a0f;
-  }
-  
-  .confirm-box p {
+}
+
+.confirm-box p {
     font-size: 18px;
     margin-bottom: 20px;
     font-weight: bold;
-  }
-  
-  .button-row {
+}
+
+.button-row {
     display: flex;
     justify-content: space-around;
     gap: 15px;
-  }
-  
-  .button-row button {
+}
+
+.button-row button {
     background-color: #f5deb3;
     color: black;
     border: none;
@@ -173,12 +187,10 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s;
-  }
-  
-  .button-row button:hover {
+}
+
+.button-row button:hover {
     background-color: #eac88a;
-  }
-  
-  .hidden {
-    display: none;
-  }
+}
+
+/* .hidden class duplicaat verwijderd */
