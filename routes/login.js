@@ -45,7 +45,7 @@ router.post("/", (req, res) => {
       } else {
         // Wachtwoord fout
         console.log("❌ Onjuist wachtwoord");
-        return res.render("login", {
+        return res.render("/login", {
           login: [{
             Username: "Onjuist",
             Password: "Onjuist"

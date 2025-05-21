@@ -120,8 +120,8 @@ bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
                 username, amountOfCookies, amountOfRebirths, amountOfUpgrades, amountOfRebirthTokens,
                 cookiesSpend, totalAmountOfCookies, achAmount1, achAmount100, achAmount1000, 
                 achAmount10000, achAmount100000, achAmount1000000, achAmount10000000, 
-                achAmount100000000, achAmount1000000000
-            ) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)`;
+                achAmount100000000, achAmount1000000000, unlockedPrestigeNodes
+            ) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '[]')`;
 
             db.run(insertPlayerQuery, [username], (err) => {
                 if (err) {
