@@ -1,17 +1,26 @@
+let eventTimeout = null;
+
 function showEvent(templateId) {
   const source   = document.getElementById(templateId).innerHTML;
   const template = Handlebars.compile(source);
   const html     = template({});
   document.getElementById("CookieContent").innerHTML = html;
+
+  if (eventTimeout !== null) {
+    clearTimeout(eventTimeout);
+  }
+  eventTimeout = setTimeout(showNormal, 300000);
 }
+
    function showChristmass(){
-     showEvent("template-Christmass")
+     showEvent("template-Christmass");
+
   }
     function showEaster(){
-    showEvent("template-Easter")
+    showEvent("template-Easter");
   }
     function showHalloween(){
-    showEvent("template-Halloween")
+    showEvent("template-Halloween");
   }
   function showNormal(){
     showEvent("template-NoEvent")
