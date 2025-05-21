@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/SPboyy/KoekjesKlikker#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "connect-sqlite3": "^0.9.15",
     "cors": "^2.8.5",
     "express": "^5.1.0",

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const bcrypt = require("bcrypt");
 const { signup } = require("../assets/data/signup");
 
 router.get("/", function (req, res) {
@@ -55,8 +56,55 @@ router.post("/", (req, res) => {
             });
         }
 
-        const insertLoginQuery = `INSERT INTO login (username, password, checkAdmin) VALUES (?, ?, 0)`;
-        db.run(insertLoginQuery, [username, password], (err) => {
+        const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
+bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+    if (err) {
+        console.error("Fout bij het hashen van het wachtwoord:", err);
+        return res.render("signup", {
+            signup: [{
+                Image: "images/cookie.png",
+                PasswordError: "Er is iets misgegaan met het wachtwoord"
+            }],
+            hasError: true
+        });
+    }
+
+    const insertLoginQuery = `INSERT INTO login (username, password, checkAdmin) VALUES (?, ?, 0)`;
+    db.run(insertLoginQuery, [username, hashedPassword], (err) => {
+        if (err) {
+            console.error("Fout bij opslaan gebruiker in login tabel:", err);
+            return res.render("signup", {
+                signup: [{
+                    Image: "images/cookie.png",
+                    UsernameError: "Opslaan mislukt in login tabel"
+                }],
+                hasError: true
+            });
+        }
+
+        // ... vervolgens player toevoegen zoals eerder
+        const insertPlayerQuery = `INSERT INTO player (...) VALUES (?, 0, 0, 0, 0, ...)`;
+
+        db.run(insertPlayerQuery, [username], (err) => {
+            if (err) {
+                console.error("Fout bij opslaan gebruiker in player tabel:", err);
+                return res.render("signup", {
+                    signup: [{
+                        Image: "images/cookie.png",
+                        UsernameError: "Opslaan mislukt in player tabel"
+                    }],
+                    hasError: true
+                });
+            }
+
+            console.log("Nieuwe gebruiker toegevoegd:", username);
+            res.redirect("/login");
+        });
+    });
+});
+
             if (err) {
                 console.error("Fout bij opslaan gebruiker in login tabel:", err);
                 return res.render("signup", {
@@ -92,6 +140,6 @@ router.post("/", (req, res) => {
             });
         });
     });
-});
+;
 
 module.exports = router;
