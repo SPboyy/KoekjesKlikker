@@ -191,6 +191,13 @@
 
 .button-row button:hover {
     background-color: #eac88a;
+
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+
 }
 
-/* .hidden class duplicaat verwijderd */
