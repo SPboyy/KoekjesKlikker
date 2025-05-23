@@ -1,55 +1,36 @@
 <link rel="stylesheet" href="/stylesheets/login.css">
-<main id="login-page" style="text-align: center;">
-    {{#each login}}
+<main id="login-page">
+  <div class="header">
+    <img src="images/cookie.png" width="20%" alt="Cookie">
+    <h1>COOKIE</h1>
+    <h1>CLICKER</h1>
+  </div>
+
+  <form id="loginForm" method="POST" action="/login">
     <div>
-        <img src="images/cookie.png" width="20%" style="margin: 40px auto 0; display: block;">
-        <h1 style="margin: 0;">COOKIE</h1>
-        <h1 style="margin: 0;">CLICKER</h1>
+      <input type="text" id="username" name="username" placeholder="Username" required value="{{enteredUsername}}">
+      {{#if hasError}}
+        {{#if UsernameError}}
+          <p class="error">{{UsernameError}}</p>
+        {{/if}}
+      {{/if}}
     </div>
-    <form id="loginForm">
-        <div>
-            <input type="text" id="username" name="username" placeholder="{{this.Username}}" required>
-        </div>
-        <div style="margin-top: 10px;">
-            <input type="password" id="password" name="password" placeholder="{{this.Password}}" required>
-        </div>
-        <div style="margin-top: 10px;">
-            <button type="submit" id="login-button">LOG IN</button>
-        </div>
-    </form>
-    <a href="/signup">
-        <button type="button" id="sign-in-button" style="margin-top: 10px;">Sign up</button>
-    </a>
-    {{/each}}
+
+    <div>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      {{#if hasError}}
+        {{#if PasswordError}}
+          <p class="error">{{PasswordError}}</p>
+        {{/if}}
+      {{/if}}
+    </div>
+
+    <div>
+      <button type="submit" id="login-button">LOG IN</button>
+    </div>
+  </form>
+
+  <a href="/signup">
+    <button type="button" id="sign-in-button">Sign up</button>
+  </a>
 </main>
-
-<script>
-  document.getElementById("loginForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    fetch("http://localhost:3000/login", {
-      method: "POST",
-      credentials: "include", // ✅ Stuurt de sessiecookie mee
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password })
-    })
-    .then(res => {
-      if (res.redirected) {
-        window.location.href = res.url; // Als backend redirect geeft
-      } else if (res.ok) {
-        window.location.href = "/"; // Fallback
-      } else {
-        alert("❌ Inloggen mislukt");
-      }
-    })
-    .catch(err => {
-      console.error("Netwerkfout:", err);
-      alert("Netwerkfout bij inloggen");
-    });
-  });
-</script>
