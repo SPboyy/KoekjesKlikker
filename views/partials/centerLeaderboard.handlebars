@@ -1,36 +1,39 @@
- <div class="column center">
-{{>centerButtons}}
-    <div class="podium">
-  <div class="podium-block second">
-    <div class="podium-rank">2</div>
-    <div class="podium-name">Player2</div>
-  </div>
-  <div class="podium-block first">
-    <div class="podium-rank">1</div>
-    <div class="podium-name">Player1</div>
-  </div>
-  <div class="podium-block third">
-    <div class="podium-rank">3</div>
-    <div class="podium-name">Player3</div>
-  </div>
-</div>
-<div class="containerLeaderboard">
-<table>
-  <tr>
-    <th>ranking</th>
-    <th>name</th>
-    <th>Total Cookies</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Player1</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Player2</td>
-    <td>0</td>
-  </tr>
-</table>
-</div>
+<div class="column center">
+  {{>centerButtons}}
+  
+  <div class="podium">
+    <div class="podium-block second">
+      <div class="podium-rank">2</div>
+      <div class="podium-name">{{topPlayers.[1].username}}</div>
     </div>
+    <div class="podium-block first">
+      <div class="podium-rank">1</div>
+      <div class="podium-name">{{topPlayers.[0].username}}</div>
+    </div>
+    <div class="podium-block third">
+      <div class="podium-rank">3</div>
+      <div class="podium-name">{{topPlayers.[2].username}}</div>
+    </div>
+  </div>
+
+  <div class="containerLeaderboard">
+    <table>
+      <thead>
+        <tr>
+          <th>Ranking</th>
+          <th>Name</th>
+          <th>Total Cookies</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each fullLeaderboard}}
+        <tr>
+          <td>{{add @index 1}}</td>
+          <td>{{this.username}}</td>
+          <td>{{formatNumber this.amountOfCookies}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>

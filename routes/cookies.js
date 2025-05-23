@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database('./DataBase.db');
 
 const gameStatePath = path.join(__dirname, '../gameState.json');
 
@@ -155,6 +157,30 @@ router.post('/delete-progress', (req, res) => {
 
         res.status(200).json({ message: "Progression reset successfully." });
     });
+});
+
+router.get('/api/leaderboard', (req, res) => {
+  db.all(`
+    SELECT username, amountOfCookies 
+    FROM player 
+    ORDER BY amountOfCookies DESC 
+    LIMIT 50
+  `, (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    // Vul top 3 aan als er minder dan 3 spelers zijn
+    const paddedRows = [...rows];
+    while (paddedRows.length < 3) {
+      paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
+    }
+
+    res.json({
+      topPlayers: paddedRows.slice(0, 3),
+      fullLeaderboard: rows
+    });
+  });
 });
 
 module.exports = router;
