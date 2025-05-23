@@ -59,7 +59,7 @@ router.post("/reincarnate", (req, res) => {
     UPDATE player
     SET 
       amountOfRebirths = amountOfRebirths + 1,
-      amountOfRebirthTokens = 0,
+      amountOfRebirthTokens = amountOfRebirthTokens + 1,
       unlockedPrestigeNodes = ?
     WHERE username = ?
   `;

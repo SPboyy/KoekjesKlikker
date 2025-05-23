@@ -96,5 +96,7 @@ CREATE TABLE login (
 --    username, amountOfCookies, amountOfRebirths, amountOfUpgrades, amountOfRebirthTokens,
 --    cookiesSpend, totalAmountOfCookies, achAmount1, achAmount100, achAmount1000, 
 --    achAmount10000, achAmount100000, achAmount1000000, achAmount10000000, 
---    achAmount100000000, achAmount1000000000
---) VALUES ('admin', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+--    achAmount100000000, achAmount1000000000, unlockedPrestigeNodes
+--) VALUES (
+--    'admin', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '[]'
+--);
