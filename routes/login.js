@@ -6,7 +6,7 @@ const { login } = require("../assets/data/login"); // Controleer of dit echt nod
 
 // GET /login - Toon loginpagina
 router.get("/", function (req, res) {
-  res.render("login", { login });
+  res.render("login", { login, hasError: false, enteredUsername: "" });
 });
 
 // POST /login - Verwerk loginpoging
@@ -23,10 +23,11 @@ router.post("/", (req, res) => {
     if (!row) {
       console.log("❌ Gebruiker niet gevonden");
       return res.render("login", {
-        login: [{
-          Username: "Onjuist",
-          Password: "Onjuist"
-        }]
+        login,
+        hasError: true,
+        UsernameError: "Gebruiker niet gevonden",
+        PasswordError: null,
+        enteredUsername: username
       });
     }
 
@@ -45,11 +46,12 @@ router.post("/", (req, res) => {
       } else {
         // Wachtwoord fout
         console.log("❌ Onjuist wachtwoord");
-        return res.render("/login", {
-          login: [{
-            Username: "Onjuist",
-            Password: "Onjuist"
-          }]
+        return res.render("login", {
+          login,
+          hasError: true,
+          UsernameError: null,
+          PasswordError: "Onjuist wachtwoord",
+          enteredUsername: username
         });
       }
     });
