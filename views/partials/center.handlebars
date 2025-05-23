@@ -1,7 +1,16 @@
-    <div id="centerContent">
-      {{> centerLeaderboard }} 
-    </div>
+<!-- center.handlebars -->
 
+<!-- Knoppen staan vast buiten de inhoud en worden niet vervangen -->
+<div id="centerButtons">
+  {{> centerButtons }}
+</div>
+
+<!-- Dynamische content zoals leaderboard, stats, etc. komt hier -->
+<div id="centerContent">
+  {{> centerLeaderboard }}
+</div>
+
+<!-- Templates voor client-side rendering (alleen inhoud, GEEN knoppen!) -->
 <script id="template-centerStats" type="text/x-handlebars-template">
   {{> centerStats }}
 </script>
@@ -11,9 +20,8 @@
 </script>
 
 <script id="template-centerOptions" type="text/x-handlebars-template">
-  {{>centerOptions}}
+  {{> centerOptions }}
 </script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
 <script src="/javascript/home/PartialsSwitch.js"></script>

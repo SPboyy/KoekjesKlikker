@@ -182,18 +182,21 @@
   }
   
   #button-TopRight{
+    position: sticky;
     float: right;
     height: 12.5%;
     width: 25%;
     background-color: #fceabb;
   }
   #button-logout{
+    position: sticky;
     height: 12.5%;
     width: 25%;
     background-color: rgb(200, 44, 44);
     margin-top: 5%;
 }
   #button-delete{
+    position: sticky;
     float: right;
     height: 12.5%;
     width: 25%;
@@ -201,6 +204,7 @@
     margin-top: 5%;
 }
   #button-TopLeft{
+    position: sticky;
     height: 12.5%;
     width: 25%;
     background-color: #fceabb;
@@ -257,3 +261,8 @@
     text-align: center;
   }
   
+  .scrollable-leaderboard {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+  }
