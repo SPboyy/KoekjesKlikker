@@ -10,9 +10,9 @@ function showCenter(templateId) {
   
   function showLeaderboard() {
     showCenter("template-centerLeaderboard");
+    
   }
 
   function showOptions(){
     showCenter("template-centerOptions");
-    
   }

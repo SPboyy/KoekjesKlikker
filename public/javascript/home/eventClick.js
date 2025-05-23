@@ -21,6 +21,8 @@ document.getElementById('CookieContent').addEventListener('click', async functio
       cookieCountEl.textContent = data.total;
       cpsDisplayEl.textContent = data.cps;
 
+
+
     } catch (error) {
       console.error("Cookie click error:", error);
     }
