@@ -77,6 +77,7 @@ app.use("/login", require("./routes/login"));
 app.use("/signup", require("./routes/signup"));
 app.use("/prestige", require("./routes/prestige"));
 app.use("/", require("./routes/cookies"));
+app.use("/api/achievements", require("./routes/achievements"));
 
 // ✅ Leaderboard op `/`
 app.get("/", (req, res) => {

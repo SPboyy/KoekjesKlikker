@@ -65,19 +65,25 @@
             <p>0</p>
         </div>
     </div>
-            <h1>Achievements</h1>
-    <div class="containerUpgrades">
-        <div class="LeftAch">
-            <h2>Title</h2>
-            <p>quick tapper</p>
-        </div>
-        <div class="centerAch">
-            <h2>Description</h2>
-            <p>click 100 times</p>
-        </div>
-        <div class="rightAch">
-            <h2>completion</h2>
-            <p>completed</p>
-        </div>
+<h1>Achievements</h1>
+  <div class="achievement-container">
+    <div class="achievement-row header">
+      <div class="title">Title</div>
+      <div class="description">Description</div>
+      <div class="status">Completion</div>
     </div>
+    <div id="achievement-list"></div>
+  </div>
+
 </div>
+<script id="template-centerStats" type="text/x-handlebars-template">
+  <h1>Achievements</h1>
+  <div class="achievement-container">
+    <div class="achievement-row header">
+      <div class="title">Title</div>
+      <div class="description">Description</div>
+      <div class="status">Completion</div>
+    </div>
+    <div id="achievement-list"></div>
+  </div>
+</script>
