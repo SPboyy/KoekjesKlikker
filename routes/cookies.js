@@ -59,7 +59,7 @@ function updatePassiveCookies() {
 
 // Passive income + CPS update
 setInterval(() => {
-    updatePassiveCookies()/2;
+    updatePassiveCookies();
     gameState.cps = calculateCPS();
 }, 500);
 
@@ -89,9 +89,16 @@ router.get('/', (req, res) => {
     });
 });
 
+// Hier aangepast: amount in request body gebruiken, default 1
 router.post('/add-cookie', (req, res) => {
-    gameState.currentCookies += 1;
-    gameState.totalCookiesEver += 1;
+    const { amount } = req.body;
+    const addAmount = parseFloat(amount);
+    if (isNaN(addAmount) || addAmount <= 0) {
+        return res.status(400).json({ error: "Ongeldig aantal cookies om toe te voegen" });
+    }
+
+    gameState.currentCookies += addAmount;
+    gameState.totalCookiesEver += addAmount;
 
     res.json({
         total: gameState.currentCookies.toFixed(1),
