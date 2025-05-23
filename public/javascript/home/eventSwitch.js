@@ -9,7 +9,7 @@ function showEvent(templateId) {
   if (eventTimeout !== null) {
     clearTimeout(eventTimeout);
   }
-  eventTimeout = setTimeout(showNormal, 300000);
+  eventTimeout = setTimeout(showNormal, 5000);
 }
 
    function showChristmass(){
