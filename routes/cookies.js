@@ -153,6 +153,7 @@ router.post('/delete-progress', (req, res) => {
             { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
             { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
         ],
+        nodeUnlocked: [],
         lastUpdate: Date.now()
     };
 
