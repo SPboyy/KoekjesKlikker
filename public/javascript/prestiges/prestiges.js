@@ -233,10 +233,25 @@ function updateVisibility() {
   createConnections();
 }
 
+function fullyPrestige() {
+    fetch('/prestigeSuccessfully', { method: 'POST' })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Fout bij resetten van progressie');
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Fout:', error);
+            alert('Er is een fout opgetreden bij het resetten.');
+        });
+}
+
 function returnToHome() {
   console.log("[🏠] Gebruiker keert terug naar homepagina");
   closePopup();
   const start = performance.now();
+  fullyPrestige();
   window.location.href = "/";
   const end = performance.now();
   console.log(`[➡️] Redirect uitgevoerd in ${(end - start).toFixed(2)} ms (NB: pagina laadt daarna extern)`);

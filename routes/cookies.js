@@ -166,6 +166,29 @@ router.post('/delete-progress', (req, res) => {
     });
 });
 
+router.post('/prestigeSuccessfully', (req, res) => {
+    gameState = {
+        currentCookies: 0,
+        totalCookiesEver: 0,
+        cps: 0,
+        buildings: [
+            { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
+            { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
+            { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
+        ],
+        lastUpdate: Date.now()
+    };
+
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+        if (err) {
+            console.error("error:", err);
+            return res.status(500).json({ error: "couldn't reset game state" });
+        }
+
+        res.status(200).json({ message: "successfully prestiged." });
+    });
+});
+
 router.get('/api/leaderboard', (req, res) => {
   db.all(`
     SELECT username, amountOfCookies 
