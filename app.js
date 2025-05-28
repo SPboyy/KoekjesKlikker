@@ -128,6 +128,18 @@ app.get('/get-stats', (req, res) => {
   });
 });
 
+app.get("/logout", function (req, res) {
+  req.session.destroy(function (err) {
+    if (err) {
+      console.error("Fout bij uitloggen:", err);
+      return res.status(500).send("Kon sessie niet beëindigen");
+    }
+
+    res.clearCookie("connect.sid"); // Dit wist de sessie-cookie
+    res.redirect("/login");
+  });
+});
+
 // Prestige save dummy
 app.post('/prestige/save', (req, res) => {
   const start = Date.now();
