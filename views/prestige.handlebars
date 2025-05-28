@@ -1,44 +1,93 @@
  <link rel="stylesheet" href="/stylesheets/Prestige.css">
 <div id="prestige-container">
-    <div class="prestige-node" id="node-0" onclick="unlockNode('node-0')">
-       <img src="images/PrestigeStart.png" alt="Cookie Button">
-    </div>
-    <div id="node-1" class="prestige-node locked" onclick="unlockNode('node-1')">
-        <img src="images/discount.png" alt="Cookie Button" class="prestige-img">
-    </div>
-    <div id="node-2" class="prestige-node locked" onclick="unlockNode('node-2')">
-       <span class="building-count">10X</span>
-            <img src="images/LightBrownRollingPin.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-3" class="prestige-node locked" onclick="unlockNode('node-3')">
-              <img src="images/CookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-4" class="prestige-node locked" onclick="unlockNode('node-4')">
-      <img src="images/2Cookies.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-5" class="prestige-node locked" onclick="unlockNode('node-5')">
-              <img src="images/greenDiscount.png" alt="Cookie Button" class="prestige-img">
-    </div>
+<div class="prestige-node" 
+     id="node-0" 
+     onclick="unlockNode('node-0')" 
+     data-line1="Gain 5% cookie boost" 
+     data-line2="Price: 1">
+  <img src="images/PrestigeStart.png" alt="Cookie Button">
+</div>
 
-    <div id="node-6" class="prestige-node locked" onclick="unlockNode('node-6')">
-             <span class="building-count">5X</span>
-            <img src="images/CookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-7" class="prestige-node locked" onclick="unlockNode('node-7')">
-                    <img src="images/RedCookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-8" class="prestige-node locked" onclick="unlockNode('node-8')">
-      <img src="images/SleepingCookie.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-9" class="prestige-node locked" onclick="unlockNode('node-9')">
-            <img src="images/3Cookies.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-10" class="prestige-node locked" onclick="unlockNode('node-10')">
-            <img src="images/2SleepingCookies.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
-    <div id="node-11" class="prestige-node locked" onclick="unlockNode('node-11')">
-        <img src="images/AllCookies.png" alt="Cookie Button" class="prestigeBig-img">
-    </div>
+
+    <div id="node-1" class="prestige-node locked" 
+     onclick="unlockNode('node-1')" 
+     data-line1="Buildings are 10% cheaper" 
+     data-line2="Price: 5">
+  <img src="images/discount.png" alt="Cookie Button" class="prestige-img">
+</div>
+
+<div id="node-2" class="prestige-node locked" 
+     onclick="unlockNode('node-2')" 
+     data-line1="Start with 10 rolling pins" 
+     data-line2="Price: 10">
+  <span class="building-count">10X</span>
+  <img src="images/LightBrownRollingPin.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-3" class="prestige-node locked" 
+     onclick="unlockNode('node-3')" 
+     data-line1="Gain the ability to gamble with the cookie monster" 
+     data-line2="Price: 10">
+  <img src="images/CookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-4" class="prestige-node locked" 
+     onclick="unlockNode('node-4')" 
+     data-line1="Gain an additional 5% cookie boost" 
+     data-line2="Price: 10">
+  <img src="images/2Cookies.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-5" class="prestige-node locked" 
+     onclick="unlockNode('node-5')" 
+     data-line1="Upgrades are 10% cheaper" 
+     data-line2="Price: 15">
+  <img src="images/greenDiscount.png" alt="Cookie Button" class="prestige-img">
+</div>
+
+<div id="node-6" class="prestige-node locked" 
+     onclick="unlockNode('node-6')" 
+     data-line1="Start with 5 cookie monsters" 
+     data-line2="Price: 25">
+  <span class="building-count">5X</span>
+  <img src="images/CookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-7" class="prestige-node locked" 
+     onclick="unlockNode('node-7')" 
+     data-line1="The odds in the cookie monster gambling mini game are increased" 
+     data-line2="Price: 50">
+  <img src="images/RedCookieMonster.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-8" class="prestige-node locked" 
+     onclick="unlockNode('node-8')" 
+     data-line1="Offline time is increased with an hour" 
+     data-line2="Price: 15">
+  <img src="images/SleepingCookie.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-9" class="prestige-node locked" 
+     onclick="unlockNode('node-9')" 
+     data-line1="Gain an additional 15% cookie boost" 
+     data-line2="Price: 25">
+  <img src="images/3Cookies.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-10" class="prestige-node locked" 
+     onclick="unlockNode('node-10')" 
+     data-line1="Offline increased with 2 hours" 
+     data-line2="Price: 30">
+  <img src="images/2SleepingCookies.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
+<div id="node-11" class="prestige-node locked" 
+     onclick="unlockNode('node-11')" 
+     data-line1="Gain a 500% cookie boost" 
+     data-line2="Price: 999">
+  <img src="images/AllCookies.png" alt="Cookie Button" class="prestigeBig-img">
+</div>
+
 </div>
 <div id="prestige-info-box">
   <div class="prestige-label">Prestige level: <span id="prestige-level">{{prestigeData.level}}</span></div>

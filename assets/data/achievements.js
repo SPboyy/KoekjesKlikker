@@ -3,7 +3,7 @@ const { getTotalCookies } = require("./TotalCookies.js");
 
 const achievements = [
   { achievementId: 1, name: "getting started", description: "you clicked your first cookie", unlocked: 0 },
-  { achievementId: 2, name: "getting better", description: "you clicked 1000 times", unlocked: 0 },
+  { achievementId: 2, name: "getting better", description: "you clicked 1000 times", unlocked: 0 }, 
   { achievementId: 3, name: "Tapping Maniac", description: "you clicked 1.000.000 times", unlocked: 0 },
   { achievementId: 4, name: "baking intern", description: "buy your first rolling pin", unlocked: 0 },
   { achievementId: 5, name: "Keep on rollin", description: "you bought 100 rolling pins", unlocked: 0 },

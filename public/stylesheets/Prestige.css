@@ -193,9 +193,52 @@
     background-color: #eac88a;
 
   }
-  
-  .hidden {
-    display: none;
-  }
-  
+
+/* Tooltip stijl */
+.prestige-node:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: pre; /* Allows \A to break lines */
+    z-index: 999;
+    opacity: 1;
+    pointer-events: none;
+}
+
+
+/* Tooltip pijltje */
+.prestige-node:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+    z-index: 999;
+}
+.prestige-node:hover::after {
+    content: attr(data-line1) "\A" attr(data-line2);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: pre; /* This makes \A act as a line break */
+    z-index: 999;
+    opacity: 1;
+    pointer-events: none;
+}
 
