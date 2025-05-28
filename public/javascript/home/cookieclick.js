@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fingerBtn = document.getElementById('fingerButton');
   const cookiesPerClickDisplay = document.getElementById('cookiesPerClickDisplay');
 
-  let cookiesPerClick = 1;
+  let cookiesPerClick = 0.5;
   let cookieCount = 0;
 
   function updateStats() {
@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (fingerBtn) {
   fingerBtn.addEventListener('click', () => {
     cookiesPerClick *= 2;
-    console.log("Finger clicked, cookiesPerClick is nu:", cookiesPerClick);
-    cookiesPerClickDisplay.textContent = `Cookies per click ${cookiesPerClick}`;
+    console.log("Finger clicked, cookiesPerClick is nu:", cookiesPerClick*2);
+    cookiesPerClickDisplay.textContent = `Cookies per click ${cookiesPerClick*2}`;
   });
 } else {
   console.warn("fingerButton niet gevonden in de DOM");
