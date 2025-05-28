@@ -1,17 +1,24 @@
+let currentView = null; // Houd bij welke view momenteel getoond wordt
+
 function showCenter(templateId) {
   const source = document.getElementById(templateId).innerHTML;
   const template = Handlebars.compile(source);
   const html = template({});
   
   document.getElementById("centerContent").innerHTML = html;
+  currentView = templateId; // Update de huidige view
 }
-function showStats() {
-  showCenter("template-centerStats");
 
-  // Wacht tot DOM is bijgewerkt met Handlebars output
-  setTimeout(() => {
+function showStats() {
+  const targetView = "template-centerStats";
+
+  // Alleen als je niet al in de stats-view bent
+  if (currentView !== targetView) {
+    showCenter(targetView);
     loadAchievements();
-  }, 100);
+  } else {
+    console.log("📌 Je bent al in Stats — niets herladen.");
+  }
 }
 
 async function loadAchievements() {
@@ -46,8 +53,8 @@ async function loadAchievements() {
     console.error("❌ Fout bij ophalen achievements:", err);
   }
 }
-  
-  function showLeaderboard() {
+
+function showLeaderboard() {
   showCenter("template-centerLeaderboard");
 
   fetch('/api/leaderboard')
