@@ -22,7 +22,8 @@ let gameState = {
         { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
         { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
     ],
-    lastUpdate: Date.now()
+    lastUpdate: Date.now(),
+    clickCounter:0
 };
 console.log("DEBUG: [Server Init] Initial gameState in RAM:", JSON.stringify(gameState));
 
@@ -149,7 +150,6 @@ router.post('/add-cookie', (req, res) => {
     
     gameState.currentCookies += addAmount;
     gameState.totalCookiesEver += addAmount;
-    console.log(`DEBUG: [add-cookie] Cookies AFTER add: ${gameState.currentCookies.toFixed(1)}. Total Ever: ${gameState.totalCookiesEver.toFixed(1)}`);
 
     // NIEUW: Update de database na elke klik
     if (username) { // Alleen opslaan als er een gebruiker is ingelogd
@@ -166,6 +166,7 @@ router.post('/add-cookie', (req, res) => {
             }
         });
     }
+    gameState.clickCounter += 0.5;
 
     res.json({
         total: gameState.currentCookies.toFixed(1),
