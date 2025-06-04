@@ -73,6 +73,11 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
+app.get('/chatbox', (req, res) => {
+  res.render('chatbox', {
+  });
+});
+
 app.use("/login", require("./routes/login"));
 app.use("/signup", require("./routes/signup"));
 app.use("/prestige", require("./routes/prestige"));
