@@ -1,3 +1,6 @@
 function chatbox() {
-  window.location.href = "/chatbox"; // Deze route moet gedefinieerd zijn in je Express backend
+  // Verwijder eventuele eerder gekozen chatkleur van deze sessie
+  sessionStorage.removeItem('chatColor');
+  // Navigeer naar de chatbox-pagina
+  window.location.href = "/chatbox";
 }

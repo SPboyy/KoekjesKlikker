@@ -69,13 +69,12 @@ app.engine("handlebars", expressHandlebars.engine({
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
-// Static files
+// Static bestanden
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes
-app.get('/chatbox', (req, res) => {
-  res.render('chatbox', {
-  });
+// ROUTES
+app.get("/chatbox", (req, res) => {
+  res.render("chatbox");
 });
 
 app.use("/login", require("./routes/login"));
@@ -84,7 +83,7 @@ app.use("/prestige", require("./routes/prestige"));
 app.use("/", require("./routes/cookies"));
 app.use("/api/achievements", require("./routes/achievements"));
 
-// Leaderboard op `/`
+// Home route + leaderboard
 app.get("/", (req, res) => {
   db.all(`
     SELECT username, amountOfCookies 
@@ -102,7 +101,6 @@ app.get("/", (req, res) => {
       paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
     }
 
-    // Geef leaderboard data mee
     res.render("home", {
       username: req.session.username,
       userId: req.session.userId,
@@ -113,7 +111,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Statistieken ophalen voor de ingelogde gebruiker
+// API: Get stats
 app.get('/get-stats', (req, res) => {
   const userId = req.session.userId;
 
@@ -133,6 +131,7 @@ app.get('/get-stats', (req, res) => {
   });
 });
 
+// Uitloggen
 app.get("/logout", function (req, res) {
   req.session.destroy(function (err) {
     if (err) {
@@ -140,16 +139,16 @@ app.get("/logout", function (req, res) {
       return res.status(500).send("Kon sessie niet beëindigen");
     }
 
-    res.clearCookie("connect.sid"); // Dit wist de sessie-cookie
+    res.clearCookie("connect.sid");
     res.redirect("/login");
   });
 });
 
-// Prestige save dummy
+// Prestige opslaan (dummy)
 app.post('/prestige/save', (req, res) => {
   const start = Date.now();
   
-  saveToDatabase(req.body.unlockedNodes) // Dummy functie, zorg dat je deze zelf definieert
+  saveToDatabase(req.body.unlockedNodes) // Dummy functie
     .then(() => {
       const duration = Date.now() - start;
       console.log(`[⏱️] prestige/save duurde ${duration} ms`);
@@ -162,7 +161,7 @@ app.post('/prestige/save', (req, res) => {
     });
 });
 
-// Dummy implementatie voor reincarnatie
+// Dummy reincarnatie functie
 async function performReincarnation(userId) {
   console.log("Reincarnation gestart voor:", userId);
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -183,6 +182,7 @@ app.post('/reincarnate', async (req, res) => {
   }
 });
 
+// Cookies toevoegen (API)
 app.post('/add-cookie', (req, res) => {
   let { amount } = req.body;
   const userId = req.session.userId;
@@ -191,7 +191,7 @@ app.post('/add-cookie', (req, res) => {
     return res.status(400).json({ error: "Ongeldige input of geen sessie." });
   }
 
-  amount = Math.min(parseInt(amount), 1000000); // limiet om abuse te voorkomen
+  amount = Math.min(parseInt(amount), 1000000); // Limiet tegen abuse
 
   db.run(`
     UPDATE player
@@ -214,11 +214,11 @@ app.post('/add-cookie', (req, res) => {
   });
 });
 
-// Errors
+// Error handling
 app.use((req, res) => res.status(404).render("errors/404"));
 app.use((err, req, res, next) => res.status(500).render("errors/500"));
 
 // Server starten
 app.listen(port, () => {
-  console.log(`Server gestart op http://localhost:${port}`);
+  console.log(`🚀 Server gestart op http://localhost:${port}`);
 });
