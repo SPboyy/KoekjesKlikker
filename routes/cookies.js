@@ -65,6 +65,12 @@ setInterval(() => {
 
 // Auto-save
 setInterval(() => {
+    updatePassiveCookies();
+    gameState.cps = calculateCPS();
+}, 500);
+
+// Auto-save
+setInterval(() => {
     fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
         if (err) console.error("Error saving game:", err);
     });
