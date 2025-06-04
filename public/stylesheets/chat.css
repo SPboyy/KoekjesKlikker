@@ -1,0 +1,110 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #8C4B26;
+  display: flex;
+  height: 100vh;
+  color: white;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  color: black;
+}
+
+.sidebar h2 {
+  margin: 0 0 1rem;
+}
+
+.chat-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-user {
+  background-color: #f7c948;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: black;
+}
+
+.chat-user:hover {
+  background-color: #fbd768;
+}
+
+.chat-user.active {
+  background-color: #f4a300;
+  color: white;
+}
+
+.add-user,
+.home-button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  text-align: center;
+  background-color: #8C4B26;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+}
+
+.chat-window {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff7e6;
+  padding: 1rem;
+  color: black;
+}
+
+.messages {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 60%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  background-color: #eee;
+  color: black;
+}
+
+.message.right {
+  align-self: flex-end;
+  background-color: #f4a300;
+  color: white;
+}
+
+.input-area {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.input-area input {
+  flex-grow: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.input-area button {
+  background-color: #8C4B26;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

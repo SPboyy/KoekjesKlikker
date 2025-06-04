@@ -10,3 +10,30 @@
   padding: 20px;
   box-sizing: border-box;
 }
+.hoek-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;         /* vaste breedte */
+  height: 50px;        /* vaste hoogte (vierkant) */
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #28a745;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hoek-button:hover {
+  background-color: #218838;
+}
+
+.hoek-button img {
+  width: 60%;         /* schaal het plaatje binnen de knop */
+  height: 60%;
+  object-fit: contain;
+}
+
