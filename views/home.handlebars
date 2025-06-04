@@ -1,34 +1,51 @@
-<link rel="stylesheet" href="/stylesheets/home/home.css">
-<link rel="stylesheet" href="/stylesheets/home/Right.css">
-<link rel="stylesheet" href="/stylesheets/home/Left.css">
-<link rel="stylesheet" href="/stylesheets/home/Center.css">
-<div class="container">
-  {{> left }}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home</title>
+  <!-- Jouw bestaande CSS-bestanden voor home -->
+  <link rel="stylesheet" href="/stylesheets/home/home.css" />
+  <link rel="stylesheet" href="/stylesheets/home/Right.css" />
+  <link rel="stylesheet" href="/stylesheets/home/Left.css" />
+  <link rel="stylesheet" href="/stylesheets/home/Center.css" />
+</head>
+<body>
+  <div class="container">
+    {{> left }}
 
-  <div class="column center">
-    {{>center}}
-  </div>
+    <div class="column center">
+      {{> center }}
+    </div>
 
-  {{> right }}
-              <button class="hoek-button" id="btn-chat" >
-                <img src="images/chat.png" alt="Chat box" onclick="chatbox()">
-            </button>
-  <div id="popup">
-  <div class="popup-content">
-    <h2>Are you sure you want to rebirth?</h2>
-    <div class="button-container">
-      <button id="confirm-reincarnate-yes" style="margin-right: 10px;">Yes</button>
-      <button onclick="closePopup()">No</button>
+    {{> right }}
+
+    <!-- Jouw bestaande button in de rechterbovenhoek -->
+    <button class="hoek-button" id="btn-chat">
+      <img src="/images/chat.png" alt="Chat box" onclick="chatbox()" />
+    </button>
+
+    <!-- Jouw popup-divs etc. hieronder, blijft ongewijzigd -->
+    <div id="popup">
+      <div class="popup-content">
+        <h2>Are you sure you want to rebirth?</h2>
+        <div class="button-container">
+          <button id="confirm-reincarnate-yes" style="margin-right: 10px;">Yes</button>
+          <button onclick="closePopup()">No</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</script>
-<script src="/javascript/home/cookieclick.js"></script>
-<script src="/javascript/home/chatbox.js"></script>
-<script src="/javascript/home/popup.js"></script>
-<script src="/javascript/home/prestige.js"></script>
-<script src="/javascript/home/Delete.js"></script>
-<script src="/javascript/home/buyBuilding.js"></script>
-<script src="/javascript/home/audioControls.js"></script>
-<script src="/javascript/home/leaderboard.js"></script>
-<script src="/javascript/home/buyUpgrade.js"></script>
+
+  <!-- Jouw bestaande scripts voor de homepagina -->
+  <script src="/javascript/home/cookieclick.js"></script>
+  <script src="/javascript/home/chatbox.js"></script>  <!-- <<== Wijzig/voeg dit bestand toe -->
+  <script src="/javascript/home/popup.js"></script>
+  <script src="/javascript/home/prestige.js"></script>
+  <script src="/javascript/home/Delete.js"></script>
+  <script src="/javascript/home/buyBuilding.js"></script>
+  <script src="/javascript/home/audioControls.js"></script>
+  <script src="/javascript/home/leaderboard.js"></script>
+  <script src="/javascript/home/buyUpgrade.js"></script>
+</body>
+</html>

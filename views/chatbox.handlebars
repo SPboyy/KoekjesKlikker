@@ -1,12 +1,28 @@
- <link rel="stylesheet" href="/stylesheets/chat.css">
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat</title>
+  <!-- Verwijzing naar de chat-stylesheet -->
+  <link rel="stylesheet" href="/stylesheets/chat.css" />
+</head>
+<body>
   <div class="chat-window">
-    <div class="messages">
-<h2>Global chat</h2>
+    <div class="messages" id="chatBox">
+      <h2>Global chat</h2>
+      <!-- Alle opgeslagen berichten (uit localStorage) verschijnen hier -->
     </div>
+
     <div class="input-area">
-         <a class="home-button" href="/">⬅️ Back to game</a>
-      <input type="text" placeholder="Type a message..." />
-      <button>&gt;</button>
+      <a class="home-button" href="/">⬅️ Back to game</a>
+      <button id="clearButton" class="clear-button">✖ Clear chat</button>
+      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" />
+      <button id="sendButton">&gt;</button>
     </div>
   </div>
+
+  <!-- JavaScript voor chatfunctionaliteit, incl. sessiekleur -->
   <script src="/javascript/chat.js"></script>
+</body>
+</html>
