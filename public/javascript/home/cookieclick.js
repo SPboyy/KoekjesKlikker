@@ -1,11 +1,14 @@
+
 document.addEventListener('DOMContentLoaded', () => {
   const cookieCountEl = document.getElementById('cookieCount');
   const cpsDisplayEl = document.getElementById('cpsDisplay');
   const fingerBtn = document.getElementById('fingerButton');
   const cookiesPerClickDisplay = document.getElementById('cookiesPerClickDisplay');
 
+
   let cookiesPerClick = 0.5;
   let cookieCount = 0;
+  let clickCount = 0;
 
   function updateStats() {
     fetch('/get-stats')
@@ -16,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cpsDisplayEl.textContent = data.cps;
       })
       .catch(err => console.error('Error fetching stats:', err));
+      
   }
 
   setInterval(updateStats, 2000);
@@ -33,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('click', (e) => {
   if (e.target.closest('#cookieClickBtn')) {
     console.log("Koekje geklikt, voeg", cookiesPerClick, "cookies toe");
+    clickCount++;
     fetch('/add-cookie', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

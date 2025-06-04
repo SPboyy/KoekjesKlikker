@@ -19,7 +19,8 @@ let gameState = {
         { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
         { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
     ],
-    lastUpdate: Date.now()
+    lastUpdate: Date.now(),
+    clickCounter:0
 };
 
 // Load save
@@ -104,6 +105,7 @@ router.post('/add-cookie', (req, res) => {
 
     gameState.currentCookies += addAmount;
     gameState.totalCookiesEver += addAmount;
+    gameState.clickCounter += 0.5;
 
     res.json({
         total: gameState.currentCookies.toFixed(1),
