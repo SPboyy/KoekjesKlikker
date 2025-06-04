@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentCookiesPerClickPrice = 10;
     let currentCookieCount = 0;
 
-    function updateStats() {
+    function updateStats(initialLoad = false) {
         fetch('/get-stats')
             .then(res => {
                 if (!res.ok) {
@@ -21,31 +21,45 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 currentCookieCount = parseFloat(data.total);
-                cookieCountEl.textContent = currentCookieCount.toFixed(1);
-                cpsDisplayEl.textContent = parseFloat(data.cps).toFixed(1);
-                
                 currentCookiesPerClick = parseFloat(data.cookiesPerClick);
-                cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`; // Gebruik .toFixed(0) of .toFixed(1) hier
-                
                 currentCookiesPerClickPrice = parseFloat(data.cookiesPerClickPrice);
-                fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
+
+                if (cookieCountEl) {
+                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
+                }
+
+                if (cpsDisplayEl) {
+                    cpsDisplayEl.textContent = parseFloat(data.cps).toFixed(1);
+                }
+
+                if (cookiesPerClickDisplay) {
+                    cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
+                }
+
+                if (fingerPriceDisplay) {
+                    fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
+                }
 
                 if (fingerBtn) {
                     fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
+
+                    // Voeg eventlistener alleen toe bij eerste keer laden
+                    if (initialLoad && !fingerBtn.dataset.listenerAttached) {
+                        attachFingerButtonListener();
+                        fingerBtn.dataset.listenerAttached = "true";
+                    }
+                }
+
+                if (initialLoad && mainCookieBtn && !mainCookieBtn.dataset.listenerAttached) {
+                    attachMainCookieButtonListener();
+                    mainCookieBtn.dataset.listenerAttached = "true";
                 }
             })
             .catch(err => console.error('Error fetching stats:', err));
     }
 
-    setInterval(updateStats, 2000);
-
-    if (fingerBtn) {
+    function attachFingerButtonListener() {
         fingerBtn.addEventListener('click', () => {
-            if (currentCookieCount < currentCookiesPerClickPrice) {
-                alert('Niet genoeg koekjes om deze upgrade te kopen!');
-                return;
-            }
-
             fetch('/upgrade-cookies-per-click', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -54,7 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => {
                 if (!res.ok) {
                     if (res.status === 400) {
-                        return res.json().then(errorData => { throw new Error(errorData.error); });
+                        return res.json().then(errorData => {
+                            alert(errorData.error);
+                            throw new Error(errorData.error);
+                        });
                     }
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
@@ -62,32 +79,37 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(data => {
                 currentCookiesPerClick = parseFloat(data.newCookiesPerClick);
-                cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`; // Gebruik .toFixed(0) of .toFixed(1) hier
-                
                 currentCookiesPerClickPrice = parseFloat(data.newCookiesPerClickPrice);
-                fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
-
                 currentCookieCount = parseFloat(data.totalCookies);
-                cookieCountEl.textContent = currentCookieCount.toFixed(1);
-                
+
+                if (cookiesPerClickDisplay) {
+                    cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
+                }
+
+                if (fingerPriceDisplay) {
+                    fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
+                }
+
+                if (cookieCountEl) {
+                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
+                }
+
                 if (fingerBtn) {
                     fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
                 }
+
                 console.log("Cookies per click succesvol geüpgraded naar:", currentCookiesPerClick);
             })
             .catch(err => console.error('Fout bij upgraden cookies per click:', err.message));
         });
-    } else {
-        console.warn("fingerButton met ID 'fingerButton' niet gevonden in de DOM (controleer ID in HTML)");
     }
 
-    if (mainCookieBtn) {
+    function attachMainCookieButtonListener() {
         mainCookieBtn.addEventListener('click', () => {
             fetch('/add-cookie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // GEEN amount meer sturen. Server moet de hoeveelheid bepalen.
-                body: JSON.stringify({}) // Stuur een leeg object of helemaal geen body als je wilt
+                body: JSON.stringify({})
             })
             .then(res => {
                 if (!res.ok) {
@@ -96,17 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                // Client update de UI met data van de server
-                cookieCountEl.textContent = parseFloat(data.total).toFixed(1);
-                currentCookieCount = parseFloat(data.total); // Update de lokale client state
+                currentCookieCount = parseFloat(data.total);
+
+                if (cookieCountEl) {
+                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
+                }
+
                 if (fingerBtn) {
                     fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
                 }
             })
             .catch(err => console.error('Error adding cookie:', err));
         });
-    } else {
-        console.warn("Hoofd 'cookieClickBtn' niet gevonden in de DOM (controleer ID in HTML)");
     }
 
     updateStats();
