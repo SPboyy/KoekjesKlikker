@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const cookieCountEl = document.getElementById('cookieCount');
     const cpsDisplayEl = document.getElementById('cpsDisplay');
@@ -14,9 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStats(initialLoad = false) {
         fetch('/get-stats')
             .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 return res.json();
             })
             .then(data => {
@@ -24,167 +21,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentCookiesPerClick = parseFloat(data.cookiesPerClick);
                 currentCookiesPerClickPrice = parseFloat(data.cookiesPerClickPrice);
 
-                if (cookieCountEl) {
-                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
-                }
-
-                if (cpsDisplayEl) {
-                    cpsDisplayEl.textContent = parseFloat(data.cps).toFixed(1);
-                }
-
-                if (cookiesPerClickDisplay) {
-                    cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
-                }
-
-                if (fingerPriceDisplay) {
-                    fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
-                }
+                if (cookieCountEl) cookieCountEl.textContent = currentCookieCount.toFixed(1);
+                if (cpsDisplayEl) cpsDisplayEl.textContent = parseFloat(data.cps).toFixed(1);
+                if (cookiesPerClickDisplay) cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
+                if (fingerPriceDisplay) fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
 
                 if (fingerBtn) {
                     fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
 
-                    // Voeg eventlistener alleen toe bij eerste keer laden
                     if (initialLoad && !fingerBtn.dataset.listenerAttached) {
-                        attachFingerButtonListener();
+                        fingerBtn.addEventListener('click', upgradeCookiesPerClick);
                         fingerBtn.dataset.listenerAttached = "true";
                     }
                 }
 
                 if (initialLoad && mainCookieBtn && !mainCookieBtn.dataset.listenerAttached) {
-                    attachMainCookieButtonListener();
+                    mainCookieBtn.addEventListener('click', addCookie);
                     mainCookieBtn.dataset.listenerAttached = "true";
                 }
             })
             .catch(err => console.error('Error fetching stats:', err));
     }
 
-    function attachFingerButtonListener() {
-        fingerBtn.addEventListener('click', () => {
-            fetch('/upgrade-cookies-per-click', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            })
-            .then(res => {
-                if (!res.ok) {
-                    if (res.status === 400) {
-                        return res.json().then(errorData => {
-                            alert(errorData.error);
-                            throw new Error(errorData.error);
-                        });
-                    }
-                    throw new Error(`HTTP error! status: ${res.status}`);
+    function upgradeCookiesPerClick() {
+        fetch('/upgrade-cookies-per-click', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        })
+        .then(res => {
+            if (!res.ok) {
+                if (res.status === 400) {
+                    return res.json().then(err => {
+                        alert(err.error);
+                        throw new Error(err.error);
+                    });
                 }
-                return res.json();
-            })
-            .then(data => {
-                currentCookiesPerClick = parseFloat(data.newCookiesPerClick);
-                currentCookiesPerClickPrice = parseFloat(data.newCookiesPerClickPrice);
-                currentCookieCount = parseFloat(data.totalCookies);
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            currentCookiesPerClick = parseFloat(data.newCookiesPerClick);
+            currentCookiesPerClickPrice = parseFloat(data.newCookiesPerClickPrice);
+            currentCookieCount = parseFloat(data.totalCookies);
 
-                if (cookiesPerClickDisplay) {
-                    cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
-                }
+            if (cookiesPerClickDisplay) cookiesPerClickDisplay.textContent = `Cookies per click ${currentCookiesPerClick.toFixed(0)}`;
+            if (fingerPriceDisplay) fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
+            if (cookieCountEl) cookieCountEl.textContent = currentCookieCount.toFixed(1);
+            if (fingerBtn) fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
 
-                if (fingerPriceDisplay) {
-                    fingerPriceDisplay.textContent = `Prijs: ${currentCookiesPerClickPrice.toFixed(0)}`;
-                }
-
-                if (cookieCountEl) {
-                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
-                }
-
-                if (fingerBtn) {
-                    fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
-                }
-
-                console.log("Cookies per click succesvol geüpgraded naar:", currentCookiesPerClick);
-            })
-            .catch(err => console.error('Fout bij upgraden cookies per click:', err.message));
-        });
+            console.log("Cookies per click succesvol geüpgraded naar:", currentCookiesPerClick);
+        })
+        .catch(err => console.error('Fout bij upgraden cookies per click:', err.message));
     }
 
-    function attachMainCookieButtonListener() {
-        mainCookieBtn.addEventListener('click', () => {
-            fetch('/add-cookie', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                currentCookieCount = parseFloat(data.total);
-
-                if (cookieCountEl) {
-                    cookieCountEl.textContent = currentCookieCount.toFixed(1);
-                }
-
-                if (fingerBtn) {
-                    fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
-                }
-            })
-            .catch(err => console.error('Error adding cookie:', err));
-        });
+    function addCookie() {
+        fetch('/add-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: currentCookiesPerClick })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            currentCookieCount = parseFloat(data.total);
+            if (cookieCountEl) cookieCountEl.textContent = currentCookieCount.toFixed(1);
+            if (fingerBtn) fingerBtn.disabled = currentCookieCount < currentCookiesPerClickPrice;
+        })
+        .catch(err => console.error('Error adding cookie:', err));
     }
 
-    updateStats();
-  const cookieCountEl = document.getElementById('cookieCount');
-  const cpsDisplayEl = document.getElementById('cpsDisplay');
-  const fingerBtn = document.getElementById('fingerButton');
-  const cookiesPerClickDisplay = document.getElementById('cookiesPerClickDisplay');
-
-
-  let cookiesPerClick = 0.5;
-  let cookieCount = 0;
-  let clickCount = 0;
-
-  function updateStats() {
-    fetch('/get-stats')
-      .then(res => res.json())
-      .then(data => {
-        cookieCount = data.total;
-        cookieCountEl.textContent = data.total;
-        cpsDisplayEl.textContent = data.cps;
-      })
-      .catch(err => console.error('Error fetching stats:', err));
-      
-  }
-
-  setInterval(updateStats, 2000);
-
-  if (fingerBtn) {
-  fingerBtn.addEventListener('click', () => {
-    cookiesPerClick *= 2;
-    console.log("Finger clicked, cookiesPerClick is nu:", cookiesPerClick*2);
-    cookiesPerClickDisplay.textContent = `Cookies per click ${cookiesPerClick*2}`;
-  });
-} else {
-  console.warn("fingerButton niet gevonden in de DOM");
-}
-
-document.addEventListener('click', (e) => {
-  if (e.target.closest('#cookieClickBtn')) {
-    console.log("Koekje geklikt, voeg", cookiesPerClick, "cookies toe");
-    clickCount++;
-    fetch('/add-cookie', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: cookiesPerClick })
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Response van server:", data);
-      cookieCount = data.total;
-      cookieCountEl.textContent = cookieCount;
-    })
-    .catch(err => console.error('Error adding cookie:', err));
-  }
-});
-
-  updateStats();
+    // Eerste keer laden en starten
+    updateStats(true);
+    setInterval(() => updateStats(false), 2000);
 });
