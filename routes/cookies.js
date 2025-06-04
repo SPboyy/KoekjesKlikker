@@ -65,9 +65,8 @@ function updatePassiveCookies() {
     gameState.lastUpdate = now;
 }
 
-// Passive income + CPS update
 setInterval(() => {
-    updatePassiveCookies();
+    updatePassiveCookies()/2;
     gameState.cps = calculateCPS();
 }, 500);
 
@@ -172,6 +171,88 @@ router.post('/add-cookie', (req, res) => {
         cps: gameState.cps.toFixed(1)
     });
 });
+router.post('/buy-upgrade/:id/:type', (req, res) => {
+    const id = parseInt(req.params.id);
+    const type = req.params.type; // 'multiplier' of 'discount'
+    const building = gameState.buildings.find(b => b.id === id);
+
+    if (!building) {
+        return res.status(404).json({ error: "Building not found" });
+    }
+
+    let price = type === 'multiplier' ? 50 : 75;
+
+    if (gameState.currentCookies < price) {
+        return res.status(400).json({ error: "Not enough cookies for upgrade." });
+    }
+
+    gameState.currentCookies -= price;
+
+    if (type === 'multiplier') {
+        building.cps *= 2;
+    } else if (type === 'discount') {
+        building.price = Math.floor(building.price * 0.9);
+    } else {
+        return res.status(400).json({ error: "Invalid upgrade type." });
+    }
+
+    gameState.cps = calculateCPS();
+
+    return res.status(200).json({
+        message: "Upgrade purchased",
+        buildingId: building.id,
+        newPrice: building.price,
+        newCps: building.cps,
+        totalCookies: gameState.currentCookies.toFixed(1),
+        cps: gameState.cps.toFixed(1)
+    });
+});
+
+router.post('/buy-upgrade/:id/:type', (req, res) => {
+    const userId = req.session.userId;
+    const gameState = loadGameState();
+    const player = gameState.activePlayers.find(p => p.userId === userId);
+
+    if (!player) return res.status(404).json({ error: 'Player not found' });
+
+    const id = parseInt(req.params.id);
+    const type = req.params.type;
+
+    const upgrade = player.upgrades?.[id]?.[type];
+    if (!upgrade) return res.status(400).json({ error: 'Invalid upgrade type or building' });
+
+    const price = upgrade.price;
+    if (player.totalCookies < price) {
+        return res.status(400).json({ error: 'Not enough cookies' });
+    }
+
+    // Koop de upgrade
+    player.totalCookies -= price;
+    upgrade.level = (upgrade.level || 1) + 1;
+
+    if (type === 'multiplier') {
+        // Multiplier groeit exponentieel
+        upgrade.multiplier = (upgrade.multiplier || 1) * 2;
+    } else if (type === 'discount') {
+        // 10% korting op buildings
+        const building = player.buildings[id];
+        building.price = Math.floor(building.price * 0.9);
+    }
+
+    // Verhoog de upgradeprijs exponentieel
+    upgrade.price = Math.floor(upgrade.price * 10);
+
+    // Recalculate CPS
+    player.cps = calculateCPS(player);
+
+    saveGameState(gameState);
+
+    res.json({
+        totalCookies: player.totalCookies,
+        cps: player.cps,
+        newPrice: upgrade.price
+    });
+});
 
 router.post('/buy-building/:id', (req, res) => {
     const id = parseInt(req.params.id);
@@ -183,7 +264,7 @@ router.post('/buy-building/:id', (req, res) => {
     }
     if (gameState.currentCookies < building.price) {
         return res.status(400).json({
-            error: `Not enough cookies. Needed: ${building.price}, Have: ${gameState.currentCookies}`
+            error: `Niet genoeg koekjes`
         });
     }
     gameState.currentCookies -= building.price;
@@ -254,13 +335,13 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
     if (gameState.currentCookies < gameState.cookiesPerClickPrice) {
         console.warn(`DEBUG: [upgrade-cookies-per-click] Not enough cookies for ${username}. Needed: ${gameState.cookiesPerClickPrice}, Have: ${gameState.currentCookies.toFixed(1)}`);
         return res.status(400).json({
-            error: `Not enough cookies. Needed: ${gameState.cookiesPerClickPrice}, Have: ${gameState.currentCookies.toFixed(1)}`
+            error: `Not enough cookies.`
         });
     }
 
     // Trek de prijs af en verdubbel de cookiesPerClick
     gameState.currentCookies -= gameState.cookiesPerClickPrice;
-    gameState.cookiesPerClick = (gameState.cookiesPerClick || 1); // Hier verdubbelt het
+    gameState.cookiesPerClick *= 2; // Hier verdubbelt het
     gameState.cookiesPerClickPrice = Math.floor(gameState.cookiesPerClickPrice * 1.15); // Verhoog de prijs voor de volgende upgrade
 
     console.log(`DEBUG: [upgrade-cookies-per-click] After upgrade. Cookies: ${gameState.currentCookies.toFixed(1)}, New CPC: ${gameState.cookiesPerClick.toFixed(1)}, New Price: ${gameState.cookiesPerClickPrice.toFixed(0)}`);
@@ -296,15 +377,15 @@ router.post('/delete-progress', (req, res) => {
         return res.status(401).json({ error: "Niet ingelogd" });
     }
 
-    // Reset gameState in RAM, inclusief cookiesPerClick en cookiesPerClickPrice
+    // Reset gameState
     gameState = {
         currentCookies: 0,
         totalCookiesEver: 0,
         cps: 0,
         prestigeLevel: 0,
         heavenlyChips: 0,
-        cookiesPerClick: 1, // Reset deze ook naar 1
-        cookiesPerClickPrice: 10, // Reset deze ook naar 10
+        cookiesPerClick: 1,
+        cookiesPerClickPrice: 10,
         buildings: [
             { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
             { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
@@ -313,41 +394,43 @@ router.post('/delete-progress', (req, res) => {
         lastUpdate: Date.now()
     };
 
-    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
-        if (err) {
-            console.error("DEBUG: [delete-progress] Fout bij het opslaan van gameState naar bestand:", err);
+    // First update the database
+    db.run(`
+        UPDATE player
+        SET
+            amountOfCookies = 0,
+            amountOfRebirths = 0,
+            amountOfUpgrades = 0,
+            amountOfRebirthTokens = 0,
+            cookiesSpend = 0,
+            totalAmountOfCookies = 0,
+            unlockedPrestigeNodes = '[]',
+            cookiesPerClick = 1,
+            cookiesPerClickPrice = 10,
+            achAmount1 = 0,
+            achAmount100 = 0,
+            achAmount1000 = 0,
+            achAmount10000 = 0,
+            achAmount100000 = 0,
+            achAmount1000000 = 0,
+            achAmount10000000 = 0,
+            achAmount100000000 = 0,
+            achAmount1000000000 = 0
+        WHERE username = ?
+    `, [username], function(dbErr) {
+        if (dbErr) {
+            console.error("Database reset error:", dbErr);
+            return res.status(500).json({ error: "Database reset failed" });
         }
-        console.log("DEBUG: [delete-progress] gameState.json succesvol gereset.");
 
-        db.run(`
-            UPDATE player
-            SET
-                amountOfCookies = 0,
-                amountOfRebirths = 0,
-                amountOfUpgrades = 0,  -- Correcte reset, geen +1 of commentaar
-                amountOfRebirthTokens = 0,
-                cookiesSpend = 0,
-                totalAmountOfCookies = 0,
-                unlockedPrestigeNodes = '[]',
-                cookiesPerClick = 1,     -- Reset deze ook in de DB
-                cookiesPerClickPrice = 10, -- Reset deze ook in de DB
-                achAmount1 = 0,
-                achAmount100 = 0,
-                achAmount1000 = 0,
-                achAmount10000 = 0,
-                achAmount100000 = 0,
-                achAmount1000000 = 0,
-                achAmount10000000 = 0,
-                achAmount100000000 = 0,
-                achAmount1000000000 = 0
-            WHERE username = ?
-        `, [username], function(dbErr) {
-            if (dbErr) {
-                console.error("DEBUG: [delete-progress] Fout bij het resetten van spelerprogressie in database:", dbErr);
-                return res.status(500).json({ error: "Kon progressie in de database niet resetten." });
+        // Then save to file
+        fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+            if (err) {
+                console.error("File save error:", err);
+                return res.status(500).json({ error: "File save failed but database was reset" });
             }
-            console.log(`DEBUG: [delete-progress] Databaseprogressie voor gebruiker ${username} succesvol gereset.`);
-            res.status(200).json({ message: "Progressie succesvol gereset (inclusief database)." });
+            
+            res.status(200).json({ message: "Progress reset successfully" });
         });
     });
 });
@@ -406,9 +489,9 @@ router.post('/prestigeSuccessfully', (req, res) => {
 
 router.get('/api/leaderboard', (req, res) => {
     db.all(`
-        SELECT username, amountOfCookies 
-        FROM player 
-        ORDER BY amountOfCookies DESC 
+        SELECT username, amountOfCookies
+        FROM player
+        ORDER BY amountOfCookies DESC
         LIMIT 50
     `, (err, rows) => {
         if (err) {
@@ -418,9 +501,16 @@ router.get('/api/leaderboard', (req, res) => {
         while (paddedRows.length < 3) {
             paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
         }
+
+        // Convert amountOfCookies to an integer for display
+        const processedRows = paddedRows.map(row => ({
+            username: row.username,
+            amountOfCookies: Math.floor(row.amountOfCookies) // Use Math.floor to get an integer
+        }));
+
         res.json({
-            topPlayers: paddedRows.slice(0, 3),
-            fullLeaderboard: rows
+            topPlayers: processedRows.slice(0, 3),
+            fullLeaderboard: processedRows // Use processedRows for the full leaderboard as well
         });
     });
 });
