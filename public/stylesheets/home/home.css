@@ -19,7 +19,7 @@
   padding: 0;
   border: none;
   border-radius: 8px;
-  background-color: #28a745;
+  background-color: #cf6712;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -28,12 +28,20 @@
 }
 
 .hoek-button:hover {
-  background-color: #218838;
+  background-color: #785805;
 }
 
 .hoek-button img {
   width: 60%;         /* schaal het plaatje binnen de knop */
   height: 60%;
   object-fit: contain;
+}
+.message.left {
+  align-self: flex-start;
+  background-color: #eee;
+}
+
+.message.right {
+  align-self: flex-end;
 }
 
