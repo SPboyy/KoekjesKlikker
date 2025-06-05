@@ -76,6 +76,7 @@ setInterval(() => {
     fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
         if (err) console.error("Error saving game:", err);
     });
+    
 }, 10000);
 
 // Shutdown handling
