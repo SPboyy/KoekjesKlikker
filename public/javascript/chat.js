@@ -85,16 +85,13 @@ document.addEventListener('DOMContentLoaded', function () {
     input.focus();
   }
 
-  // Chat leegmaken
   function clearChat() {
-    while (chatBox.children.length > 1) {
-      chatBox.removeChild(chatBox.lastChild);
-    }
+    chatBox.innerHTML = ''; 
     localStorage.removeItem(STORAGE_KEY);
     input.focus();
   }
 
-  // Initialiseren
+
   loadMessagesFromStorage();
   sendButton.addEventListener('click', addMessage);
   input.addEventListener('keydown', function (e) {
