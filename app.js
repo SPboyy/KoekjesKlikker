@@ -85,30 +85,96 @@ app.use("/api/achievements", require("./routes/achievements"));
 
 // Home route + leaderboard
 app.get("/", (req, res) => {
-  db.all(`
-    SELECT username, amountOfCookies 
-    FROM player 
-    ORDER BY amountOfCookies DESC
-    LIMIT 50
-  `, (err, rows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).render("errors/500");
-    }
+    const userId = req.session.userId; // Gebruik consistent userId
 
-    const paddedRows = [...rows];
-    while (paddedRows.length < 3) {
-      paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
-    }
+    db.get(`SELECT * FROM player WHERE id = ?`, [userId], (playerErr, playerRow) => {
+        if (playerErr) {
+            console.error("❌ Fout bij ophalen spelerdata voor home route:", playerErr);
+            return res.status(500).render("errors/500");
+        }
 
-    res.render("home", {
-      username: req.session.username,
-      userId: req.session.userId,
-      topPlayers: paddedRows.slice(0, 3),
-      fullLeaderboard: rows,
-      currentUser: req.session.username
+        let koekies = 0;
+        let cps = 0;
+        let cookiesPerClick = 1;
+        let cookiesPerClickPrice = 10;
+        let buildingsData = [];
+        let upgradesData = [];
+
+        if (playerRow) {
+            koekies = playerRow.amountOfCookies;
+            cps = playerRow.cookiesPerSecond;
+            cookiesPerClick = playerRow.cookiesPerClick;
+            cookiesPerClickPrice = playerRow.cookiesPerClickPrice;
+
+            // Gebruik de helperfunctie voor het parsen en initialiseren
+            ({ buildings: buildingsData, upgrades: upgradesData } = initializePlayerGameData(playerRow));
+
+        } else {
+            console.log("ℹ️ Geen spelerdata gevonden (niet ingelogd of nieuwe sessie). Gebruik standaardwaarden en initialiseer items.");
+            // Voor niet-ingelogde gebruikers of nieuwe sessies, geef standaardwaarden mee
+            buildingsData = initialBuildings.map(b => ({ ...b, amount: 0, price: b.price, cps: b.cps }));
+            upgradesData = initialUpgrades.map(u => ({ ...u, level: 0, price: u.price }));
+        }
+
+        // Nu de leaderboard data ophalen
+        db.all(`
+            SELECT username, amountOfCookies
+            FROM player
+            ORDER BY amountOfCookies DESC
+            LIMIT 50
+        `, (leaderboardErr, rows) => {
+            if (leaderboardErr) {
+                console.error("❌ Fout bij ophalen leaderboard data:", leaderboardErr);
+                // Render home met lege leaderboard als er een fout is
+                return res.status(500).render("home", {
+                    username: req.session.username,
+                    userId: req.session.userId,
+                    koekies: koekies,
+                    cps: cps,
+                    cookiesPerClick: cookiesPerClick,
+                    cookiesPerClickPrice: cookiesPerClickPrice,
+                    buildings: buildingsData,
+                    upgrades: upgradesData,
+                    topPlayers: [],
+                    fullLeaderboard: [],
+                    currentUser: req.session.username
+                });
+            }
+
+            const paddedRows = [...rows];
+            while (paddedRows.length < 3) {
+                paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
+            }
+
+            console.log("DEBUG: Volledige Data naar Handlebars:", {
+                username: req.session.username,
+                userId: req.session.userId,
+                koekies: koekies,
+                cps: cps,
+                cookiesPerClick: cookiesPerClick,
+                cookiesPerClickPrice: cookiesPerClickPrice,
+                buildings: buildingsData,
+                upgrades: upgradesData,
+                topPlayers: paddedRows.slice(0, 3),
+                fullLeaderboard: rows,
+                currentUser: req.session.username
+            });
+
+            res.render("home", {
+                username: req.session.username,
+                userId: req.session.userId,
+                koekies: koekies,
+                cps: cps,
+                cookiesPerClick: cookiesPerClick,
+                cookiesPerClickPrice: cookiesPerClickPrice,
+                buildings: buildingsData,
+                upgrades: upgradesData,
+                topPlayers: paddedRows.slice(0, 3),
+                fullLeaderboard: rows,
+                currentUser: req.session.username
+            });
+        });
     });
-  });
 });
 
 // API: Get stats
