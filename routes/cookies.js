@@ -68,7 +68,25 @@ try {
 function calculateCPS() {
     return gameState.buildings.reduce((sum, b) => sum + b.amount * b.baseCps * b.multiplier, 0);
 }
+function buyUpgrade(id, type) {
+    fetch(`/buy-upgrade/${id}/${type}`, {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            showToast(data.error); // Je kunt ook gewoon alert(data.error) doen
+            return;
+        }
 
+        document.getElementById('cookieCount').textContent = data.totalCookies;
+        document.getElementById('cpsDisplay').textContent = data.cps;
+
+        // Eventueel DOM updaten met nieuwe prijs
+        console.log(`Upgrade ${type} gekocht voor building ${id}`);
+    })
+    .catch(err => console.error('Upgrade error:', err));
+}
 function updatePassiveCookies() {
     const now = Date.now();
     const seconds = (now - gameState.lastUpdate) / 1000;
