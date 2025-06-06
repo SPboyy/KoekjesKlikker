@@ -145,8 +145,7 @@ router.post('/add-cookie', (req, res) => {
     // De hoeveelheid die wordt toegevoegd, is nu direct afkomstig van de server's gameState
     const addAmount = gameState.cookiesPerClick; // <<-- HIER IS DE BELANGRIJKE VERANDERING
 
-    console.log(`DEBUG: [add-cookie] Request received. Adding: ${addAmount}. Current cookies BEFORE add: ${gameState.currentCookies.toFixed(1)}`);
-
+    
     if (isNaN(addAmount) || addAmount <= 0) { // Dit zou nu niet meer getriggerd moeten worden met addAmount=gameState.cookiesPerClick
         console.warn(`DEBUG: [add-cookie] Invalid amount received/determined: ${addAmount}`);
         return res.status(400).json({ error: "Ongeldig aantal cookies om toe te voegen" });
@@ -165,8 +164,6 @@ router.post('/add-cookie', (req, res) => {
         `, [gameState.amountOfCookies, gameState.totalAmountOfCookies, username], function(dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [add-cookie] DB error saving cookies after click:", dbErr);
-            } else {
-                console.log(`DEBUG: [add-cookie] Cookies saved to DB for ${username}. Current: ${gameState.amountOfCookies.toFixed(1)}, Total Ever: ${gameState.totalAmountOfCookies.toFixed(1)}`);
             }
         });
     }

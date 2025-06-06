@@ -10,6 +10,7 @@ function showEvent(templateId) {
     clearTimeout(eventTimeout);
   }
   eventTimeout = setTimeout(showNormal, 5000);
+  
 }
 
    function showChristmass(){
