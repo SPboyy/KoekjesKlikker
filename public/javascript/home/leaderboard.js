@@ -58,7 +58,7 @@ function renderRows(leaderboard) {
     <tr>
       <td>${i + 1}</td>
       <td>${player.username}</td>
-      <td>${player.amountOfCookies.toLocaleString()}</td>
+      <td>${player.totalAmountOfCookies.toLocaleString()}</td>
     </tr>
   `).join('');
 }

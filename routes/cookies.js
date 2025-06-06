@@ -491,9 +491,9 @@ router.post('/prestigeSuccessfully', (req, res) => {
 
 router.get('/api/leaderboard', (req, res) => {
     db.all(`
-        SELECT username, amountOfCookies
+        SELECT username, totalAmountOfCookies
         FROM player
-        ORDER BY amountOfCookies DESC
+        ORDER BY totalAmountOfCookies DESC
         LIMIT 50
     `, (err, rows) => {
         if (err) {
@@ -501,13 +501,13 @@ router.get('/api/leaderboard', (req, res) => {
         }
         const paddedRows = [...rows];
         while (paddedRows.length < 3) {
-            paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
+            paddedRows.push({ username: 'Niemand', totalAmountOfCookies: 0 });
         }
 
         // Convert amountOfCookies to an integer for display
         const processedRows = paddedRows.map(row => ({
             username: row.username,
-            amountOfCookies: Math.floor(row.amountOfCookies) // Use Math.floor to get an integer
+            totalAmountOfCookies: Math.floor(row.totalAmountOfCookies) // Use Math.floor to get an integer
         }));
 
         res.json({
