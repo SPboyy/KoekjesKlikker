@@ -7,22 +7,30 @@ const db = new sqlite3.Database('./DataBase.db');
 
 const gameStatePath = path.join(__dirname, '../gameState.json');
 
-// Initial game state in RAM
-let gameState = {
+const DEFAULT_GAME_STATE = {
     currentCookies: 0,
     totalCookiesEver: 0,
     cps: 0,
     prestigeLevel: 0,
     heavenlyChips: 0,
     buildings: [
-        { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-        { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
+        { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
+        { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
+        { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
+    ],
+    upgrades: [
+        { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
+        { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
+        { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
+        { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
+        { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
+        { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
     ],
     lastUpdate: Date.now()
 };
 
-// Load save
+let gameState = { ...DEFAULT_GAME_STATE };
+
 try {
     if (fs.existsSync(gameStatePath)) {
         const savedState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
@@ -31,46 +39,56 @@ try {
         const offlineCookies = (savedState.cps || 0) * timeDiff;
 
         gameState = {
+            ...DEFAULT_GAME_STATE,
             ...savedState,
             currentCookies: savedState.currentCookies + offlineCookies,
             totalCookiesEver: savedState.totalCookiesEver + offlineCookies,
-            lastUpdate: now
+            lastUpdate: now,
+            buildings: DEFAULT_GAME_STATE.buildings.map(b => ({
+                ...b,
+                ...(savedState.buildings.find(sb => sb.id === b.id) || {})
+            })),
+            upgrades: DEFAULT_GAME_STATE.upgrades.map(u => {
+                const savedUpgrade = savedState.upgrades.find(su => su.id === u.id) || {};
+                return {
+                    ...u,
+                    ...savedUpgrade,
+                    amount: savedUpgrade.amount || 0,
+                    purchased: savedUpgrade.amount > 0
+                };
+            })
         };
 
         console.log(`Loaded game state with ${offlineCookies.toFixed(1)} offline cookies`);
     }
-} catch (err) {
+} catch {
     console.log("No saved game state found, using defaults");
 }
 
 function calculateCPS() {
-    return gameState.buildings.reduce((sum, b) => sum + (b.amount * b.cps), 0);
+    return gameState.buildings.reduce((sum, b) => sum + b.amount * b.baseCps * b.multiplier, 0);
 }
 
 function updatePassiveCookies() {
     const now = Date.now();
     const seconds = (now - gameState.lastUpdate) / 1000;
     const generated = gameState.cps * seconds;
-
     gameState.currentCookies += generated;
     gameState.totalCookiesEver += generated;
     gameState.lastUpdate = now;
 }
 
-// Passive income + CPS update
 setInterval(() => {
-    updatePassiveCookies()/2;
+    updatePassiveCookies();
     gameState.cps = calculateCPS();
 }, 500);
 
-// Auto-save
 setInterval(() => {
-    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), err => {
         if (err) console.error("Error saving game:", err);
     });
 }, 10000);
 
-// Shutdown handling
 process.on('SIGINT', () => {
     fs.writeFileSync(gameStatePath, JSON.stringify(gameState));
     process.exit();
@@ -82,10 +100,9 @@ router.get('/', (req, res) => {
         koekies: gameState.currentCookies.toFixed(1),
         cps: gameState.cps.toFixed(1),
         buildings: gameState.buildings,
+        upgrades: gameState.upgrades,
         prestigeLevel: gameState.prestigeLevel,
-        heavenlyChips: gameState.heavenlyChips,
-        multiplierPrice: 50,
-        discountPrice: 75
+        heavenlyChips: gameState.heavenlyChips
     });
 });
 
@@ -99,23 +116,33 @@ router.post('/add-cookie', (req, res) => {
     });
 });
 
+router.get('/get-prices', (req, res) => {
+    // De functie getActivePlayer is niet gedefinieerd. Je moet dit vervangen of implementeren.
+    // const player = getActivePlayer(req);
+    // if (!player) return res.status(401).json({ error: 'Niet ingelogd' });
+
+    res.json({
+        upgrades: gameState.upgrades,
+        buildings: gameState.buildings
+    });
+});
+
 router.post('/buy-building/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const building = gameState.buildings.find(b => b.id === id);
 
-    if (!building) {
-        return res.status(404).json({ error: "Building not found" });
+    if (!building) return res.status(404).json({ error: "Building not found" });
+
+    const finalPrice = Math.floor(building.price * building.discount);
+
+    if (gameState.currentCookies < finalPrice) {
+        return res.status(400).json(`{ error: Not enough cookies. Needed: ${finalPrice}, Have: ${gameState.currentCookies} }`);
     }
 
-    if (gameState.currentCookies < building.price) {
-        return res.status(400).json({
-            error: `Not enough cookies. Needed: ${building.price}, Have: ${gameState.currentCookies}`
-        });
-    }
-
-    gameState.currentCookies -= building.price;
+    gameState.currentCookies -= finalPrice;
     building.amount += 1;
-    building.price = Math.floor(building.price * 1.15);
+    building.price = Math.floor(building.basePrice * Math.pow(1.15, building.amount) * building.discount);
+    gameState.cps = calculateCPS();
 
     res.json({
         success: true,
@@ -133,106 +160,58 @@ router.get('/get-stats', (req, res) => {
         cps: gameState.cps.toFixed(1)
     });
 });
-router.post('/buy-upgrade/:id/:type', (req, res) => {
-    const id = parseInt(req.params.id);
-    const type = req.params.type; // 'multiplier' of 'discount'
-    const building = gameState.buildings.find(b => b.id === id);
 
-    if (!building) {
-        return res.status(404).json({ error: "Building not found" });
-    }
-
-    let price = type === 'multiplier' ? 50 : 75;
-
-    if (gameState.currentCookies < price) {
-        return res.status(400).json({ error: "Not enough cookies for upgrade." });
-    }
-
-    gameState.currentCookies -= price;
-
-    if (type === 'multiplier') {
-        building.cps *= 2;
-    } else if (type === 'discount') {
-        building.price = Math.floor(building.price * 0.9);
-    } else {
-        return res.status(400).json({ error: "Invalid upgrade type." });
-    }
-
-    gameState.cps = calculateCPS();
-
-    return res.status(200).json({
-        message: "Upgrade purchased",
-        buildingId: building.id,
-        newPrice: building.price,
-        newCps: building.cps,
-        totalCookies: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1)
-    });
-});
-
-router.post('/buy-upgrade/:id/:type', (req, res) => {
-    const userId = req.session.userId;
-    const gameState = loadGameState();
-    const player = gameState.activePlayers.find(p => p.userId === userId);
-
-    if (!player) return res.status(404).json({ error: 'Player not found' });
-
-    const id = parseInt(req.params.id);
+router.post('/buy-upgrade/:buildingId/:type', (req, res) => {
+    const buildingId = parseInt(req.params.buildingId);
     const type = req.params.type;
 
-    const upgrade = player.upgrades?.[id]?.[type];
-    if (!upgrade) return res.status(400).json({ error: 'Invalid upgrade type or building' });
+    const upgrade = gameState.upgrades.find(u => 
+        u.buildingId === buildingId && u.type === type
+    );
 
-    const price = upgrade.price;
-    if (player.totalCookies < price) {
-        return res.status(400).json({ error: 'Not enough cookies' });
+    if (!upgrade) return res.status(404).json({ error: "Upgrade not found" });
+
+    if (gameState.currentCookies < upgrade.price) {
+        return res.status(400).json({ 
+            error: "Not enough cookies", 
+            required: upgrade.price, 
+            current: gameState.currentCookies 
+        });
     }
 
-    // Koop de upgrade
-    player.totalCookies -= price;
-    upgrade.level = (upgrade.level || 1) + 1;
+    const building = gameState.buildings.find(b => b.id === buildingId);
+    if (!building) return res.status(404).json({ error: "Building not found" });
 
-    if (type === 'multiplier') {
-        // Multiplier groeit exponentieel
-        upgrade.multiplier = (upgrade.multiplier || 1) * 2;
-    } else if (type === 'discount') {
-        // 10% korting op buildings
-        const building = player.buildings[id];
-        building.price = Math.floor(building.price * 0.9);
+    gameState.currentCookies -= upgrade.price;
+    upgrade.amount = (upgrade.amount || 0) + 1;
+    upgrade.purchased = true;
+    upgrade.price = Math.floor(upgrade.price * 1.5);
+
+    if (type === "multiplier") {
+        building.multiplier *= upgrade.effect;
+    } else if (type === "discount") {
+        building.discount = Math.max(0.1, building.discount * upgrade.effect);
     }
 
-    // Verhoog de upgradeprijs exponentieel
-    upgrade.price = Math.floor(upgrade.price * 10);
-
-    // Recalculate CPS
-    player.cps = calculateCPS(player);
-
-    saveGameState(gameState);
+    building.cps = building.baseCps * building.multiplier;
+    building.price = Math.floor(building.basePrice * Math.pow(1.15, building.amount) * building.discount);
+    gameState.cps = calculateCPS();
 
     res.json({
-        totalCookies: player.totalCookies,
-        cps: player.cps,
-        newPrice: upgrade.price
+        success: true,
+        currentCookies: gameState.currentCookies.toFixed(1),
+        cps: gameState.cps.toFixed(1),
+        building,
+        upgrade,
+        buildings: gameState.buildings,
+        upgrades: gameState.upgrades
     });
 });
 
-
 router.post('/delete-progress', (req, res) => {
-    gameState = {
-        currentCookies: 0,
-        totalCookiesEver: 0,
-        cps: 0,
-        prestigeLevel: 0,
-        heavenlyChips: 0,
-        buildings: [
-            { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-            { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-            { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
-        ],
-        lastUpdate: Date.now()
-    };
+    gameState = { ...DEFAULT_GAME_STATE, lastUpdate: Date.now() };
 
-    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), err => {
         if (err) {
             console.error("error:", err);
             return res.status(500).json({ error: "couldn't reset game state" });
@@ -243,27 +222,25 @@ router.post('/delete-progress', (req, res) => {
 });
 
 router.get('/api/leaderboard', (req, res) => {
-  db.all(`
-    SELECT username, amountOfCookies 
-    FROM player 
-    ORDER BY amountOfCookies DESC 
-    LIMIT 50
-  `, (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+    db.all(`
+        SELECT username, amountOfCookies 
+        FROM player 
+        ORDER BY amountOfCookies DESC 
+        LIMIT 50`
+    , (err, rows) => {
+        if (err) return res.status(500).json({ error: "Database error" });
 
-    // Vul top 3 aan als er minder dan 3 spelers zijn
-    const paddedRows = [...rows];
-    while (paddedRows.length < 3) {
-      paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
-    }
+        const paddedRows = [...rows];
+        while (paddedRows.length < 3) {
+            paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
+        }
 
-    res.json({
-      topPlayers: paddedRows.slice(0, 3),
-      fullLeaderboard: rows
+        res.json({
+            topPlayers: paddedRows.slice(0, 3),
+            fullLeaderboard: rows
+        });
     });
-  });
 });
 
+// ⚠️ Frontend-functie hoort hier niet thuis. Verplaats autoRefreshPrices naar een JS-bestand op de client.
 module.exports = router;
