@@ -8,8 +8,7 @@ const db = new sqlite3.Database('./DataBase.db'); // <-- Controleer dit pad
 
 const gameStatePath = path.join(__dirname, '../gameState.json'); // <-- Controleer dit pad
 
-// Initial game state in RAM
-let gameState = {
+const DEFAULT_GAME_STATE = {
     currentCookies: 0,
     totalCookiesEver: 0,
     cps: 0,
@@ -18,16 +17,26 @@ let gameState = {
     cookiesPerClick: 1, // Zorg dat de RAM initieel 1 is
     cookiesPerClickPrice: 10,
     buildings: [
-        { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-        { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-        { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
+        { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
+        { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
+        { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
+    ],
+    upgrades: [
+        { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
+        { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
+        { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
+        { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
+        { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
+        { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
     ],
     lastUpdate: Date.now(),
-    clickCounter:0
+    clickCounter: 0
 };
+
+let gameState = { ...DEFAULT_GAME_STATE };
+
 console.log("DEBUG: [Server Init] Initial gameState in RAM:", JSON.stringify(gameState));
 
-// Load save - Zorg dat cookiesPerClick en cookiesPerClickPrice ook correct worden geladen
 try {
     if (fs.existsSync(gameStatePath)) {
         const savedState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
@@ -36,12 +45,26 @@ try {
         const offlineCookies = (savedState.cps || 0) * timeDiff;
 
         gameState = {
+            ...DEFAULT_GAME_STATE,
             ...savedState,
             currentCookies: savedState.currentCookies + offlineCookies,
             totalCookiesEver: savedState.totalCookiesEver + offlineCookies,
             cookiesPerClick: savedState.cookiesPerClick || 1, // Default 1 als niet gevonden in file
             cookiesPerClickPrice: savedState.cookiesPerClickPrice || 10,
-            lastUpdate: now
+            lastUpdate: now,
+            buildings: DEFAULT_GAME_STATE.buildings.map(b => ({
+                ...b,
+                ...(savedState.buildings.find(sb => sb.id === b.id) || {})
+            })),
+            upgrades: DEFAULT_GAME_STATE.upgrades.map(u => {
+                const savedUpgrade = savedState.upgrades.find(su => su.id === u.id) || {};
+                return {
+                    ...u,
+                    ...savedUpgrade,
+                    amount: savedUpgrade.amount || 0,
+                    purchased: savedUpgrade.amount > 0
+                };
+            })
         };
         console.log(`DEBUG: [Server Init] Loaded gameState.json. Offline cookies: ${offlineCookies.toFixed(1)}`);
         console.log("DEBUG: [Server Init] GameState after loading file:", JSON.stringify(gameState));
@@ -54,7 +77,27 @@ try {
 }
 
 function calculateCPS() {
-    return gameState.buildings.reduce((sum, b) => sum + (b.amount * b.cps), 0);
+    return gameState.buildings.reduce((sum, b) => sum + b.amount * b.baseCps * b.multiplier, 0);
+}
+
+function buyUpgrade(id, type) {
+    fetch(`/buy-upgrade/${id}/${type}`, {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            showToast(data.error); // Je kunt ook gewoon alert(data.error) doen
+            return;
+        }
+
+        document.getElementById('cookieCount').textContent = data.totalCookies;
+        document.getElementById('cpsDisplay').textContent = data.cps;
+
+        // Eventueel DOM updaten met nieuwe prijs
+        console.log(`Upgrade ${type} gekocht voor building ${id}`);
+    })
+    .catch(err => console.error('Upgrade error:', err));
 }
 
 function updatePassiveCookies() {
@@ -67,19 +110,17 @@ function updatePassiveCookies() {
 }
 
 setInterval(() => {
-    updatePassiveCookies()/2;
+    updatePassiveCookies();
     gameState.cps = calculateCPS();
 }, 500);
 
 // Auto-save - Deze slaat de huidige gameState in RAM op, dus inclusief cookiesPerClick
 setInterval(() => {
-    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), err => {
         if (err) console.error("Error saving game:", err);
     });
-    
 }, 10000);
 
-// Shutdown handling
 process.on('SIGINT', () => {
     fs.writeFileSync(gameStatePath, JSON.stringify(gameState));
     process.exit();
@@ -173,86 +214,51 @@ router.post('/add-cookie', (req, res) => {
         cps: gameState.cps.toFixed(1)
     });
 });
-router.post('/buy-upgrade/:id/:type', (req, res) => {
-    const id = parseInt(req.params.id);
-    const type = req.params.type; // 'multiplier' of 'discount'
-    const building = gameState.buildings.find(b => b.id === id);
 
-    if (!building) {
-        return res.status(404).json({ error: "Building not found" });
-    }
-
-    let price = type === 'multiplier' ? 50 : 75;
-
-    if (gameState.currentCookies < price) {
-        return res.status(400).json({ error: "Not enough cookies for upgrade." });
-    }
-
-    gameState.currentCookies -= price;
-
-    if (type === 'multiplier') {
-        building.cps *= 2;
-    } else if (type === 'discount') {
-        building.price = Math.floor(building.price * 0.9);
-    } else {
-        return res.status(400).json({ error: "Invalid upgrade type." });
-    }
-
-    gameState.cps = calculateCPS();
-
-    return res.status(200).json({
-        message: "Upgrade purchased",
-        buildingId: building.id,
-        newPrice: building.price,
-        newCps: building.cps,
-        totalCookies: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1)
-    });
-});
-
-router.post('/buy-upgrade/:id/:type', (req, res) => {
-    const userId = req.session.userId;
-    const gameState = loadGameState();
-    const player = gameState.activePlayers.find(p => p.userId === userId);
-
-    if (!player) return res.status(404).json({ error: 'Player not found' });
-
-    const id = parseInt(req.params.id);
+router.post('/buy-upgrade/:buildingId/:type', (req, res) => {
+    const buildingId = parseInt(req.params.buildingId);
     const type = req.params.type;
 
-    const upgrade = player.upgrades?.[id]?.[type];
-    if (!upgrade) return res.status(400).json({ error: 'Invalid upgrade type or building' });
+    const upgrade = gameState.upgrades.find(u => 
+        u.buildingId === buildingId && u.type === type
+    );
 
-    const price = upgrade.price;
-    if (player.totalCookies < price) {
-        return res.status(400).json({ error: 'Not enough cookies' });
+    if (!upgrade) return res.status(404).json({ error: "Upgrade not found" });
+
+    if (gameState.currentCookies < upgrade.price) {
+        return res.status(400).json({ 
+            error: "Not enough cookies", 
+            required: upgrade.price, 
+            current: gameState.currentCookies 
+        });
     }
 
-    // Koop de upgrade
-    player.totalCookies -= price;
-    upgrade.level = (upgrade.level || 1) + 1;
+    const building = gameState.buildings.find(b => b.id === buildingId);
+    if (!building) return res.status(404).json({ error: "Building not found" });
 
-    if (type === 'multiplier') {
-        // Multiplier groeit exponentieel
-        upgrade.multiplier = (upgrade.multiplier || 1) * 2;
-    } else if (type === 'discount') {
-        // 10% korting op buildings
-        const building = player.buildings[id];
-        building.price = Math.floor(building.price * 0.9);
+    gameState.currentCookies -= upgrade.price;
+    upgrade.amount = (upgrade.amount || 0) + 1;
+    upgrade.purchased = true;
+    upgrade.price = Math.floor(upgrade.price * 1.5);
+
+    if (type === "multiplier") {
+        building.multiplier *= upgrade.effect;
+    } else if (type === "discount") {
+        building.discount = Math.max(0.1, building.discount * upgrade.effect);
     }
 
-    // Verhoog de upgradeprijs exponentieel
-    upgrade.price = Math.floor(upgrade.price * 10);
-
-    // Recalculate CPS
-    player.cps = calculateCPS(player);
-
-    saveGameState(gameState);
+    building.cps = building.baseCps * building.multiplier;
+    building.price = Math.floor(building.basePrice * Math.pow(1.15, building.amount) * building.discount);
+    gameState.cps = calculateCPS();
 
     res.json({
-        totalCookies: player.totalCookies,
-        cps: player.cps,
-        newPrice: upgrade.price
+        success: true,
+        currentCookies: gameState.currentCookies.toFixed(1),
+        cps: gameState.cps.toFixed(1),
+        building,
+        upgrade,
+        buildings: gameState.buildings,
+        upgrades: gameState.upgrades
     });
 });
 
@@ -446,19 +452,28 @@ router.post('/prestigeSuccessfully', (req, res) => {
 
     // Let op: Bij prestige reset je waarschijnlijk niet ALLES naar 0, maar dit is de huidige logica.
     gameState = {
-        currentCookies: 0,
-        totalCookiesEver: 0,
-        cps: 0,
-        prestigeLevel: gameState.prestigeLevel + 1, // Voorbeeld: verhoog prestige level
-        heavenlyChips: gameState.heavenlyChips + 1, // Voorbeeld: geef 1 chip per prestige
-        cookiesPerClick: 1, // Reset naar 1
-        cookiesPerClickPrice: 10, // Reset deze ook naar 10
-        buildings: [
-            { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-            { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-            { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
-        ],
-        lastUpdate: Date.now()
+         currentCookies: 0,
+    totalCookiesEver: 0,
+    cps: 0,
+    prestigeLevel: 0,
+    heavenlyChips: 0,
+    cookiesPerClick: 1, // Zorg dat de RAM initieel 1 is
+    cookiesPerClickPrice: 10,
+    buildings: [
+        { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
+        { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
+        { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
+    ],
+    upgrades: [
+        { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
+        { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
+        { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
+        { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
+        { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
+        { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
+    ],
+    lastUpdate: Date.now(),
+    clickCounter:0
     };
     
     fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
