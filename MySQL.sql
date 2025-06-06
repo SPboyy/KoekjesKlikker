@@ -91,6 +91,8 @@ CREATE TABLE login (
      );
 -- DROP TABLE login
 -- ALTER TABLE player ADD COLUMN unlockedPrestigeNodes TEXT DEFAULT '["node-0"]';
+-- ALTER TABLE player ADD COLUMN cookiesPerClick INTEGER DEFAULT 1;
+-- ALTER TABLE player ADD COLUMN cookiesPerClickPrice INTEGER DEFAULT 10;
 
 --INSERT INTO player (
 --    username, amountOfCookies, amountOfRebirths, amountOfUpgrades, amountOfRebirthTokens,

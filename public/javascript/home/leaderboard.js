@@ -4,6 +4,7 @@ fetch('/api/leaderboard')
     const container = document.getElementById('centerContent');
     if (!container) return;
 
+    // HTML voor de top 3 (podium)
     let html = `
       <div class="podium">
         <div class="podium-block second">
@@ -28,18 +29,36 @@ fetch('/api/leaderboard')
               <th>Total Cookies</th>
             </tr>
           </thead>
-          <tbody>
-            ${data.fullLeaderboard.map((player, i) => `
-              <tr>
-                <td>${i + 1}</td>
-                <td>${player.username}</td>
-                <td>${player.amountOfCookies.toLocaleString()}</td>
-              </tr>
-            `).join('')}
+          <tbody id="leaderboardBody">
+            ${renderRows(data.fullLeaderboard)}
           </tbody>
         </table>
       </div>
     `;
+
     container.innerHTML = html;
+
+    // Optioneel: automatisch vernieuwen elke 10 seconden
+    setInterval(() => {
+      fetch('/api/leaderboard')
+        .then(res => res.json())
+        .then(newData => {
+          const tbody = document.getElementById('leaderboardBody');
+          if (tbody) {
+            tbody.innerHTML = renderRows(newData.fullLeaderboard);
+          }
+        });
+    }, 10000);
   })
   .catch(err => console.error('Fout bij laden leaderboard:', err));
+
+// Functie om leaderboard-rijen te genereren
+function renderRows(leaderboard) {
+  return leaderboard.map((player, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>${player.username}</td>
+      <td>${player.amountOfCookies.toLocaleString()}</td>
+    </tr>
+  `).join('');
+}
