@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/chat')
       .then(res => res.json())
       .then(data => {
-        chatBox.innerHTML = '<h2>Global Chat</h2>';
+        chatBox.innerHTML = "";
         data.forEach((msg) => {
           const messageDiv = document.createElement('div');
           const isCurrentSession = msg.color === sessionColor;
