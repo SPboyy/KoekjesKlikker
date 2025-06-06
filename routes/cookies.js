@@ -99,7 +99,25 @@ function buyUpgrade(id, type) {
     })
     .catch(err => console.error('Upgrade error:', err));
 }
+function buyUpgrade(id, type) {
+    fetch(`/buy-upgrade/${id}/${type}`, {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            showToast(data.error); // Je kunt ook gewoon alert(data.error) doen
+            return;
+        }
 
+        document.getElementById('cookieCount').textContent = data.totalCookies;
+        document.getElementById('cpsDisplay').textContent = data.cps;
+
+        // Eventueel DOM updaten met nieuwe prijs
+        console.log(`Upgrade ${type} gekocht voor building ${id}`);
+    })
+    .catch(err => console.error('Upgrade error:', err));
+}
 function updatePassiveCookies() {
     const now = Date.now();
     const seconds = (now - gameState.lastUpdate) / 1000;
@@ -377,7 +395,42 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
         });
     });
 });
+router.post('/buy-upgrade/:id/:type', (req, res) => {
+    const id = parseInt(req.params.id);
+    const type = req.params.type; // 'multiplier' of 'discount'
+    const building = gameState.buildings.find(b => b.id === id);
 
+    if (!building) {
+        return res.status(404).json({ error: "Building not found" });
+    }
+
+    let price = type === 'multiplier' ? 50 : 75;
+
+    if (gameState.currentCookies < price) {
+        return res.status(400).json({ error: "Not enough cookies for upgrade." });
+    }
+
+    gameState.currentCookies -= price;
+
+    if (type === 'multiplier') {
+        building.cps *= 2;
+    } else if (type === 'discount') {
+        building.price = Math.floor(building.price * 0.9);
+    } else {
+        return res.status(400).json({ error: "Invalid upgrade type." });
+    }
+
+    gameState.cps = calculateCPS();
+
+    return res.status(200).json({
+        message: "Upgrade purchased",
+        buildingId: building.id,
+        newPrice: building.price,
+        newCps: building.cps,
+        totalCookies: gameState.currentCookies.toFixed(1),
+        cps: gameState.cps.toFixed(1)
+    });
+});
 router.post('/delete-progress', (req, res) => {
     const username = req.session.username;
 
