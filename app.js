@@ -17,7 +17,6 @@ const db = new sqlite3.Database('./DataBase.db', (err) => {
   } else {
     console.log('✅ Verbonden met SQLite database');
 
-    // ✅ Spelertabel
     db.run(`CREATE TABLE IF NOT EXISTS player (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE,
@@ -27,7 +26,6 @@ const db = new sqlite3.Database('./DataBase.db', (err) => {
       lastLogin TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // ✅ Chatberichtentabel
     db.run(`CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       text TEXT NOT NULL,
@@ -54,6 +52,7 @@ app.use(session({
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.engine("handlebars", expressHandlebars.engine({
   defaultLayout: "main",
   helpers: {
@@ -73,33 +72,51 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/chatbox", (req, res) => {
   res.render("chatbox");
 });
+
 app.use("/login", require("./routes/login"));
 app.use("/signup", require("./routes/signup"));
 app.use("/prestige", require("./routes/prestige"));
 app.use("/", require("./routes/cookies"));
 app.use("/api/achievements", require("./routes/achievements"));
 
-// ✅ Home/Leaderboard
+// ✅ Home + leaderboard
 app.get("/", (req, res) => {
-  db.all(`
-    SELECT username, amountOfCookies 
-    FROM player 
-    ORDER BY amountOfCookies DESC
-    LIMIT 50
-  `, (err, rows) => {
-    if (err) return res.status(500).render("errors/500");
+  const userId = req.session.userId;
 
-    const padded = [...rows];
-    while (padded.length < 3) {
-      padded.push({ username: 'Niemand', amountOfCookies: 0 });
+  db.get(`SELECT * FROM player WHERE id = ?`, [userId], (playerErr, playerRow) => {
+    if (playerErr) return res.status(500).render("errors/500");
+
+    let koekies = 0, cps = 0, cookiesPerClick = 1, cookiesPerClickPrice = 10;
+    let buildingsData = [], upgradesData = [];
+
+    if (playerRow) {
+      koekies = playerRow.amountOfCookies;
+      cps = playerRow.cookiesPerSecond;
+      cookiesPerClick = playerRow.cookiesPerClick || 1;
+      cookiesPerClickPrice = playerRow.cookiesPerClickPrice || 10;
     }
 
-    res.render("home", {
-      username: req.session.username,
-      userId: req.session.userId,
-      topPlayers: padded.slice(0, 3),
-      fullLeaderboard: rows,
-      currentUser: req.session.username
+    db.all(`SELECT username, amountOfCookies FROM player ORDER BY amountOfCookies DESC LIMIT 50`, (leaderboardErr, rows) => {
+      if (leaderboardErr) return res.status(500).render("errors/500");
+
+      const paddedRows = [...rows];
+      while (paddedRows.length < 3) {
+        paddedRows.push({ username: 'Niemand', amountOfCookies: 0 });
+      }
+
+      res.render("home", {
+        username: req.session.username,
+        userId: req.session.userId,
+        koekies,
+        cps,
+        cookiesPerClick,
+        cookiesPerClickPrice,
+        buildings: buildingsData,
+        upgrades: upgradesData,
+        topPlayers: paddedRows.slice(0, 3),
+        fullLeaderboard: rows,
+        currentUser: req.session.username
+      });
     });
   });
 });
@@ -129,7 +146,7 @@ app.delete('/api/chat', (req, res) => {
   });
 });
 
-// ✅ Statistieken ophalen
+// ✅ Stats ophalen
 app.get('/get-stats', (req, res) => {
   const userId = req.session.userId;
   if (!userId) return res.status(401).json({ error: "Niet ingelogd" });
@@ -140,7 +157,7 @@ app.get('/get-stats', (req, res) => {
   });
 });
 
-// ✅ Chat functionaliteit behouden
+// ✅ Cookies toevoegen
 app.post('/add-cookie', (req, res) => {
   let { amount } = req.body;
   const userId = req.session.userId;
@@ -156,6 +173,34 @@ app.post('/add-cookie', (req, res) => {
   });
 });
 
+// ✅ Prestige opslaan (dummy)
+app.post('/prestige/save', (req, res) => {
+  const start = Date.now();
+  saveToDatabase(req.body.unlockedNodes) // <-- implementatie nodig
+    .then(() => res.json({ success: true }))
+    .catch(err => {
+      console.error(`[❌] prestige/save error:`, err);
+      res.json({ success: false });
+    });
+});
+
+// ✅ Reincarnatie
+async function performReincarnation(userId) {
+  console.log("Reincarnation gestart voor:", userId);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log("Reincarnation voltooid");
+}
+
+app.post('/reincarnate', async (req, res) => {
+  try {
+    await performReincarnation(req.session.userId);
+    res.json({ success: true, redirectUrl: "/prestige" });
+  } catch (err) {
+    console.error(`[❌] Fout bij /reincarnate`, err);
+    res.status(500).json({ success: false });
+  }
+});
+
 // ✅ Uitloggen
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
@@ -169,7 +214,7 @@ app.get("/logout", (req, res) => {
 app.use((req, res) => res.status(404).render("errors/404"));
 app.use((err, req, res, next) => res.status(500).render("errors/500"));
 
-// ✅ Server starten
+// ✅ Start server
 app.listen(port, () => {
   console.log(`🚀 Server gestart op http://localhost:${port}`);
 });
