@@ -5,9 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const chatBox = document.getElementById('chatBox');
 
   const COLOR_KEY = 'chatColor';
-  const STORAGE_KEY = 'chatMessages';
 
-  // Genereer of haal sessiekleur op
   function getSessionColor() {
     let color = sessionStorage.getItem(COLOR_KEY);
     if (!color) {
@@ -22,82 +20,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const sessionColor = getSessionColor();
 
-  // Laad berichten uit localStorage
-  function loadMessagesFromStorage() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return;
-
-    let messagesArray;
-    try {
-      messagesArray = JSON.parse(stored);
-    } catch (e) {
-      console.error('Fout bij parsen van opgeslagen chat:', e);
-      return;
-    }
-
-    messagesArray.forEach((item) => {
-      const messageDiv = document.createElement('div');
-      const isCurrentSession = item.color === sessionColor;
-
-      messageDiv.classList.add('message');
-      messageDiv.classList.add(isCurrentSession ? 'right' : 'left');
-      messageDiv.textContent = item.text;
-      messageDiv.style.backgroundColor = item.color;
-
-      chatBox.appendChild(messageDiv);
-    });
-
-    chatBox.scrollTop = chatBox.scrollHeight;
+  function loadMessages() {
+    fetch('/api/chat')
+      .then(res => res.json())
+      .then(data => {
+        chatBox.innerHTML = '<h2>Global Chat</h2>';
+        data.forEach((msg) => {
+          const messageDiv = document.createElement('div');
+          const isCurrentSession = msg.color === sessionColor;
+          messageDiv.classList.add('message');
+          messageDiv.style.backgroundColor = msg.color;
+          messageDiv.style.marginLeft = isCurrentSession ? 'auto' : '0';
+          messageDiv.style.marginRight = isCurrentSession ? '0' : 'auto';
+          messageDiv.style.maxWidth = '60%';
+          messageDiv.style.padding = '10px';
+          messageDiv.style.borderRadius = '8px';
+          messageDiv.style.marginBottom = '5px';
+          messageDiv.textContent = msg.text;
+          chatBox.appendChild(messageDiv);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
   }
 
-  // Voeg nieuw bericht toe
   function addMessage() {
     const text = input.value.trim();
     if (text === '') return;
 
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'right');
-    messageDiv.textContent = text;
-    messageDiv.style.backgroundColor = sessionColor;
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    let messagesArray = [];
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        messagesArray = JSON.parse(stored);
-      } catch (e) {
-        console.error('Fout bij parsen bestaande chat in localStorage:', e);
-        messagesArray = [];
-      }
-    }
-
-    messagesArray.push({ text: text, color: sessionColor });
-
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messagesArray));
-    } catch (e) {
-      console.error('Fout bij opslaan van chat in localStorage:', e);
-    }
-
-    input.value = '';
-    input.focus();
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, color: sessionColor })
+    })
+    .then(() => {
+      input.value = '';
+      loadMessages();
+    });
   }
 
   function clearChat() {
-    chatBox.innerHTML = ''; 
-    localStorage.removeItem(STORAGE_KEY);
-    input.focus();
+    fetch('/api/chat', { method: 'DELETE' })
+      .then(() => loadMessages());
   }
 
-
-  loadMessagesFromStorage();
   sendButton.addEventListener('click', addMessage);
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      addMessage();
-    }
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addMessage();
   });
   clearButton.addEventListener('click', clearChat);
+
+  loadMessages();
 });
