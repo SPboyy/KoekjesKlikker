@@ -10,11 +10,11 @@ const gameStatePath = path.join(__dirname, '../gameState.json'); // <-- Controle
 
 // Initial game state in RAM
 let gameState = {
-    currentCookies: 0,
-    totalCookiesEver: 0,
+    amountOfCookies: 0,
+    totalAmountOfCookies: 0,
     cps: 0,
-    prestigeLevel: 0,
-    heavenlyChips: 0,
+    amountOfRebirths: 0,
+    amountOfRebirthTokens: 0,
     cookiesPerClick: 1, // Zorg dat de RAM initieel 1 is
     cookiesPerClickPrice: 10,
     buildings: [
@@ -37,11 +37,15 @@ try {
 
         gameState = {
             ...savedState,
-            currentCookies: savedState.currentCookies + offlineCookies,
-            totalCookiesEver: savedState.totalCookiesEver + offlineCookies,
+            amountOfCookies: savedState.amountOfCookies + offlineCookies,
+            totalAmountOfCookies: savedState.totalAmountOfCookies + offlineCookies,
+            cps:savedState.cps||0,
+            amountOfRebirths:savedState.amountOfRebirths||0,
+            amountOfRebirthTokens:savedState.amountOfRebirthTokens||0,
             cookiesPerClick: savedState.cookiesPerClick || 1, // Default 1 als niet gevonden in file
             cookiesPerClickPrice: savedState.cookiesPerClickPrice || 10,
             lastUpdate: now
+
         };
         console.log(`DEBUG: [Server Init] Loaded gameState.json. Offline cookies: ${offlineCookies.toFixed(1)}`);
         console.log("DEBUG: [Server Init] GameState after loading file:", JSON.stringify(gameState));
@@ -61,8 +65,8 @@ function updatePassiveCookies() {
     const now = Date.now();
     const seconds = (now - gameState.lastUpdate) / 1000;
     const generated = gameState.cps * seconds;
-    gameState.currentCookies += generated;
-    gameState.totalCookiesEver += generated;
+    gameState.amountOfCookies += generated;
+    gameState.totalAmountOfCookies += generated;
     gameState.lastUpdate = now;
 }
 
@@ -97,21 +101,21 @@ router.get('/', (req, res) => {
                 console.error("DEBUG: [GET /] Database error retrieving user data:", err);
             } else if (row) {
                 // Update gameState in RAM met database waarden
-                gameState.currentCookies = row.amountOfCookies;
-                gameState.totalCookiesEver = row.totalAmountOfCookies;
-                gameState.prestigeLevel = row.amountOfRebirths;
-                gameState.heavenlyChips = row.amountOfRebirthTokens;
+                gameState.amountOfCookies = row.amountOfCookies;
+                gameState.totalAmountOfCookies = row.totalAmountOfCookies;
+                gameState.amountOfRebirths = row.amountOfRebirths;
+                gameState.amountOfRebirthTokens = row.amountOfRebirthTokens;
                 gameState.cookiesPerClick = row.cookiesPerClick || 1; // Default 1 als niet gevonden in DB
                 gameState.cookiesPerClickPrice = row.cookiesPerClickPrice || 10;
                 console.log(`DEBUG: [GET /] Loaded user data for ${username} from DB. Current CPC: ${gameState.cookiesPerClick}, Price: ${gameState.cookiesPerClickPrice}`);
             }
             // Render de pagina na het (eventueel) updaten van gameState
             res.render('home', {
-                koekies: gameState.currentCookies.toFixed(1),
+                cookies: gameState.amountOfCookies.toFixed(1),
                 cps: gameState.cps.toFixed(1),
                 buildings: gameState.buildings,
-                prestigeLevel: gameState.prestigeLevel,
-                heavenlyChips: gameState.heavenlyChips,
+                prestigeLevel: gameState.amountOfRebirths,
+                heavenlyChips: gameState.amountOfRebirthTokens,
                 multiplierPrice: 50,
                 discountPrice: 75,
                 cookiesPerClick: gameState.cookiesPerClick.toFixed(0), // Afronden op 0 decimalen voor weergave
@@ -121,11 +125,11 @@ router.get('/', (req, res) => {
     } else {
         // Als er geen gebruiker is ingelogd, gebruik dan de standaard gameState
         res.render('home', {
-            koekies: gameState.currentCookies.toFixed(1),
+            cookies: gameState.amountOfCookies.toFixed(1),
             cps: gameState.cps.toFixed(1),
             buildings: gameState.buildings,
-            prestigeLevel: gameState.prestigeLevel,
-            heavenlyChips: gameState.heavenlyChips,
+            prestigeLevel: gameState.amountOfRebirths,
+            heavenlyChips: gameState.amountOfRebirthTokens,
             multiplierPrice: 50,
             discountPrice: 75,
             cookiesPerClick: gameState.cookiesPerClick.toFixed(0), // Afronden op 0 decimalen voor weergave
@@ -148,8 +152,8 @@ router.post('/add-cookie', (req, res) => {
         return res.status(400).json({ error: "Ongeldig aantal cookies om toe te voegen" });
     }
     
-    gameState.currentCookies += addAmount;
-    gameState.totalCookiesEver += addAmount;
+    gameState.amountOfCookies += addAmount;
+    gameState.totalAmountOfCookies += addAmount;
 
     // NIEUW: Update de database na elke klik
     if (username) { // Alleen opslaan als er een gebruiker is ingelogd
@@ -158,18 +162,18 @@ router.post('/add-cookie', (req, res) => {
             SET amountOfCookies = ?,
                 totalAmountOfCookies = ?
             WHERE username = ?
-        `, [gameState.currentCookies, gameState.totalCookiesEver, username], function(dbErr) {
+        `, [gameState.amountOfCookies, gameState.totalAmountOfCookies, username], function(dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [add-cookie] DB error saving cookies after click:", dbErr);
             } else {
-                console.log(`DEBUG: [add-cookie] Cookies saved to DB for ${username}. Current: ${gameState.currentCookies.toFixed(1)}, Total Ever: ${gameState.totalCookiesEver.toFixed(1)}`);
+                console.log(`DEBUG: [add-cookie] Cookies saved to DB for ${username}. Current: ${gameState.amountOfCookies.toFixed(1)}, Total Ever: ${gameState.totalAmountOfCookies.toFixed(1)}`);
             }
         });
     }
     gameState.clickCounter += 0.5;
 
     res.json({
-        total: gameState.currentCookies.toFixed(1),
+        total: gameState.amountOfCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
     });
 });
@@ -184,11 +188,11 @@ router.post('/buy-upgrade/:id/:type', (req, res) => {
 
     let price = type === 'multiplier' ? 50 : 75;
 
-    if (gameState.currentCookies < price) {
+    if (gameState.amountOfCookies < price) {
         return res.status(400).json({ error: "Not enough cookies for upgrade." });
     }
 
-    gameState.currentCookies -= price;
+    gameState.amountOfCookies -= price;
 
     if (type === 'multiplier') {
         building.cps *= 2;
@@ -205,7 +209,7 @@ router.post('/buy-upgrade/:id/:type', (req, res) => {
         buildingId: building.id,
         newPrice: building.price,
         newCps: building.cps,
-        totalCookies: gameState.currentCookies.toFixed(1),
+        totalAmountOfCookies: gameState.amountOfCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
     });
 });
@@ -224,12 +228,12 @@ router.post('/buy-upgrade/:id/:type', (req, res) => {
     if (!upgrade) return res.status(400).json({ error: 'Invalid upgrade type or building' });
 
     const price = upgrade.price;
-    if (player.totalCookies < price) {
+    if (player.totalAmountOfCookies < price) {
         return res.status(400).json({ error: 'Not enough cookies' });
     }
 
     // Koop de upgrade
-    player.totalCookies -= price;
+    player.totalAmountOfCookies -= price;
     upgrade.level = (upgrade.level || 1) + 1;
 
     if (type === 'multiplier') {
@@ -250,7 +254,7 @@ router.post('/buy-upgrade/:id/:type', (req, res) => {
     saveGameState(gameState);
 
     res.json({
-        totalCookies: player.totalCookies,
+        totalAmountOfCookies: player.totalAmountOfCookies,
         cps: player.cps,
         newPrice: upgrade.price
     });
@@ -264,12 +268,12 @@ router.post('/buy-building/:id', (req, res) => {
     if (!building) {
         return res.status(404).json({ error: "Building not found" });
     }
-    if (gameState.currentCookies < building.price) {
+    if (gameState.amountOfCookies < building.price) {
         return res.status(400).json({
             error: `Niet genoeg koekjes`
         });
     }
-    gameState.currentCookies -= building.price;
+    gameState.amountOfCookies -= building.price;
     building.amount += 1;
     building.price = Math.floor(building.price * 1.15);
 
@@ -280,7 +284,7 @@ router.post('/buy-building/:id', (req, res) => {
             SET amountOfCookies = ?,
                 amountOfUpgrades = amountOfUpgrades + 1 -- Aanname: elk gebouw is een upgrade (Dit commentaar is hier wel op zijn plek)
             WHERE username = ?
-        `, [gameState.currentCookies, username], function(dbErr) {
+        `, [gameState.amountOfCookies, username], function(dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [buy-building] DB error saving after purchase:", dbErr);
             } else {
@@ -294,19 +298,31 @@ router.post('/buy-building/:id', (req, res) => {
         amount: building.amount,
         name: building.name,
         price: building.price,
-        totalCookies: gameState.currentCookies.toFixed(1),
+        totalAmountOfCookies: gameState.amountOfCookies.toFixed(1),
         cps: gameState.cps.toFixed(1)
     });
 });
 
 // Aangepaste GET /get-stats route om cookiesPerClick en cookiesPerClickPrice mee te sturen
 router.get('/get-stats', (req, res) => {
-    res.json({
-        total: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1),
-        cookiesPerClick: gameState.cookiesPerClick.toFixed(0), // Afronden op 0 decimalen voor weergave
-        cookiesPerClickPrice: gameState.cookiesPerClickPrice.toFixed(0)
-    });
+    try {
+        // Sum the amount of each building
+        const totalBuildings = gameState.buildings.reduce((sum, building) => sum + (building.amount || 0), 0);
+
+        res.json({
+            amountOfCookies: gameState.amountOfCookies?.toFixed(1) ?? "0.0",
+            totalAmountOfCookies: gameState.totalAmountOfCookies?.toFixed(1) ?? "0.0",
+            amountOfRebirths: gameState.amountOfRebirths?.toFixed(1) ?? "0.0",
+            timePlayed: gameState.timePlayed ?? 0,
+            totalBuildings: totalBuildings.toFixed(1),
+            cps: gameState.cps?.toFixed(1) ?? "0.0",
+            cookiesPerClick: gameState.cookiesPerClick?.toFixed(0) ?? "0",
+            cookiesPerClickPrice: gameState.cookiesPerClickPrice?.toFixed(0) ?? "0"
+        });
+    } catch (error) {
+        console.error("Error in /get-stats:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 // Tijdstempel map om debounce per gebruiker te beheren
@@ -334,7 +350,7 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
     console.log(`DEBUG: [upgrade-cookies-per-click] Request from ${username}. Before upgrade. Cookies: ${gameState.currentCookies.toFixed(1)}, CPC: ${gameState.cookiesPerClick.toFixed(1)}, Price: ${gameState.cookiesPerClickPrice.toFixed(0)}`);
 
     // BELANGRIJK: Check op genoeg koekjes
-    if (gameState.currentCookies < gameState.cookiesPerClickPrice) {
+    if (gameState.amountOfCookies < gameState.cookiesPerClickPrice) {
         console.warn(`DEBUG: [upgrade-cookies-per-click] Not enough cookies for ${username}. Needed: ${gameState.cookiesPerClickPrice}, Have: ${gameState.currentCookies.toFixed(1)}`);
         return res.status(400).json({
             error: `Not enough cookies.`
@@ -342,11 +358,11 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
     }
 
     // Trek de prijs af en verdubbel de cookiesPerClick
-    gameState.currentCookies -= gameState.cookiesPerClickPrice;
+    gameState.amountOfCookies -= gameState.cookiesPerClickPrice;
     gameState.cookiesPerClick *= 2; // Hier verdubbelt het
     gameState.cookiesPerClickPrice = Math.floor(gameState.cookiesPerClickPrice * 1.15); // Verhoog de prijs voor de volgende upgrade
 
-    console.log(`DEBUG: [upgrade-cookies-per-click] After upgrade. Cookies: ${gameState.currentCookies.toFixed(1)}, New CPC: ${gameState.cookiesPerClick.toFixed(1)}, New Price: ${gameState.cookiesPerClickPrice.toFixed(0)}`);
+    console.log(`DEBUG: [upgrade-cookies-per-click] After upgrade. Cookies: ${gameState.amountOfCookies.toFixed(1)}, New CPC: ${gameState.cookiesPerClick.toFixed(1)}, New Price: ${gameState.cookiesPerClickPrice.toFixed(0)}`);
 
     // Werk de database bij met de nieuwe cookiesPerClick en cookiesPerClickPrice waarde
     db.run(`
@@ -355,19 +371,19 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
             cookiesPerClickPrice = ?,
             amountOfCookies = ?
         WHERE username = ?
-    `, [gameState.cookiesPerClick, gameState.cookiesPerClickPrice, gameState.currentCookies, username], function(dbErr) {
+    `, [gameState.cookiesPerClick, gameState.cookiesPerClickPrice, gameState.amountOfCookies, username], function(dbErr) {
         if (dbErr) {
             console.error("DEBUG: [upgrade-cookies-per-click] DB error:", dbErr);
             return res.status(500).json({ error: "Kon cookies per click niet updaten in database." });
         }
-        console.log(`DEBUG: [upgrade-cookies-per-click] DB updated for ${username}. CPC: ${gameState.cookiesPerClick}, Price: ${gameState.cookiesPerClickPrice}, Cookies: ${gameState.currentCookies.toFixed(1)}`);
+        console.log(`DEBUG: [upgrade-cookies-per-click] DB updated for ${username}. CPC: ${gameState.cookiesPerClick}, Price: ${gameState.cookiesPerClickPrice}, Cookies: ${gameState.amountOfCookies.toFixed(1)}`);
         
         // Stuur de nieuwe waarden terug naar de client
         res.status(200).json({ 
             message: "Cookies per click succesvol geüpgraded.",
             newCookiesPerClick: gameState.cookiesPerClick.toFixed(1), // Stuur als string voor weergave
             newCookiesPerClickPrice: gameState.cookiesPerClickPrice.toFixed(0), // Stuur als string voor weergave
-            totalCookies: gameState.currentCookies.toFixed(1) // Stuur als string voor weergave
+            totalAmountOfCookies: gameState.amountOfCookies.toFixed(1) // Stuur als string voor weergave
         });
     });
 });
@@ -381,11 +397,11 @@ router.post('/delete-progress', (req, res) => {
 
     // Reset gameState
     gameState = {
-        currentCookies: 0,
-        totalCookiesEver: 0,
+        amountOfCookies: 0,
+        totalAmountOfCookies: 0,
         cps: 0,
-        prestigeLevel: 0,
-        heavenlyChips: 0,
+        amountOfRebirths: 0,
+        amountOfRebirthTokens: 0,
         cookiesPerClick: 1,
         cookiesPerClickPrice: 10,
         buildings: [
@@ -446,11 +462,11 @@ router.post('/prestigeSuccessfully', (req, res) => {
 
     // Let op: Bij prestige reset je waarschijnlijk niet ALLES naar 0, maar dit is de huidige logica.
     gameState = {
-        currentCookies: 0,
-        totalCookiesEver: 0,
+        amountOfCookies: 0,
+        totalAmountOfCookies: 0,
         cps: 0,
-        prestigeLevel: gameState.prestigeLevel + 1, // Voorbeeld: verhoog prestige level
-        heavenlyChips: gameState.heavenlyChips + 1, // Voorbeeld: geef 1 chip per prestige
+        amountOfRebirths: gameState.amountOfRebirths + 1, // Voorbeeld: verhoog prestige level
+        amountOfRebirthTokens: gameState.amountOfRebirthTokens + 1, // Voorbeeld: geef 1 chip per prestige
         cookiesPerClick: 1, // Reset naar 1
         cookiesPerClickPrice: 10, // Reset deze ook naar 10
         buildings: [
@@ -478,7 +494,7 @@ router.post('/prestigeSuccessfully', (req, res) => {
                 cookiesPerClick = ?,
                 cookiesPerClickPrice = ?
             WHERE username = ?
-        `, [gameState.currentCookies, gameState.prestigeLevel, gameState.heavenlyChips, gameState.cookiesPerClick, gameState.cookiesPerClickPrice, username], function(dbErr) {
+        `, [gameState.amountOfCookies, gameState.amountOfRebirths, gameState.amountOfRebirthTokens, gameState.cookiesPerClick, gameState.cookiesPerClickPrice, username], function(dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [prestigeSuccessfully] DB error:", dbErr);
                 return res.status(500).json({ error: "Kon prestige progressie in de database niet updaten." });
@@ -516,5 +532,44 @@ router.get('/api/leaderboard', (req, res) => {
         });
     });
 });
+router.get('/get-stats', (req, res) => {
+    const username = req.session.username;
 
+    if (!username) {
+        return res.status(401).json({ error: "Niet ingelogd" });
+    }
+
+    db.get(
+      `SELECT 
+         amountOfCookies, 
+         totalAmountOfCookies, 
+         totalCookiesThisRebirth,
+         totalRebirths,
+         timePlayed,
+         totalBuildings,
+         cookiesPerClick
+       FROM player WHERE username = ?`, 
+      [username], 
+      (err, row) => {
+        if (err) {
+            console.error("[get-stats] DB error:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        if (!row) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        // If you don't store these in DB, fallback to defaults
+        const statsResponse = {
+        amountOfCookies: Number(row.amountOfCookies || 0).toFixed(0),
+        totalAmountOfCookies: Number(row.totalAmountOfCookies || 0).toFixed(0),
+        totalRebirths: Number(row.totalRebirths || 0),
+        timePlayed: row.timePlayed || "0h 0m",
+        totalBuildings: Number(row.totalBuildings || 0),
+        cps: 0, // Replace with real CPS calculation if needed
+        cpc: Number(row.cookiesPerClick || 1),
+};
+
+        res.json(statsResponse);       
+    });
+    });
 module.exports = router;
