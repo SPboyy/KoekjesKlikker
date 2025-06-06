@@ -1,4 +1,3 @@
-<!-- === In your main template (right column) === -->
 <div class="column right">
     <div class="containerUpgrades2">
         <h1>Events</h1>
@@ -28,12 +27,12 @@
     <!-- Rolling Pin -->
     <div class="containerUpgrades1">
         <div class="columnhalf">
-            <h2>Multiplier price: {{upgrades.[0].price}}</h2>
+            <h2 id="multiplier-price-0">Multiplier price: {{upgrades.[0].price}}</h2>
             <button class="upgrade-button" id="multiplier-button-0" onclick="buyUpgrade(0, 'multiplier')">
                 <img src="images/LightBrownRollingPin.png" alt="Multiplier Upgrade" class="upgrade-img">
             </button>
 
-            <h2>Discount price: {{upgrades.[1].price}}</h2>
+            <h2 id="discount-price-0">Discount price: {{upgrades.[1].price}}</h2>
             <button class="upgrade-button" id="discount-button-0" onclick="buyUpgrade(0, 'discount')">
                 <img src="images/BrownRollingPin.png" alt="Discount Upgrade" class="upgrade-img">
             </button>
@@ -47,52 +46,51 @@
         </div>
     </div>
 
-        <div class="containerUpgrades2">
-            <div class="columnhalf"> 
-                <th>
-                    <h2>Multiplier price: {{multiplierPrice}}</h2>
-                    <button class="upgrade-button" id="upgradeBtn3">
-                        <img src="images/CookieMonster.png" alt="Multiplier Upgrade" class="upgrade-img">
-                    </button>
-                </th>
-                <th>
-                    <h2>Discount price: {{discountPrice}}</h2>
-                    <button class="upgrade-button" id="upgradeBtn4">
-                        <img src="images/RedCookieMonster.png" alt="Discount Upgrade" class="upgrade-img">
-                    </button>
-                </th>
-            </div>
-            <div class="columndoubleLong">
-                <h3>Cookie Monster price: {{buildings.[1].price}}</h3>
-                <button class="BigBuildings-button" id="buildingBtn2" onclick="buyBuilding(1)">
-                    <span class="building-count">{{buildings.[1].amount}}</span>
-                    <img src="images/CookieMonster.jpg" alt="Cookie Monster" class="big-building-img">
+    <div class="containerUpgrades2">
+        <div class="columnhalf"> 
+            <th>
+                <h2 id="multiplier-price-1">Multiplier price: {{upgrades.[2].price}}</h2>
+                <button class="upgrade-button" id="upgradeBtn3" onclick="buyUpgrade(1, 'multiplier')">
+                    <img src="images/CookieMonster.png" alt="Multiplier Upgrade" class="upgrade-img">
                 </button>
-            </div>
+            </th>
+            <th>
+                <h2 id="discount-price-1">Discount price: {{upgrades.[3].price}}</h2>
+                <button class="upgrade-button" id="upgradeBtn4" onclick="buyUpgrade(1, 'discount')">
+                    <img src="images/RedCookieMonster.png" alt="Discount Upgrade" class="upgrade-img">
+                </button>
+            </th>
         </div>
-        <div class="containerUpgrades1">
-            <div class="columnhalf"> 
-                <th>
-                    <h2>Multiplier price: {{multiplierPrice}}</h2>
-                    <button class="upgrade-button" id="upgradeBtn1">
-                        <img src="images/furnace.png" alt="Multiplier Upgrade" class="upgrade-img">
-                    </button>
-                </th>
-                <th>
-                    <h2>Discount price: {{discountPrice}}</h2>
-                    <button class="upgrade-button" id="upgradeBtn2">
-                        <img src="images/blast-furnace.png" alt="Discount Upgrade" class="upgrade-img">
-                    </button>
-                </th>
-            </div>
-            <div class="columndouble">
-                <h3>Iron furnace price: {{buildings.[2].price}}</h3>
-                <button class="Buildings-button" id="buildingBtn1" onclick="buyBuilding(2)">
-                    <span class="building-count">{{buildings.[2].amount}}</span>
-                    <img src="images/furnace.jpg" alt="Rolling Pin" class="building-img">
-                </button>
-            </div>
+        <div class="columndoubleLong">
+            <h3>Cookie Monster price: {{buildings.[1].price}}</h3>
+            <button class="BigBuildings-button" id="buildingBtn2" onclick="buyBuilding(1)">
+                <span class="building-count">{{buildings.[1].amount}}</span>
+                <img src="images/CookieMonster.jpg" alt="Cookie Monster" class="big-building-img">
+            </button>
         </div>
     </div>
-    
+
+    <div class="containerUpgrades1">
+        <div class="columnhalf"> 
+            <th>
+                <h2 id="multiplier-price-2">Multiplier price: {{upgrades.[4].price}}</h2>
+                <button class="upgrade-button" id="upgradeBtn1" onclick="buyUpgrade(2, 'multiplier')">
+                    <img src="images/furnace.png" alt="Multiplier Upgrade" class="upgrade-img">
+                </button>
+            </th>
+            <th>
+                <h2 id="discount-price-2">Discount price: {{upgrades.[5].price}}</h2>
+                <button class="upgrade-button" id="upgradeBtn2" onclick="buyUpgrade(2, 'discount')">
+                    <img src="images/blast-furnace.png" alt="Discount Upgrade" class="upgrade-img">
+                </button>
+            </th>
+        </div>
+        <div class="columndouble">
+            <h3>Iron furnace price: {{buildings.[2].price}}</h3>
+            <button class="Buildings-button" id="buildingBtn1" onclick="buyBuilding(2)">
+                <span class="building-count">{{buildings.[2].amount}}</span>
+                <img src="images/furnace.jpg" alt="Rolling Pin" class="building-img">
+            </button>
+        </div>
+    </div>
 </div>
