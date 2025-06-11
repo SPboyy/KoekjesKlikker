@@ -1,9 +1,8 @@
-// Wordt automatisch uitgevoerd bij het laden van de pagina
 document.addEventListener('DOMContentLoaded', () => {
-  showLeaderboard(); // Laad leaderboard direct bij opstart
+  showLeaderboard(); // eerste keer laden
+  setInterval(updateLeaderboard, 5000); // ververs elke 5 seconden
 });
 
-// Globale functie die ook via de knop wordt aangeroepen
 function showLeaderboard() {
   fetch('/api/leaderboard')
     .then(res => res.json())
@@ -43,11 +42,28 @@ function showLeaderboard() {
       `;
 
       container.innerHTML = html;
-    })
-    .catch(err => console.error('Fout bij laden leaderboard:', err));
+    });
 }
 
-// Helper-functie om leaderboard-rijen te genereren
+function updateLeaderboard() {
+  fetch('/api/leaderboard')
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('leaderboardBody');
+      if (tbody) {
+        tbody.innerHTML = renderRows(data.fullLeaderboard);
+      }
+
+      // eventueel ook top 3 updaten
+      const podium = document.querySelector('.podium');
+      if (podium) {
+        podium.querySelector('.first .podium-name').textContent = data.topPlayers[0]?.username || 'Niemand';
+        podium.querySelector('.second .podium-name').textContent = data.topPlayers[1]?.username || 'Niemand';
+        podium.querySelector('.third .podium-name').textContent = data.topPlayers[2]?.username || 'Niemand';
+      }
+    });
+}
+
 function renderRows(leaderboard) {
   return leaderboard.map((player, i) => `
     <tr>

@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const { login } = require("../assets/data/login"); // Controleer of dit echt nodig is
+const { login } = require("../assets/data/login"); 
 
-// GET /login - Toon loginpagina
+
 router.get("/", function (req, res) {
   res.render("login", { login, hasError: false, enteredUsername: "" });
 });
 
-// POST /login - Verwerk loginpoging
+
 router.post("/", (req, res) => {
   const { username, password } = req.body;
 
@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
       });
     }
 
-    // Vergelijk wachtwoord met hash
+
     bcrypt.compare(password, row.password, (err, result) => {
       if (err) {
         console.error("❌ Fout bij bcrypt.compare:", err);
@@ -39,12 +39,12 @@ router.post("/", (req, res) => {
       }
 
       if (result) {
-        // Wachtwoord klopt
+
         req.session.username = row.username;
         console.log("✅ Ingelogd als:", req.session.username);
         return res.redirect("/");
       } else {
-        // Wachtwoord fout
+
         console.log("❌ Onjuist wachtwoord");
         return res.render("login", {
           login,

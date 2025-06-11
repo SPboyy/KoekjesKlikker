@@ -10,7 +10,7 @@ const sqlite3 = require("sqlite3").verbose();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Database
+
 const db = new sqlite3.Database('./DataBase.db', (err) => {
   if (err) {
     console.error('❌ Database connection error:', err);
@@ -35,7 +35,7 @@ const db = new sqlite3.Database('./DataBase.db', (err) => {
   }
 });
 
-// ✅ Middleware
+
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.set("trust proxy", 1);
 app.use(session({
@@ -68,7 +68,7 @@ app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ ROUTES
+
 app.get("/chatbox", (req, res) => {
   res.render("chatbox");
 });
@@ -79,7 +79,7 @@ app.use("/prestige", require("./routes/prestige"));
 app.use("/", require("./routes/cookies"));
 app.use("/api/achievements", require("./routes/achievements"));
 
-// ✅ Home + leaderboard
+
 app.get("/", (req, res) => {
   const userId = req.session.userId;
 
@@ -121,7 +121,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// ✅ Chat API
+
 app.get('/api/chat', (req, res) => {
   db.all(`SELECT * FROM messages ORDER BY timestamp ASC`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: "Databasefout bij ophalen" });
@@ -146,7 +146,7 @@ app.delete('/api/chat', (req, res) => {
   });
 });
 
-// ✅ Stats ophalen
+
 app.get('/get-stats', (req, res) => {
   const userId = req.session.userId;
   if (!userId) return res.status(401).json({ error: "Niet ingelogd" });
@@ -157,7 +157,7 @@ app.get('/get-stats', (req, res) => {
   });
 });
 
-// ✅ Cookies toevoegen
+
 app.post('/add-cookie', (req, res) => {
   let { amount } = req.body;
   const userId = req.session.userId;
@@ -173,10 +173,10 @@ app.post('/add-cookie', (req, res) => {
   });
 });
 
-// ✅ Prestige opslaan (dummy)
+
 app.post('/prestige/save', (req, res) => {
   const start = Date.now();
-  saveToDatabase(req.body.unlockedNodes) // <-- implementatie nodig
+  saveToDatabase(req.body.unlockedNodes) 
     .then(() => res.json({ success: true }))
     .catch(err => {
       console.error(`[❌] prestige/save error:`, err);
@@ -184,7 +184,7 @@ app.post('/prestige/save', (req, res) => {
     });
 });
 
-// ✅ Reincarnatie
+
 async function performReincarnation(userId) {
   console.log("Reincarnation gestart voor:", userId);
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -201,7 +201,7 @@ app.post('/reincarnate', async (req, res) => {
   }
 });
 
-// ✅ Uitloggen
+
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) return res.status(500).send("Fout bij uitloggen");
@@ -210,11 +210,10 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// ✅ Error handling
+
 app.use((req, res) => res.status(404).render("errors/404"));
 app.use((err, req, res, next) => res.status(500).render("errors/500"));
 
-// ✅ Start server
 app.listen(port, () => {
   console.log(`🚀 Server gestart op http://localhost:${port}`);
 });

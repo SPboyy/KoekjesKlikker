@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// GET prestige pagina
+
 router.get("/", function (req, res) {
   const username = req.session.username;
   if (!username) return res.redirect("/login");
@@ -45,7 +45,7 @@ if (row.unlockedPrestigeNodes) {
   });
 });
 
-// POST prestige uitvoeren
+
 router.post("/reincarnate", (req, res) => {
   console.log("🚀 Reincarnate called");
   console.log("Session ID:", req.sessionID);

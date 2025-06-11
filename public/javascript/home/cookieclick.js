@@ -94,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => console.error('Error adding cookie:', err));
     }
 
-    // Eerste keer laden en starten
     updateStats(true);
     setInterval(() => updateStats(false), 2000);
 });

@@ -36,7 +36,6 @@ document.getElementById('confirm-reincarnate-yes').onclick = function () {
   confirmReincarnation();
 };
 
-// Sluit popup als je buiten het popup-venster klikt
 document.getElementById('popup').addEventListener('click', function(event) {
   if (event.target === document.getElementById('popup')) {
     closePopup();

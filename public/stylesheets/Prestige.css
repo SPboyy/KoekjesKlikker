@@ -52,13 +52,13 @@
     cursor: pointer;
 }
 
-/* Algemene faded class voor andere elementen (indien nodig) */
+
 .faded {
     opacity: 0.3;
     pointer-events: none;
 }
 
-/* Specifieke faded styling voor prestige nodes: zichtbaar en klikbaar */
+
 .prestige-node.faded {
     opacity: 0.5;
     pointer-events: auto;
@@ -78,7 +78,7 @@
 .hidden {
     opacity: 0;
     pointer-events: none;
-    display: none; /* Zorgt dat verborgen nodes ook geen ruimte innemen */
+    display: none; 
 }
 
 .connection {
@@ -194,7 +194,7 @@
 
   }
 
-/* Tooltip stijl */
+
 .prestige-node:hover::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -206,14 +206,14 @@
     padding: 6px 10px;
     border-radius: 6px;
     font-size: 13px;
-    white-space: pre; /* Allows \A to break lines */
+    white-space: pre;
     z-index: 999;
     opacity: 1;
     pointer-events: none;
 }
 
 
-/* Tooltip pijltje */
+
 .prestige-node:hover::before {
     content: "";
     position: absolute;
@@ -236,7 +236,7 @@
     padding: 6px 10px;
     border-radius: 6px;
     font-size: 13px;
-    white-space: pre; /* This makes \A act as a line break */
+    white-space: pre; 
     z-index: 999;
     opacity: 1;
     pointer-events: none;

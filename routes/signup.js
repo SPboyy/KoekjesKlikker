@@ -84,7 +84,7 @@ bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
             });
         }
 
-        // ... vervolgens player toevoegen zoals eerder
+
         const insertPlayerQuery = `INSERT INTO player (...) VALUES (?, 0, 0, 0, 0, ...)`;
 
         db.run(insertPlayerQuery, [username], (err) => {

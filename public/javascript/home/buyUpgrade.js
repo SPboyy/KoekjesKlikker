@@ -16,7 +16,6 @@ async function buyUpgrade(buildingId, type) {
         const data = await response.json();
 
         if (data.success) {
-            // Update buildings UI (aantal en prijs)
             if (data.building) {
                 const buildingCounts = document.querySelectorAll('.building-count');
                 const priceDisplays = document.querySelectorAll('.columndouble h3, .columndoubleLong h3');
@@ -25,14 +24,12 @@ async function buyUpgrade(buildingId, type) {
                 priceDisplays[data.building.id].textContent = `${data.building.name} price: ${data.building.price.toFixed(1)}`;
             }
 
-            // Update cookies en CPS display
             const cookieCount = document.getElementById('cookieCount');
             const cpsDisplay = document.getElementById('cpsDisplay');
 
             if (cookieCount) cookieCount.textContent = parseFloat(data.currentCookies).toFixed(1);
             if (cpsDisplay) cpsDisplay.textContent = parseFloat(data.cps).toFixed(1);
 
-            // Update upgrades UI
            if (data.upgrades && Array.isArray(data.upgrades)) {
     data.upgrades.forEach(upgrade => {
         const priceElementId = `${upgrade.type}-price-${upgrade.buildingId}`;

@@ -63,7 +63,7 @@ function positionNodes() {
 function createConnections() {
   const container = document.getElementById('prestige-container');
 
-  // Verwijder bestaande verbindingen
+
   document.querySelectorAll('.connection').forEach(line => line.remove());
 
   Object.entries(nodes).forEach(([fromId, fromNode]) => {
@@ -83,7 +83,6 @@ function createConnections() {
       const dy = toCenterY - fromCenterY;
       const angle = Math.atan2(dy, dx);
 
-      // Correcte positie aan de rand van nodes
       const startX = fromCenterX + Math.cos(angle) * (NODE_WIDTH / 2);
       const startY = fromCenterY + Math.sin(angle) * (NODE_HEIGHT / 2);
       const endX = toCenterX - Math.cos(angle) * (NODE_WIDTH / 2);
@@ -127,7 +126,7 @@ function unlockNode(id) {
 
   const isStartNode = id === 'node-0';
 
-  // Check of node verbonden is met een actieve node
+
   const isConnectedToActive = Object.entries(nodes).some(([nodeId, data]) => {
     return data.connectedTo.includes(id) &&
            document.getElementById(nodeId)?.classList.contains('active');
@@ -178,7 +177,7 @@ function updateVisibility() {
   const visited = new Set();
   const distances = {};
 
-  // Voeg actieve nodes toe aan queue met afstand 0
+
   Object.keys(nodes).forEach(id => {
     const el = document.getElementById(id);
     if (el && el.classList.contains('active')) {
@@ -188,7 +187,7 @@ function updateVisibility() {
     }
   });
 
-  // BFS om afstand tot actieve nodes te bepalen (max 1)
+
   while (queue.length > 0) {
     const current = queue.shift();
     const distance = distances[current];
@@ -204,7 +203,7 @@ function updateVisibility() {
     });
   }
 
-  // Stel klassen in op basis van afstand
+
   Object.keys(nodes).forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -223,7 +222,7 @@ function updateVisibility() {
     }
   });
 
-  // Speciaal voor node-0 als niet actief
+
   const node0 = document.getElementById('node-0');
   if (node0 && !node0.classList.contains('faded')) {
     node0.classList.remove('hidden', 'unlocked');
@@ -288,7 +287,7 @@ console.log("unlockedNodes:", unlockedNodes);
     });
   }
 
-  // Zet overige nodes (niet active) op hidden
+
   Object.keys(nodes).forEach(id => {
     if (id === 'node-0') return;
     const el = document.getElementById(id);
@@ -301,7 +300,6 @@ console.log("unlockedNodes:", unlockedNodes);
 
   console.log(`[✅] Alles geladen in ${(performance.now() - startTime).toFixed(2)} ms`);
 
-  // Event listeners
   document.getElementById('confirm-return-yes')?.addEventListener('click', returnToHome);
   document.getElementById('reincarnate-button')?.addEventListener('click', () => {
     document.getElementById('reincarnate-confirm')?.classList.remove('hidden');
