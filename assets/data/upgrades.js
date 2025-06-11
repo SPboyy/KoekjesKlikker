@@ -22,23 +22,19 @@ function buyUpgrade(upgradeId, gameState) {
     const building = gameState.buildings.find(b => b.id === upgrade.buildingId);
     if (!building) return { error: "Linked building not found" };
 
-    // Uitvoeren aankoop
     gameState.currentCookies -= upgrade.price;
     upgrade.amount += 1;
     upgrade.price = upgrade.basePrice * Math.pow(10, upgrade.amount);
 
-    // Effect toepassen
     if (upgrade.type === "multiplier") {
         building.multiplier = (building.multiplier || 1) * 2;
     } else if (upgrade.type === "discount") {
-        building.discount = (building.discount || 0) + 5; // +5% korting per discount upgrade
+        building.discount = (building.discount || 0) + 5; 
     }
 
-    // Herbereken prijs van het building object met korting
     const discountFactor = 1 - (building.discount / 100);
     building.price = Math.floor(building.price * 1.15 * discountFactor);
 
-    // CPS herberekenen
     gameState.cps = gameState.buildings.reduce(
         (sum, b) => sum + (b.amount * b.cps * (b.multiplier || 1)), 0
     );

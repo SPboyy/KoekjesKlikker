@@ -1,9 +1,9 @@
-// Wordt automatisch uitgevoerd bij het laden van de pagina
+
 document.addEventListener('DOMContentLoaded', () => {
-  showLeaderboard(); // Laad leaderboard direct bij opstart
+  showLeaderboard(); 
 });
 
-// Globale functie die ook via de knop wordt aangeroepen
+
 function showLeaderboard() {
   fetch('/api/leaderboard')
     .then(res => res.json())
@@ -58,7 +58,7 @@ function showLeaderboard() {
   .catch(err => console.error('Fout bij laden leaderboard:', err));
     }
 
-// Helper-functie om leaderboard-rijen te genereren
+
 function renderRows(leaderboard) {
   return leaderboard.map((player, i) => `
     <tr>
