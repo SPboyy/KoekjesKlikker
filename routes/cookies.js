@@ -435,8 +435,8 @@ router.post('/delete-progress', (req, res) => {
         return res.status(401).json({ error: "Niet ingelogd" });
     }
 
-    
-    gameState = {
+    // Reset gameState
+    const gameState = {
         currentCookies: 0,
         totalCookiesEver: 0,
         cps: 0,
@@ -445,51 +445,65 @@ router.post('/delete-progress', (req, res) => {
         cookiesPerClick: 1,
         cookiesPerClickPrice: 10,
         buildings: [
-            { id: 0, price: 10, name: "Rolling pin", amount: 0, cps: 0.1 },
-            { id: 1, price: 100, name: "Cookie monster", amount: 0, cps: 1 },
-            { id: 2, price: 1000, name: "Furnace", amount: 0, cps: 10 }
+            { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
+            { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
+            { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
         ],
-        lastUpdate: Date.now()
+        upgrades: [
+            { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
+            { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
+            { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
+            { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
+            { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
+            { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
+        ],
+        unlockedPrestigeNodes: [],
+        lastUpdate: Date.now(),
+        clickCounter: 0
     };
 
     db.run(`
-        UPDATE player
-        SET
-            amountOfCookies = 0,
-            amountOfRebirths = 0,
-            amountOfUpgrades = 0,
-            amountOfRebirthTokens = 0,
-            cookiesSpend = 0,
-            totalAmountOfCookies = 0,
-            unlockedPrestigeNodes = '[]',
-            cookiesPerClick = 1,
-            cookiesPerClickPrice = 10,
-            achAmount1 = 0,
-            achAmount100 = 0,
-            achAmount1000 = 0,
-            achAmount10000 = 0,
-            achAmount100000 = 0,
-            achAmount1000000 = 0,
-            achAmount10000000 = 0,
-            achAmount100000000 = 0,
-            achAmount1000000000 = 0
-        WHERE username = ?
-    `, [username], function(dbErr) {
-        if (dbErr) {
-            console.error("Database reset error:", dbErr);
-            return res.status(500).json({ error: "Database reset failed" });
-        }
+    UPDATE player
+    SET
+        amountOfCookies = 0,
+        amountOfRebirths = 0,
+        amountOfUpgrades = 0,
+        amountOfRebirthTokens = 0,
+        cookiesSpend = 0,
+        totalAmountOfCookies = 0,
+        unlockedPrestigeNodes = '[]',
+        cookiesPerClick = 1,
+        cookiesPerClickPrice = 10,
+        achAmount1 = 0,
+        achAmount100 = 0,
+        achAmount1000 = 0,
+        achAmount10000 = 0,
+        achAmount100000 = 0,
+        achAmount1000000 = 0,
+        achAmount10000000 = 0,
+        achAmount100000000 = 0,
+        achAmount1000000000 = 0
+    WHERE username = ?
+`, [username], function(dbErr) {
+    if (dbErr) {
+        console.error("Database reset error:", dbErr);
+        return res.status(500).json({ error: "Database reset failed" });
+    }
 
-     
-        fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
-            if (err) {
-                console.error("File save error:", err);
-                return res.status(500).json({ error: "File save failed but database was reset" });
-            }
-            
-            res.status(200).json({ message: "Progress reset successfully" });
-        });
+    if (this.changes === 0) {
+        console.warn("⚠️ Geen gebruiker gevonden voor reset:", username);
+        return res.status(404).json({ error: "Gebruiker niet gevonden" });
+    }
+
+    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+        if (err) {
+            console.error("File save error:", err);
+            return res.status(500).json({ error: "File save failed" });
+        }
+        res.status(200).json({ message: "Progress reset successfully" });
     });
+});
+
 });
 
 router.post('/prestigeSuccessfully', (req, res) => {
@@ -504,9 +518,7 @@ router.post('/prestigeSuccessfully', (req, res) => {
          currentCookies: 0,
     totalCookiesEver: 0,
     cps: 0,
-    prestigeLevel: 0,
-    heavenlyChips: 0,
-    cookiesPerClick: 1, 
+    cookiesPerClick: 1,
     cookiesPerClickPrice: 10,
     buildings: [
         { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
@@ -534,15 +546,27 @@ router.post('/prestigeSuccessfully', (req, res) => {
 
        
         db.run(`
-            UPDATE player
-            SET
-                amountOfCookies = ?,
-                amountOfRebirths = ?,
-                amountOfRebirthTokens = ?,
-                cookiesPerClick = ?,
-                cookiesPerClickPrice = ?
-            WHERE username = ?
-        `, [gameState.currentCookies, gameState.prestigeLevel, gameState.heavenlyChips, gameState.cookiesPerClick, gameState.cookiesPerClickPrice, username], function(dbErr) {
+    UPDATE player
+    SET
+        amountOfCookies = 0,
+        amountOfUpgrades = 0,
+        cookiesSpend = 0,
+        totalAmountOfCookies = 0,
+        cookiesPerClick = 1,
+        cookiesPerClickPrice = 10,
+        achAmount1 = 0,
+        achAmount100 = 0,
+        achAmount1000 = 0,
+        achAmount10000 = 0,
+        achAmount100000 = 0,
+        achAmount1000000 = 0,
+        achAmount10000000 = 0,
+        achAmount100000000 = 0,
+        achAmount1000000000 = 0,
+        amountOfRebirths = amountOfRebirths + 1,
+        amountOfRebirthTokens = amountOfRebirthTokens + 1,
+    WHERE username = ?
+`, [username], function(dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [prestigeSuccessfully] DB error:", dbErr);
                 return res.status(500).json({ error: "Kon prestige progressie in de database niet updaten." });

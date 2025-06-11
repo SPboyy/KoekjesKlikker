@@ -20,7 +20,6 @@ function confirmDelete() {
         return response.json();
     })
     .then(data => {
-        alert('Progressie is succesvol verwijderd.');
         location.reload(); 
     })
     .catch(error => {
