@@ -41,11 +41,22 @@ function showLeaderboard() {
           </table>
         </div>
       `;
-
+  
       container.innerHTML = html;
-    })
-    .catch(err => console.error('Fout bij laden leaderboard:', err));
-}
+
+      setInterval(() => {
+      fetch('/api/leaderboard')
+        .then(res => res.json())
+        .then(newData => {
+          const tbody = document.getElementById('leaderboardBody');
+          if (tbody) {
+            tbody.innerHTML = renderRows(newData.fullLeaderboard);
+          }
+        });
+    }, 1000);
+  })
+  .catch(err => console.error('Fout bij laden leaderboard:', err));
+    }
 
 // Helper-functie om leaderboard-rijen te genereren
 function renderRows(leaderboard) {
