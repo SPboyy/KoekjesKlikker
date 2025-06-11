@@ -95,13 +95,15 @@
     const statsData = await response.json();
 
     const values = [
-      statsData.amountOfCookies,      
-      statsData.totalCookies,         
-      statsData.totalRebirths,         
-      statsData.timePlayed,           
-      statsData.totalBuildings,      
-      statsData.cps,                 
-      statsData.cpc                 
+
+      statsData.amountOfCookies,       // Current Cookies
+      statsData.totalAmountOfCookies,  // Total cookies
+      statsData.totalRebirths,         // Total rebirths
+      statsData.timePlayed,            // Time played
+      statsData.totalBuildings,        // Total buildings
+      statsData.cps,                   // Cookies per second (cps)
+      statsData.cookiesPerClick        // Cookies per click (cpc)              
+
     ];
 
     const columnShort = document.querySelector('.columnshort');
@@ -118,7 +120,9 @@
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetchStats();                  
-  setInterval(fetchStats, 20000); 
+
+  fetchStats();                   // Fetch immediately on page load
+  setInterval(fetchStats, 10000); 
+
 });
   </script>
