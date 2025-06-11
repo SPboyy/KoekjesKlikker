@@ -586,5 +586,22 @@ router.get('/api/leaderboard', (req, res) => {
         });
     });
 });
+router.get('/building-prices', (req, res) => {
+    const prices = gameState.buildings.map(b => ({
+        id: b.id,
+        price: b.price.toFixed(1),
+        amount: b.amount
+    }));
+
+    const upgrades = gameState.upgrades.map(u => ({
+        id: u.id,
+        buildingId: u.buildingId,
+        type: u.type,
+        price: u.price.toFixed(1),
+        purchased: u.purchased
+    }));
+
+    res.json({ prices, upgrades });
+});
 
 module.exports = router;
