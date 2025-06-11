@@ -8,15 +8,17 @@
 </head>
 <body>
   <div class="chat-window">
-    <div class="messages" id="chatBox">
-      <h2>Global chat</h2>
-    </div>
+    <header class="chat-header">
+      <h2>🌐 Global Chat</h2>
+    </header>
+
+    <div class="messages" id="chatBox"></div>
 
     <div class="input-area">
-      <a class="home-button" href="/">⬅️ Back to game</a>
-      <button id="clearButton" class="clear-button">✖ Clear chat</button>
-      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" />
-      <button id="sendButton">&gt;</button>
+      <a class="home-button" href="/">⬅️ Terug naar spel</a>
+      <input type="text" id="messageInput" placeholder="Typ een bericht..." autocomplete="off" />
+      <button id="sendButton" class="send-button">➤</button>
+      <button id="clearButton" class="clear-button">🗑</button>
     </div>
   </div>
 

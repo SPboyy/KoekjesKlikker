@@ -1,66 +1,46 @@
 async function buyUpgrade(buildingId, type) {
-  try {
-    const response = await fetch(`/buy-upgrade/${buildingId}/${type}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    try {
+        const response = await fetch(`/buy-upgrade/${buildingId}/${type}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.error}`);
-      return;
-    }
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.error}`);
+            return;
+        }
 
-    const data = await response.json();
+        const data = await response.json();
 
-    // Debugging: check wat de backend terugstuurt
-    console.log('Upgrade response:', data);
+        if (data.success) {
+            if (data.building) {
+                const buildingCounts = document.querySelectorAll('.building-count');
+                const priceDisplays = document.querySelectorAll('.columndouble h3, .columndoubleLong h3');
 
-    // Zorg dat totalCookies en cps als number worden behandeld
-    const totalCookiesNum = Number(data.totalCookies);
-    const cpsNum = Number(data.cps);
+                buildingCounts[data.building.id].textContent = data.building.amount;
+                priceDisplays[data.building.id].textContent = `${data.building.name} price: ${data.building.price.toFixed(1)}`;
+            }
 
-    // Update totaal cookies display
-    const cookieCountElement = document.getElementById('cookieCount');
-    if (cookieCountElement) {
-      cookieCountElement.textContent = totalCookiesNum.toFixed(1);
-    }
+            const cookieCount = document.getElementById('cookieCount');
+            const cpsDisplay = document.getElementById('cpsDisplay');
 
-    // Update cookies per second (CPS) display
-    const cpsElement = document.getElementById('cpsCount');
-    if (cpsElement) {
-      cpsElement.textContent = cpsNum.toFixed(1);
-    }
+            if (cookieCount) cookieCount.textContent = parseFloat(data.currentCookies).toFixed(1);
+            if (cpsDisplay) cpsDisplay.textContent = parseFloat(data.cps).toFixed(1);
 
-    // Update gebouwen prijzen en aantallen
-    if (data.buildings && Array.isArray(data.buildings)) {
-      data.buildings.forEach((building, index) => {
-        const priceElement = document.getElementById(`buildingPrice${index}`);
-        const amountElement = document.getElementById(`buildingAmount${index}`);
-
+           if (data.upgrades && Array.isArray(data.upgrades)) {
+    data.upgrades.forEach(upgrade => {
+        const priceElementId = `${upgrade.type}-price-${upgrade.buildingId}`;
+        const priceElement = document.getElementById(priceElementId);
         if (priceElement) {
-          priceElement.textContent = building.price;
+            priceElement.textContent = `${upgrade.type.charAt(0).toUpperCase() + upgrade.type.slice(1)} price: ${upgrade.price.toFixed(1)}`;
         }
-        if (amountElement) {
-          amountElement.textContent = building.amount;
+    });
+}
         }
-      });
+    } catch (error) {
+        console.error('Failed to buy upgrade:', error);
     }
-
-    // Update upgrade buttons (prijzen)
-    if (data.upgrades && Array.isArray(data.upgrades)) {
-      data.upgrades.forEach(upgrade => {
-        const upgradeButton = document.getElementById(`upgradeBtn-${upgrade.buildingId}-${upgrade.type}`);
-        if (upgradeButton) {
-          upgradeButton.textContent = `Buy ${upgrade.type} (${upgrade.price} cookies)`;
-        }
-      });
-    }
-
-  } catch (error) {
-    console.error('Failed to buy upgrade:', error);
-    alert('Er is een fout opgetreden bij het kopen van de upgrade.');
-  }
 }

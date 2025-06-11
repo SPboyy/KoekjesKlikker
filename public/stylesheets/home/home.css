@@ -14,8 +14,8 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 50px;         /* vaste breedte */
-  height: 50px;        /* vaste hoogte (vierkant) */
+  width: 50px;   
+  height: 50px;     
   padding: 0;
   border: none;
   border-radius: 8px;
@@ -32,7 +32,7 @@
 }
 
 .hoek-button img {
-  width: 60%;         /* schaal het plaatje binnen de knop */
+  width: 60%; 
   height: 60%;
   object-fit: contain;
 }

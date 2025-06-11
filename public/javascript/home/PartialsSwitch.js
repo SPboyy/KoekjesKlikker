@@ -1,4 +1,4 @@
-let currentView = null; // Houd bij welke view momenteel getoond wordt
+let currentView = null;
 
 function showCenter(templateId) {
   const source = document.getElementById(templateId).innerHTML;
@@ -6,13 +6,13 @@ function showCenter(templateId) {
   const html = template({});
   
   document.getElementById("centerContent").innerHTML = html;
-  currentView = templateId; // Update de huidige view
+  currentView = templateId; 
 }
 
 function showStats() {
   const targetView = "template-centerStats";
 
-  // Alleen als je niet al in de stats-view bent
+
   if (currentView !== targetView) {
     showCenter(targetView);
     loadAchievements();
