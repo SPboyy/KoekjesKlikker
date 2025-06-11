@@ -102,3 +102,6 @@ CREATE TABLE login (
 --) VALUES (
 --    'admin', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '[]'
 --);
+
+-- ALTER TABLE player ADD COLUMN cookiesPerClick INTEGER DEFAULT 1;
+-- ALTER TABLE player ADD COLUMN cookiesPerClickPrice INTEGER DEFAULT 10;

@@ -11,7 +11,7 @@ function closeDeletePopup() {
 function confirmDelete() {
     fetch('/delete-progress', { 
         method: 'POST',
-        credentials: 'include'  // << toegevoegd, zorgt dat sessie-cookie meegaat
+        credentials: 'include'
     })
     .then(response => {
         if (!response.ok) {
@@ -20,7 +20,6 @@ function confirmDelete() {
         return response.json();
     })
     .then(data => {
-        alert('Progressie is succesvol verwijderd.');
         location.reload(); 
     })
     .catch(error => {

@@ -243,7 +243,6 @@ function fullyPrestige() {
         })
         .catch(error => {
             console.error('Fout:', error);
-            alert('Er is een fout opgetreden bij het resetten.');
         });
 }
 
