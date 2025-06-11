@@ -255,7 +255,7 @@ router.post('/buy-upgrade/:buildingId/:type', (req, res) => {
     gameState.currentCookies -= upgrade.price;
     upgrade.amount = (upgrade.amount || 0) + 1;
     upgrade.purchased = true;
-    upgrade.price = Math.floor(upgrade.price * 1.5);
+    upgrade.price = Math.floor(upgrade.price * 10);
 
     if (type === "multiplier") {
         building.multiplier *= upgrade.effect;
@@ -365,7 +365,7 @@ router.post('/upgrade-cookies-per-click', (req, res) => {
 
     gameState.currentCookies -= gameState.cookiesPerClickPrice;
     gameState.cookiesPerClick *= 2; 
-    gameState.cookiesPerClickPrice = Math.floor(gameState.cookiesPerClickPrice * 1.15); 
+    gameState.cookiesPerClickPrice = Math.floor(gameState.cookiesPerClickPrice * 10); 
 
     console.log(`DEBUG: [upgrade-cookies-per-click] After upgrade. Cookies: ${gameState.currentCookies.toFixed(1)}, New CPC: ${gameState.cookiesPerClick.toFixed(1)}, New Price: ${gameState.cookiesPerClickPrice.toFixed(0)}`);
 
