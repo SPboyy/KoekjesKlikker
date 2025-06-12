@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  showLeaderboard(); // eerste keer laden
-  setInterval(updateLeaderboard, 5000); // ververs elke 5 seconden
+  showLeaderboard(); 
 });
 
 function showLeaderboard() {
@@ -40,29 +39,22 @@ function showLeaderboard() {
           </table>
         </div>
       `;
-
+  
       container.innerHTML = html;
-    });
-}
 
-function updateLeaderboard() {
-  fetch('/api/leaderboard')
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.getElementById('leaderboardBody');
-      if (tbody) {
-        tbody.innerHTML = renderRows(data.fullLeaderboard);
-      }
-
-      // eventueel ook top 3 updaten
-      const podium = document.querySelector('.podium');
-      if (podium) {
-        podium.querySelector('.first .podium-name').textContent = data.topPlayers[0]?.username || 'Niemand';
-        podium.querySelector('.second .podium-name').textContent = data.topPlayers[1]?.username || 'Niemand';
-        podium.querySelector('.third .podium-name').textContent = data.topPlayers[2]?.username || 'Niemand';
-      }
-    });
-}
+      setInterval(() => {
+      fetch('/api/leaderboard')
+        .then(res => res.json())
+        .then(newData => {
+          const tbody = document.getElementById('leaderboardBody');
+          if (tbody) {
+            tbody.innerHTML = renderRows(newData.fullLeaderboard);
+          }
+        });
+    }, 1000);
+  })
+  .catch(err => console.error('Fout bij laden leaderboard:', err));
+    }
 
 function renderRows(leaderboard) {
   return leaderboard.map((player, i) => `
