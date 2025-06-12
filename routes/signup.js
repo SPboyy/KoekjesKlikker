@@ -85,7 +85,8 @@ bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
         }
 
 
-        const insertPlayerQuery = `INSERT INTO player (...) VALUES (?, 0, 0, 0, 0, ...)`;
+        const insertPlayerQuery = `INSERT INTO player (username, amountOfCookies, amountOfRebirths, amountOfUpgrades, 
+        amountOfRebirthTokens, cookiesSpend, totalAmountOfCookies) VALUES (?, 0, 0, 0, 0, 0, 0, '[]')`;
 
         db.run(insertPlayerQuery, [username], (err) => {
             if (err) {
@@ -117,11 +118,9 @@ bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
             }
 
             const insertPlayerQuery = `INSERT INTO player (
-                username, amountOfCookies, amountOfRebirths, amountOfUpgrades, amountOfRebirthTokens,
-                cookiesSpend, totalAmountOfCookies, achAmount1, achAmount100, achAmount1000, 
-                achAmount10000, achAmount100000, achAmount1000000, achAmount10000000, 
-                achAmount100000000, achAmount1000000000, unlockedPrestigeNodes
-            ) VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '[]')`;
+            username, amountOfCookies, amountOfRebirths, amountOfUpgrades,
+            amountOfRebirthTokens, cookiesSpend, totalAmountOfCookies, unlockedPrestigeNodes)
+             VALUES (?, 0, 0, 0, 0, 0, 0, '[]')`;
 
             db.run(insertPlayerQuery, [username], (err) => {
                 if (err) {
