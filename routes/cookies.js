@@ -14,7 +14,7 @@ const DEFAULT_GAME_STATE = {
     cps: 0,
     prestigeLevel: 0,
     heavenlyChips: 0,
-    cookiesPerClick: 1, 
+    cookiesPerClick: 1,
     cookiesPerClickPrice: 10,
     buildings: [
         { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
@@ -29,9 +29,20 @@ const DEFAULT_GAME_STATE = {
         { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
         { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
     ],
+    startTime: Date.now(),
+    totalPlayTime: 0,
     lastUpdate: Date.now(),
     clickCounter: 0
 };
+
+function formatPlayTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}h ${minutes}m ${seconds}s`;
+}
+
 
 let gameState = { ...DEFAULT_GAME_STATE };
 
@@ -49,8 +60,10 @@ try {
             ...savedState,
             currentCookies: savedState.currentCookies + offlineCookies,
             totalCookiesEver: savedState.totalCookiesEver + offlineCookies,
-            cookiesPerClick: savedState.cookiesPerClick || 1, 
+            cookiesPerClick: savedState.cookiesPerClick || 1,
             cookiesPerClickPrice: savedState.cookiesPerClickPrice || 10,
+            startTime: savedState.startTime || Date.now(),
+            totalPlayTime: savedState.totalPlayTime || 0,
             lastUpdate: now,
             buildings: DEFAULT_GAME_STATE.buildings.map(b => ({
                 ...b,
@@ -66,14 +79,9 @@ try {
                 };
             })
         };
-        console.log(`DEBUG: [Server Init] Loaded gameState.json. Offline cookies: ${offlineCookies.toFixed(1)}`);
-        console.log("DEBUG: [Server Init] GameState after loading file:", JSON.stringify(gameState));
-    } else {
-        console.log("DEBUG: [Server Init] gameState.json not found, using default RAM state.");
     }
 } catch (err) {
-    console.error("DEBUG: [Server Init] Error loading gameState.json:", err);
-    console.log("DEBUG: [Server Init] Using default RAM state due to error.");
+    console.error("Error loading gameState.json:", err);
 }
 
 function calculateCPS() {
@@ -98,25 +106,7 @@ function buyUpgrade(id, type) {
     })
     .catch(err => console.error('Upgrade error:', err));
 }
-function buyUpgrade(id, type) {
-    fetch(`/buy-upgrade/${id}/${type}`, {
-        method: 'POST'
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) {
-            showToast(data.error); 
-            return;
-        }
 
-        document.getElementById('cookieCount').textContent = data.totalCookies;
-        document.getElementById('cpsDisplay').textContent = data.cps;
-
-
-        console.log(`Upgrade ${type} gekocht voor building ${id}`);
-    })
-    .catch(err => console.error('Upgrade error:', err));
-}
 function updatePassiveCookies() {
     const now = Date.now();
     const seconds = (now - gameState.lastUpdate) / 1000;
@@ -133,6 +123,9 @@ setInterval(() => {
 
 
 setInterval(() => {
+    gameState.totalPlayTime += Date.now() - gameState.startTime;
+    gameState.startTime = Date.now();
+    
     fs.writeFile(gameStatePath, JSON.stringify(gameState), err => {
         if (err) console.error("Error saving game:", err);
     });
@@ -321,12 +314,38 @@ router.post('/buy-building/:id', (req, res) => {
     });
 });
 
+router.get('/get-upgrades', (req, res) => {
+    try {
+        const upgrades = gameState.upgrades.map(upgrade => {
+            const building = gameState.buildings.find(b => b.id === upgrade.buildingId);
+            return {
+                buildingName: building ? building.name : 'Unknown',
+                type: upgrade.type,
+                amount: upgrade.amount || 0
+            };
+        });
+        
+        res.json(upgrades);
+    } catch (error) {
+        console.error('Error getting upgrades:', error);
+        res.status(500).json({ error: 'Could not retrieve upgrades' });
+    }
+});
 
 router.get('/get-stats', (req, res) => {
+    const totalBuildings = gameState.buildings.reduce((sum, building) => sum + building.amount, 0);
+    const currentTime = Date.now();
+    const timePlayedMs = gameState.totalPlayTime + (currentTime - gameState.startTime);
+    
     res.json({
         total: gameState.currentCookies.toFixed(1),
-        cps: gameState.cps.toFixed(1),
-        cookiesPerClick: gameState.cookiesPerClick.toFixed(0), 
+        amountOfCookies: Number(gameState.currentCookies.toFixed(1)),
+        totalAmountOfCookies: Number(gameState.totalCookiesEver.toFixed(1)),
+        totalRebirths: Number(gameState.prestigeLevel),
+        timePlayed: formatPlayTime(timePlayedMs),
+        totalBuildings: Number(totalBuildings),
+        cps: Number(gameState.cps.toFixed(1)),
+        cookiesPerClick: Number(gameState.cookiesPerClick.toFixed(1)),
         cookiesPerClickPrice: gameState.cookiesPerClickPrice.toFixed(0)
     });
 });
@@ -504,57 +523,68 @@ router.post('/prestigeSuccessfully', (req, res) => {
         return res.status(401).json({ error: "Niet ingelogd" });
     }
 
+    const gameStatePath = getUserGameStatePath(username);
 
-    gameState = {
-         currentCookies: 0,
-    totalCookiesEver: 0,
-    cps: 0,
-    cookiesPerClick: 1,
-    cookiesPerClickPrice: 10,
-    buildings: [
-        { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
-        { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
-        { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
-    ],
-    upgrades: [
-        { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
-        { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
-        { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
-        { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
-        { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
-        { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
-    ],
-    lastUpdate: Date.now(),
-    clickCounter:0
+    // Lees de bestaande game state om de oude lastUpdate te behouden (optioneel)
+    let existingState = {};
+    if (fs.existsSync(gameStatePath)) {
+        try {
+            existingState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
+        } catch (err) {
+            console.error("Fout bij inlezen bestaande game state:", err);
+        }
+    }
+
+    // Nieuwe prestige state
+    const gameState = {
+        currentCookies: 0,
+        totalCookiesEver: 0,
+        cps: 0,
+        cookiesPerClick: 1,
+        cookiesPerClickPrice: 10,
+        buildings: [
+            { id: 0, name: "Rolling pin", basePrice: 10, price: 10, amount: 0, baseCps: 0.1, cps: 0.1, multiplier: 1, discount: 1 },
+            { id: 1, name: "Cookie monster", basePrice: 100, price: 100, amount: 0, baseCps: 1, cps: 1, multiplier: 1, discount: 1 },
+            { id: 2, name: "Furnace", basePrice: 1000, price: 1000, amount: 0, baseCps: 10, cps: 10, multiplier: 1, discount: 1 }
+        ],
+        upgrades: [
+            { id: 0, buildingId: 0, type: "multiplier", name: "Steel Rolling Pin", price: 50, effect: 2, purchased: false, amount: 0 },
+            { id: 1, buildingId: 0, type: "discount", name: "Rolling Pin Discount", price: 75, effect: 0.9, purchased: false, amount: 0 },
+            { id: 2, buildingId: 1, type: "multiplier", name: "Super Cookie Monster", price: 500, effect: 2, purchased: false, amount: 0 },
+            { id: 3, buildingId: 1, type: "discount", name: "Cookie Monster Discount", price: 750, effect: 0.9, purchased: false, amount: 0 },
+            { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
+            { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
+        ],
+        lastUpdate: Date.now(), // Gebruik nu in plaats van oude tijd
+        clickCounter: 0
     };
-    
+
     fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
         if (err) {
             console.error("DEBUG: [prestigeSuccessfully] error saving gameState:", err);
-            return res.status(500).json({ error: "couldn't reset game state" });
+            return res.status(500).json({ error: "Kon game state niet resetten" });
         }
-        console.log("DEBUG: [prestigeSuccessfully] gameState.json succesvol gereset voor prestige.");
 
-       
         db.run(`
-    UPDATE player
-    SET
-        amountOfCookies = 0,
-        amountOfUpgrades = 0,
-        cookiesSpend = 0,
-        totalAmountOfCookies = 0,
-        cookiesPerClick = 1,
-        cookiesPerClickPrice = 10,
-        amountOfRebirths = amountOfRebirths + 1,
-        amountOfRebirthTokens = amountOfRebirthTokens + 1,
-    WHERE username = ?
-`, [username], function(dbErr) {
+            UPDATE player
+            SET
+                amountOfCookies = 0,
+                amountOfUpgrades = 0,
+                cookiesSpend = 0,
+                totalAmountOfCookies = 0,
+                cookiesPerClick = 1,
+                cookiesPerClickPrice = 10,
+                amountOfRebirths = amountOfRebirths + 1,
+                amountOfRebirthTokens = amountOfRebirthTokens + 1
+            WHERE username = ?
+        `, [username], function (dbErr) {
             if (dbErr) {
                 console.error("DEBUG: [prestigeSuccessfully] DB error:", dbErr);
-                return res.status(500).json({ error: "Kon prestige progressie in de database niet updaten." });
+                return res.status(500).json({ error: "Kon prestige progressie niet opslaan in de database." });
             }
-            console.log(`DEBUG: [prestigeSuccessfully] Database prestige progressie voor gebruiker ${username} succesvol geüpdatet.`);
-            res.status(200).json({ message: "successfully prestiged." });
+
+            console.log(`DEBUG: [prestigeSuccessfully] Prestige succesvol verwerkt voor gebruiker ${username}.`);
+            res.status(200).json({ message: "Prestige succesvol uitgevoerd." });
         });
     });
 });

@@ -44,3 +44,4 @@ async function buyUpgrade(buildingId, type) {
         console.error('Failed to buy upgrade:', error);
     }
 }
+
