@@ -523,19 +523,15 @@ router.post('/prestigeSuccessfully', (req, res) => {
         return res.status(401).json({ error: "Niet ingelogd" });
     }
 
-    const gameStatePath = getUserGameStatePath(username);
-
-    // Lees de bestaande game state om de oude lastUpdate te behouden (optioneel)
     let existingState = {};
-    if (fs.existsSync(gameStatePath)) {
+    if (fs.existsSync(getUserGameStatePath(username))) {
         try {
-            existingState = JSON.parse(fs.readFileSync(gameStatePath, 'utf8'));
+            existingState = JSON.parse(fs.readFileSync(getUserGameStatePath(username), 'utf8'));
         } catch (err) {
             console.error("Fout bij inlezen bestaande game state:", err);
         }
     }
 
-    // Nieuwe prestige state
     const gameState = {
         currentCookies: 0,
         totalCookiesEver: 0,
@@ -555,11 +551,11 @@ router.post('/prestigeSuccessfully', (req, res) => {
             { id: 4, buildingId: 2, type: "multiplier", name: "Iron Furnace Boost", price: 5000, effect: 2, purchased: false, amount: 0 },
             { id: 5, buildingId: 2, type: "discount", name: "Furnace Discount", price: 7500, effect: 0.9, purchased: false, amount: 0 }
         ],
-        lastUpdate: Date.now(), // Gebruik nu in plaats van oude tijd
+        lastUpdate: Date.now(),
         clickCounter: 0
     };
 
-    fs.writeFile(gameStatePath, JSON.stringify(gameState), (err) => {
+    fs.writeFile(getUserGameStatePath(username), JSON.stringify(gameState), (err) => {
         if (err) {
             console.error("DEBUG: [prestigeSuccessfully] error saving gameState:", err);
             return res.status(500).json({ error: "Kon game state niet resetten" });
