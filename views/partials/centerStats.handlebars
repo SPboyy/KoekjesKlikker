@@ -88,31 +88,27 @@
 
  
   <script>
-    async function fetchStats() {
+   async function fetchStats() {
   try {
     const response = await fetch('/get-stats');
     if (!response.ok) throw new Error('Network response was not ok');
     const statsData = await response.json();
 
     const values = [
-
-      statsData.amountOfCookies,       // Current Cookies
-      statsData.totalAmountOfCookies,  // Total cookies
-      statsData.totalRebirths,         // Total rebirths
-      statsData.timePlayed,            // Time played
-      statsData.totalBuildings,        // Total buildings
-      statsData.cps,                   // Cookies per second (cps)
-      statsData.cookiesPerClick        // Cookies per click (cpc)              
-
+      Number(statsData.amountOfCookies) || 0,
+      Number(statsData.totalAmountOfCookies) || 0,
+      Number(statsData.totalRebirths) || 0,
+      statsData.timePlayed || "0h 0m 0s",
+      Number(statsData.totalBuildings) || 0,
+      Number(statsData.cps) || 0,
+      Number(statsData.cookiesPerClick) || 0
     ];
 
     const columnShort = document.querySelector('.columnshort');
     const pElements = columnShort.querySelectorAll('p');
 
     pElements.forEach((p, i) => {
-      if (values[i] !== undefined) {
-        p.textContent = values[i];
-      }
+      p.textContent = values[i];
     });
   } catch (error) {
     console.error('Failed to fetch stats:', error);
@@ -121,7 +117,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  fetchStats();                   // Fetch immediately on page load
+  fetchStats();
   setInterval(fetchStats, 10000); 
 
 });
